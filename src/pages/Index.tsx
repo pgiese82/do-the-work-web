@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,7 +9,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3')] bg-cover bg-center opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571019613914-85e3cbcc1d9f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-20"></div>
         <div className="relative container mx-auto px-6 py-20 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-6 bg-orange-600 hover:bg-orange-700 text-white text-lg px-6 py-2">
@@ -95,8 +94,8 @@ const Index = () => {
             <div className="relative">
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613914-85e3cbcc1d9f?ixlib=rb-4.0.3" 
-                  alt="Dominique - Personal Trainer" 
+                  src="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3" 
+                  alt="Diverse group training in modern gym" 
                   className="w-full h-[600px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
@@ -299,7 +298,7 @@ const Index = () => {
 
       {/* Final CTA Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-20">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1549060279-7e168fcee0c2?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
         <div className="relative container mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
             Stop Met Wachten.
