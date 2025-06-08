@@ -52,7 +52,7 @@ const ServicesSection = () => {
     {
       icon: Heart,
       title: 'Boksen voor Parkinson',
-      description: 'Speciale bokstraining voor mensen met Parkinson. Helpt bij balans, coördinatie en geeft je zelfvertrouwen terug.',
+      description: 'Speciale bokstraining voor mensen met Parkinson. Helpt bij balans, coördinatie en zelfvertrouwen.',
       features: [
         '• Technieken aangepast voor jou',
         '• In groepjes of alleen',
@@ -103,8 +103,8 @@ const ServicesSection = () => {
                       <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">{service.title}</h3>
                     </div>
                     
-                    {/* Description - Fixed height */}
-                    <div className="h-20 md:h-24 lg:h-28 mb-6 md:mb-8">
+                    {/* Description - Increased height to prevent overlap */}
+                    <div className="h-24 md:h-28 lg:h-32 mb-6 md:mb-8">
                       <p className="text-slate-600 text-sm md:text-base lg:text-lg leading-relaxed">
                         {service.description}
                       </p>
