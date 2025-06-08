@@ -157,7 +157,7 @@ const ContactForm = () => {
                               {...field}
                               id="firstName"
                               className="peer pt-6 pb-2 h-14 text-base placeholder-transparent"
-                              placeholder="Voornaam"
+                              placeholder=" "
                             />
                             <Label
                               htmlFor="firstName"
@@ -183,7 +183,7 @@ const ContactForm = () => {
                               {...field}
                               id="lastName"
                               className="peer pt-6 pb-2 h-14 text-base placeholder-transparent"
-                              placeholder="Achternaam"
+                              placeholder=" "
                             />
                             <Label
                               htmlFor="lastName"
@@ -211,7 +211,7 @@ const ContactForm = () => {
                             id="email"
                             type="email"
                             className="peer pt-6 pb-2 h-14 text-base placeholder-transparent"
-                            placeholder="E-mailadres"
+                            placeholder=" "
                           />
                           <Label
                             htmlFor="email"
@@ -238,7 +238,7 @@ const ContactForm = () => {
                             id="phone"
                             type="tel"
                             className="peer pt-6 pb-2 h-14 text-base placeholder-transparent"
-                            placeholder="Telefoonnummer"
+                            placeholder=" "
                           />
                           <Label
                             htmlFor="phone"
@@ -357,7 +357,7 @@ const ContactForm = () => {
                             {...field}
                             id="message"
                             className="peer pt-6 pb-2 min-h-32 text-base placeholder-transparent resize-none"
-                            placeholder="Vertel ons over je situatie, wensen en eventuele vragen..."
+                            placeholder=" "
                           />
                           <Label
                             htmlFor="message"
