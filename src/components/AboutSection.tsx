@@ -44,8 +44,8 @@ const AboutSection = () => {
           <div ref={imageRef} className={`relative order-1 lg:order-2 scroll-fade-in scroll-stagger-2 ${imageVisible ? 'visible' : ''}`}>
             <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl shadow-2xl">
               <img 
-                src="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3" 
-                alt="Diverse group training in modern gym" 
+                src="https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80" 
+                alt="Dominique - Personal trainer in fitness outfit" 
                 className="w-full h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
