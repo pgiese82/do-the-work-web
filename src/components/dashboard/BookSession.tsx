@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookingForm } from '@/components/booking/BookingForm';
+import BookingForm from '@/components/booking/BookingForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function BookSession() {
