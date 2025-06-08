@@ -1,12 +1,16 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { useParallax, useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const HeroSection = () => {
+  const parallaxRef = useParallax(-0.3);
+  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation({ delay: 300 });
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-950 text-white pt-20 min-h-screen flex items-center">
-      {/* Animated floating elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Parallax animated floating elements */}
+      <div ref={parallaxRef} className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-4 h-4 bg-orange-500/30 rounded-full animate-float-slow"></div>
         <div className="absolute top-40 right-20 w-6 h-6 bg-purple-500/20 rounded-full animate-float-medium"></div>
         <div className="absolute bottom-40 left-20 w-3 h-3 bg-orange-400/40 rounded-full animate-float-fast"></div>
@@ -33,7 +37,7 @@ const HeroSection = () => {
       </div>
       
       <div className="relative container mx-auto px-4 md:px-6 py-10 md:py-20">
-        <div className="max-w-5xl mx-auto text-center">
+        <div ref={contentRef} className={`max-w-5xl mx-auto text-center scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
           <Badge className="mb-6 md:mb-8 bg-orange-600/20 border border-orange-500/30 hover:bg-orange-600/30 text-orange-200 text-base md:text-lg px-6 md:px-8 py-2 md:py-3 backdrop-blur-sm min-h-[44px] flex items-center justify-center">
             #DoTheWork
           </Badge>

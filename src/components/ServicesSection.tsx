@@ -4,8 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, Apple, Heart } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const ServicesSection = () => {
+  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation();
+
   const services = [
     {
       icon: Users,
@@ -64,7 +67,7 @@ const ServicesSection = () => {
   return (
     <section className="py-10 md:py-20 bg-slate-50" id="services">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-12 md:mb-16">
+        <div ref={titleRef} className={`text-center mb-12 md:mb-16 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
           <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit mx-auto">
             Services
           </Badge>
@@ -80,8 +83,13 @@ const ServicesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {services.map((service, index) => {
             const IconComponent = service.icon;
+            const { ref, isVisible } = useScrollAnimation({ delay: index * 200 });
             return (
-              <Card key={index} className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white h-full flex flex-col">
+              <Card 
+                key={index} 
+                ref={ref}
+                className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white h-full flex flex-col scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+              >
                 <CardContent className="p-0 flex flex-col h-full">
                   <div className="p-6 md:p-8 flex-grow flex flex-col">
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">

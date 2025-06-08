@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Award, Target, Clock } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 interface StatItemProps {
   icon: React.ReactNode;
@@ -9,10 +10,12 @@ interface StatItemProps {
   title: string;
   description: string;
   inView: boolean;
+  index: number;
 }
 
-const StatItem = ({ icon, endValue, suffix, title, description, inView }: StatItemProps) => {
+const StatItem = ({ icon, endValue, suffix, title, description, inView, index }: StatItemProps) => {
   const [currentValue, setCurrentValue] = useState(0);
+  const { ref, isVisible } = useScrollAnimation({ delay: index * 200 });
 
   useEffect(() => {
     if (!inView) return;
@@ -38,7 +41,10 @@ const StatItem = ({ icon, endValue, suffix, title, description, inView }: StatIt
   }, [inView, endValue]);
 
   return (
-    <div className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div 
+      ref={ref}
+      className={`text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+    >
       <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 mx-auto">
         <div className="text-orange-600">
           {icon}
@@ -56,6 +62,7 @@ const StatItem = ({ icon, endValue, suffix, title, description, inView }: StatIt
 const StatsSection = () => {
   const [inView, setInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -108,7 +115,7 @@ const StatsSection = () => {
   return (
     <section ref={sectionRef} className="bg-slate-50 py-20" id="stats">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-16">
+        <div ref={titleRef} className={`text-center mb-16 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 text-slate-900">
             Resultaten die
             <span className="block text-orange-600">spreken voor zich</span>
@@ -128,6 +135,7 @@ const StatsSection = () => {
               title={stat.title}
               description={stat.description}
               inView={inView}
+              index={index}
             />
           ))}
         </div>

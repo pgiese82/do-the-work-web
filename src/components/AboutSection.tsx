@@ -3,13 +3,17 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const AboutSection = () => {
+  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation();
+  const { ref: imageRef, isVisible: imageVisible } = useScrollAnimation({ delay: 200 });
+
   return (
     <section className="py-10 md:py-20 bg-white" id="over-mij">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div className="order-2 lg:order-1">
+          <div ref={contentRef} className={`order-2 lg:order-1 scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
             <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit">
               Over mij
             </Badge>
@@ -37,7 +41,7 @@ const AboutSection = () => {
               Lees mijn verhaal
             </Button>
           </div>
-          <div className="relative order-1 lg:order-2">
+          <div ref={imageRef} className={`relative order-1 lg:order-2 scroll-fade-in scroll-stagger-2 ${imageVisible ? 'visible' : ''}`}>
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <img 
                 src="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3" 
