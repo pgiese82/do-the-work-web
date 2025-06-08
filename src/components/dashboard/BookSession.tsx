@@ -30,7 +30,7 @@ export function BookSession() {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .eq('active', true)
+        .eq('is_active', true)
         .order('name');
 
       if (error) throw error;
