@@ -30,6 +30,54 @@ const App = () => (
               <AdminDashboard />
             </AdminProtectedRoute>
           } />
+          <Route path="/admin/dashboard/bookings" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Admin Bookings</h1>
+                <p>Bookings management will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
+          <Route path="/admin/dashboard/calendar" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Admin Calendar</h1>
+                <p>Calendar management will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
+          <Route path="/admin/dashboard/clients" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Client Management</h1>
+                <p>Client management will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
+          <Route path="/admin/dashboard/payments" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Payment Management</h1>
+                <p>Payment management will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
+          <Route path="/admin/dashboard/documents" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Document Management</h1>
+                <p>Document management will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
+          <Route path="/admin/dashboard/settings" element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gray-900 text-white p-8">
+                <h1 className="text-2xl font-bold">Admin Settings</h1>
+                <p>Admin settings will be implemented here.</p>
+              </div>
+            </AdminProtectedRoute>
+          } />
           <Route path="/dashboard/*" element={
             <ProtectedRoute>
               <Dashboard />
