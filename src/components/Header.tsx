@@ -1,11 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +24,15 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const handleAuthClick = () => {
+    navigate('/auth');
+  };
 
   return (
     <header 
@@ -57,9 +75,42 @@ const Header = () => {
             >
               Contact
             </a>
-            <Button className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white transition-all duration-300 hover:scale-105 min-h-[44px] text-sm lg:text-base px-4 lg:px-6">
-              Start nu
-            </Button>
+            
+            {user ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    className="text-white hover:text-[#ff6b35] hover:bg-white/10 min-h-[44px]"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Account
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 bg-white/10 backdrop-blur-md border-white/20">
+                  <div className="space-y-2">
+                    <div className="px-2 py-1.5 text-sm text-white border-b border-white/20">
+                      {user.user_metadata?.name || user.email}
+                    </div>
+                    <Button
+                      onClick={handleSignOut}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:text-red-400 hover:bg-red-500/10"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Uitloggen
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Button 
+                onClick={handleAuthClick}
+                className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white transition-all duration-300 hover:scale-105 min-h-[44px] text-sm lg:text-base px-4 lg:px-6"
+              >
+                Inloggen
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -103,9 +154,35 @@ const Header = () => {
               >
                 Contact
               </a>
-              <Button className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white transition-all duration-300 w-full mt-4 min-h-[44px] text-base">
-                Start nu
-              </Button>
+              
+              {user ? (
+                <div className="border-t border-white/20 pt-2 mt-2">
+                  <div className="px-2 py-2 text-white text-sm">
+                    {user.user_metadata?.name || user.email}
+                  </div>
+                  <Button
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full justify-start text-white hover:text-red-400 hover:bg-red-500/10 min-h-[44px]"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Uitloggen
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    handleAuthClick();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white transition-all duration-300 w-full mt-4 min-h-[44px] text-base"
+                >
+                  Inloggen
+                </Button>
+              )}
             </div>
           </nav>
         )}
