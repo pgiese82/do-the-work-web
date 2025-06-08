@@ -4,116 +4,137 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
+  SidebarHeader,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
 import { 
   LayoutDashboard, 
   Calendar, 
-  BookOpen, 
+  CalendarCheck, 
   FileText, 
   Settings, 
   LogOut,
-  User
+  Dumbbell,
+  ShoppingBag
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const menuItems = [
   {
-    title: 'Dashboard Overview',
+    title: "Dashboard",
+    url: "/dashboard",
     icon: LayoutDashboard,
-    path: '/dashboard',
   },
   {
-    title: 'Book Session',
+    title: "Services",
+    url: "/dashboard/services",
+    icon: ShoppingBag,
+  },
+  {
+    title: "Book Session",
+    url: "/dashboard/book",
     icon: Calendar,
-    path: '/dashboard/book',
   },
   {
-    title: 'My Bookings',
-    icon: BookOpen,
-    path: '/dashboard/bookings',
+    title: "My Bookings",
+    url: "/dashboard/bookings",
+    icon: CalendarCheck,
   },
   {
-    title: 'Documents',
+    title: "Documents",
+    url: "/dashboard/documents",
     icon: FileText,
-    path: '/dashboard/documents',
   },
   {
-    title: 'Profile Settings',
+    title: "Profile Settings",
+    url: "/dashboard/profile",
     icon: Settings,
-    path: '/dashboard/profile',
   },
 ];
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { toast } = useToast();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account.",
+      });
+      
+      navigate('/auth');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error logging out",
+        description: error.message,
+      });
+    }
   };
 
   return (
-    <Sidebar className="border-r border-white/10">
+    <Sidebar className="border-r border-white/10 bg-gradient-to-b from-[#1a1a2e]/95 to-[#16213e]/95 backdrop-blur-md">
       <SidebarHeader className="p-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-[#ff6b35] to-[#f7931e] rounded-full flex items-center justify-center">
-            <User className="w-6 h-6 text-white" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-r from-[#ff6b35] to-[#f7931e] rounded-lg flex items-center justify-center">
+            <Dumbbell className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-white">DO THE WORK</h2>
-            <p className="text-sm text-gray-300">Client Portal</p>
+            <h2 className="text-xl font-bold text-white">DO THE WORK</h2>
+            <p className="text-xs text-gray-400">Client Portal</p>
           </div>
         </div>
       </SidebarHeader>
-
-      <SidebarSeparator className="bg-white/10" />
-
-      <SidebarContent className="p-4">
-        <SidebarMenu>
-          {menuItems.map((item) => (
-            <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton
-                onClick={() => navigate(item.path)}
-                isActive={location.pathname === item.path}
-                className="w-full justify-start text-white hover:bg-white/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-[#ff6b35] data-[active=true]:to-[#f7931e] data-[active=true]:text-white"
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+      
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-gray-400 text-xs uppercase tracking-wide mb-4">
+            Navigation
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-2">
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    onClick={() => navigate(item.url)}
+                    className={`w-full justify-start text-left px-4 py-3 rounded-lg transition-all duration-200 ${
+                      location.pathname === item.url
+                        ? 'bg-gradient-to-r from-[#ff6b35] to-[#f7931e] text-white'
+                        : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5 mr-3" />
+                    {item.title}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-
-      <SidebarSeparator className="bg-white/10" />
-
-      <SidebarFooter className="p-4">
-        <div className="space-y-4">
-          <div className="text-center">
-            <p className="text-sm text-gray-300">Welcome back,</p>
-            <p className="font-semibold text-white truncate">
-              {user?.user_metadata?.name || user?.email || 'Guest'}
-            </p>
-          </div>
-          
-          <Button
-            onClick={handleSignOut}
-            variant="outline"
-            className="w-full bg-transparent border-white/20 text-white hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-400"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
-        </div>
+      
+      <SidebarFooter className="p-6">
+        <Button
+          onClick={handleLogout}
+          variant="outline"
+          className="w-full border-white/20 text-gray-300 hover:bg-red-500/20 hover:border-red-500/50 hover:text-white"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Logout
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

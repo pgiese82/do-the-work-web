@@ -6,6 +6,7 @@ import { BookSession } from './BookSession';
 import { MyBookings } from './MyBookings';
 import { Documents } from './Documents';
 import { ProfileSettings } from './ProfileSettings';
+import { ServiceSelectionPage } from '@/components/services/ServiceSelectionPage';
 import { useLocation } from 'react-router-dom';
 
 export function DashboardContent() {
@@ -15,6 +16,8 @@ export function DashboardContent() {
     switch (location.pathname) {
       case '/dashboard':
         return <DashboardOverview />;
+      case '/dashboard/services':
+        return <ServiceSelectionPage />;
       case '/dashboard/book':
         return <BookSession />;
       case '/dashboard/bookings':
