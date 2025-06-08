@@ -5,11 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, Dumbbell, Users, Calendar, Apple, Heart, Phone, Mail, MapPin } from 'lucide-react';
 import Header from '@/components/Header';
+import DownloadModal from '@/components/DownloadModal';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <DownloadModal />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-950 text-white pt-20 min-h-screen flex items-center">
