@@ -7,9 +7,9 @@ interface UseScrollAnimationOptions {
   once?: boolean;
 }
 
-export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
+export const useScrollAnimation = <T extends HTMLElement = HTMLDivElement>(options: UseScrollAnimationOptions = {}) => {
   const { threshold = 0.1, delay = 0, once = true } = options;
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<T>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
   return { ref, isVisible };
 };
 
-export const useParallax = (speed: number = 0.5) => {
-  const ref = useRef<HTMLElement>(null);
+export const useParallax = <T extends HTMLElement = HTMLDivElement>(speed: number = 0.5) => {
+  const ref = useRef<T>(null);
 
   useEffect(() => {
     const element = ref.current;
