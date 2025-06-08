@@ -81,13 +81,19 @@ export function BookingFilters({
               <Input
                 type="date"
                 value={dateRange.from ? format(dateRange.from, 'yyyy-MM-dd') : ''}
-                onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value ? new Date(e.target.value) : undefined }))}
+                onChange={(e) => setDateRange({ 
+                  ...dateRange, 
+                  from: e.target.value ? new Date(e.target.value) : undefined 
+                })}
                 className="bg-white/10 border-white/20 text-white"
               />
               <Input
                 type="date"
                 value={dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : ''}
-                onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value ? new Date(e.target.value) : undefined }))}
+                onChange={(e) => setDateRange({ 
+                  ...dateRange, 
+                  to: e.target.value ? new Date(e.target.value) : undefined 
+                })}
                 className="bg-white/10 border-white/20 text-white"
               />
             </div>
