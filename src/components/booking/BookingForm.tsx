@@ -1,18 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { nl } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import CustomCalendar from './CustomCalendar';
 
 interface BookingFormProps {
   open: boolean;
@@ -36,12 +30,6 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
-
-  // Available time slots
-  const timeSlots = [
-    '09:00', '10:00', '11:00', '12:00', '13:00', 
-    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
-  ];
 
   useEffect(() => {
     if (serviceId && open) {
@@ -70,9 +58,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
     }
   };
 
-  const handleBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleBooking = async () => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -133,7 +119,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {service ? `Boek: ${service.name}` : 'Nieuwe boeking'}
@@ -141,62 +127,27 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
         </DialogHeader>
 
         {service && (
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <h3 className="font-semibold">{service.name}</h3>
             <p className="text-sm text-gray-600">
               Duur: {service.duration} minuten • Prijs: €{service.price}
             </p>
+            {service.description && (
+              <p className="text-sm text-gray-600 mt-2">{service.description}</p>
+            )}
           </div>
         )}
 
-        <form onSubmit={handleBooking} className="space-y-4">
-          <div>
-            <Label>Datum</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? (
-                    format(selectedDate, "PPP", { locale: nl })
-                  ) : (
-                    <span>Selecteer een datum</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) =>
-                    date < new Date() || date < new Date("1900-01-01")
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div>
-            <Label htmlFor="time">Tijd</Label>
-            <select
-              id="time"
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            >
-              <option value="">Selecteer een tijd</option>
-              {timeSlots.map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="space-y-6">
+          <CustomCalendar
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+            selectedTime={selectedTime}
+            onTimeSelect={setSelectedTime}
+            serviceDuration={service?.duration || 60}
+            onConfirm={handleBooking}
+            loading={loading}
+          />
 
           <div>
             <Label htmlFor="notes">Opmerkingen (optioneel)</Label>
@@ -205,14 +156,10 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Bijzondere wensen of opmerkingen..."
-              className="resize-none"
+              className="resize-none mt-2"
             />
           </div>
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Bezig...' : 'Boeking bevestigen'}
-          </Button>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
