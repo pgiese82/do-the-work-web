@@ -16,19 +16,19 @@ const Index = () => {
               #DoTheWork
             </Badge>
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-              ELKE LEEFTIJD.
-              <span className="block text-orange-500">ELKE SITUATIE.</span>
-              ÉCHTE RESULTATEN.
+              Elke leeftijd.
+              <span className="block text-orange-500">Elke situatie.</span>
+              Échte resultaten.
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Of je nu 25 of 65 bent - met de juiste begeleiding bereik je je fitnessdoelen zonder je leven overhoop te gooien.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 py-4 h-auto transition-all duration-300 hover:scale-105">
-                Start Vandaag
+                Start vandaag
               </Button>
               <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 h-auto transition-all duration-300">
-                Gratis Intake
+                Gratis intake
               </Button>
             </div>
           </div>
@@ -41,15 +41,15 @@ const Index = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="animate-fade-in">
               <div className="text-4xl font-black text-slate-900 mb-2">500+</div>
-              <div className="text-slate-600 font-medium">Tevreden Klanten</div>
+              <div className="text-slate-600 font-medium">Tevreden klanten</div>
             </div>
             <div className="animate-fade-in">
               <div className="text-4xl font-black text-slate-900 mb-2">5+</div>
-              <div className="text-slate-600 font-medium">Jaar Ervaring</div>
+              <div className="text-slate-600 font-medium">Jaar ervaring</div>
             </div>
             <div className="animate-fade-in">
               <div className="text-4xl font-black text-slate-900 mb-2">95%</div>
-              <div className="text-slate-600 font-medium">Behaalt Doelen</div>
+              <div className="text-slate-600 font-medium">Behaalt doelen</div>
             </div>
             <div className="animate-fade-in">
               <div className="text-4xl font-black text-slate-900 mb-2">24/7</div>
@@ -65,11 +65,11 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200">
-                Over Mij
+                Over mij
               </Badge>
               <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
                 Dominique (27)
-                <span className="block text-orange-600">Gecertificeerde Personal Trainer</span>
+                <span className="block text-orange-600">Gecertificeerde personal trainer</span>
               </h2>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
                 Ik ben er heilig van overtuigd dat iedereen fit, sterk en zelfverzekerd kan worden. Mijn aanpak is simpel: geen gedoe, gewoon effectieve trainingen en praktisch voedingsadvies dat écht werkt in het dagelijks leven.
@@ -85,10 +85,10 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
-                <span className="text-slate-600 font-medium">500+ Succesverhalen</span>
+                <span className="text-slate-600 font-medium">500+ succesverhalen</span>
               </div>
               <Button className="bg-slate-900 hover:bg-slate-800 text-white">
-                Lees Mijn Verhaal
+                Lees mijn verhaal
               </Button>
             </div>
             <div className="relative">
@@ -113,8 +113,8 @@ const Index = () => {
               Services
             </Badge>
             <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900">
-              Kies Je
-              <span className="block text-orange-600">Transformatie</span>
+              Kies je
+              <span className="block text-orange-600">transformatie</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Verschillende wegen naar hetzelfde doel: een fittere, sterkere, zelfverzekerder jij.
@@ -127,9 +127,9 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Users className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">1-op-1 Coaching</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">1-op-1 coaching</h3>
                 <p className="text-slate-600 mb-6">
-                  Persoonlijke begeleiding die écht bij jou past. Samen maken we een plan dat werkt met jouw agenda.
+                  Samen maken we een plan dat bij jou past. Persoonlijke begeleiding die werkt met jouw agenda.
                 </p>
                 <ul className="text-sm text-slate-500 space-y-2 mb-6">
                   <li>• Plan op maat voor jou</li>
@@ -139,7 +139,7 @@ const Index = () => {
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€197/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
-                  Start Nu
+                  Start nu
                 </Button>
               </CardContent>
             </Card>
@@ -149,7 +149,7 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Calendar className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">Online Trainingsschema's</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">Online trainingsschema's</h3>
                 <p className="text-slate-600 mb-6">
                   Klaar-voor-gebruik schema's die je thuis of in de sportschool kunt doen. Perfect als je zelf aan de slag wilt.
                 </p>
@@ -161,7 +161,7 @@ const Index = () => {
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€67/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
-                  Bekijk Schema's
+                  Bekijk schema's
                 </Button>
               </CardContent>
             </Card>
@@ -171,7 +171,7 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Apple className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">Persoonlijke Voedingsschema's</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">Persoonlijke voedingsschema's</h3>
                 <p className="text-slate-600 mb-6">
                   Geen dieet, maar een manier van eten die bij jouw leven past. Lekker eten én afvallen kan gewoon.
                 </p>
@@ -183,7 +183,7 @@ const Index = () => {
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€97/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
-                  Start Gezond
+                  Start gezond
                 </Button>
               </CardContent>
             </Card>
@@ -205,7 +205,7 @@ const Index = () => {
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€127/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
-                  Meer Info
+                  Meer info
                 </Button>
               </CardContent>
             </Card>
@@ -221,8 +221,8 @@ const Index = () => {
               Succesverhalen
             </Badge>
             <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900">
-              Echte Mensen,
-              <span className="block text-orange-600">Echte Resultaten</span>
+              Echte mensen,
+              <span className="block text-orange-600">echte resultaten</span>
             </h2>
           </div>
 
@@ -301,22 +301,21 @@ const Index = () => {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
         <div className="relative container mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-            Stop Met Wachten.
-            <span className="block text-orange-400">Start Vandaag.</span>
+            Stop met wachten.
+            <span className="block text-orange-400">Start vandaag.</span>
           </h2>
           <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
             Je hebt twee keuzes: blijven zoals je bent, of de stap zetten naar de persoon die je wilt worden.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 py-4 h-auto transition-all duration-300 hover:scale-105">
-              Ja, Ik Wil Starten
+              Ja, ik wil starten
             </Button>
             <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 h-auto transition-all duration-300">
-              Gratis Kennismaking
+              Gratis kennismaking
             </Button>
           </div>
           
-          {/* Contact Info */}
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="flex items-center justify-center">
               <Phone className="w-6 h-6 mr-3 text-orange-400" />
