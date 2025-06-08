@@ -65,22 +65,22 @@ const ServicesSection = () => {
   ];
 
   return (
-    <section className="py-10 md:py-20 bg-slate-50" id="services">
-      <div className="container mx-auto px-4 md:px-6">
-        <div ref={titleRef} className={`text-center mb-12 md:mb-16 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
-          <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit mx-auto">
+    <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-slate-50" id="services">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
+        <div ref={titleRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
+          <Badge className="mb-4 md:mb-6 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit mx-auto text-sm md:text-base">
             Services
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 md:mb-6 text-slate-900 px-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-4 md:mb-6 lg:mb-8 text-slate-900 px-4">
             Kies je
             <span className="block text-orange-600">transformatie</span>
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto px-4">
+          <p className="text-lg md:text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto px-4">
             Verschillende wegen naar hetzelfde doel: een fittere, sterkere, zelfverzekerder jij.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-7xl mx-auto">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             const { ref, isVisible } = useScrollAnimation<HTMLDivElement>({ delay: index * 200 });
@@ -92,27 +92,27 @@ const ServicesSection = () => {
                 style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="p-6 md:p-8 flex flex-col flex-grow">
+                  <div className="p-6 md:p-8 lg:p-10 flex flex-col flex-grow">
                     {/* Icon */}
-                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
-                      <IconComponent className="w-8 h-8 text-orange-600 group-hover:text-white" />
+                    <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6 md:mb-8 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                      <IconComponent className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-orange-600 group-hover:text-white" />
                     </div>
                     
                     {/* Title - Fixed height */}
-                    <div className="h-16 mb-4">
-                      <h3 className="text-xl md:text-2xl font-bold text-slate-900 leading-tight">{service.title}</h3>
+                    <div className="h-16 md:h-20 lg:h-24 mb-4 md:mb-6">
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">{service.title}</h3>
                     </div>
                     
                     {/* Description - Fixed height */}
-                    <div className="h-20 mb-6">
-                      <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                    <div className="h-20 md:h-24 lg:h-28 mb-6 md:mb-8">
+                      <p className="text-slate-600 text-sm md:text-base lg:text-lg leading-relaxed">
                         {service.description}
                       </p>
                     </div>
                     
                     {/* Features - Fixed height */}
-                    <div className="h-24 mb-8">
-                      <ul className="text-sm text-slate-500 space-y-2">
+                    <div className="h-24 md:h-28 lg:h-32 mb-8 md:mb-10">
+                      <ul className="text-sm md:text-base text-slate-500 space-y-2 md:space-y-3">
                         {service.features.map((feature, featureIndex) => (
                           <li key={featureIndex}>{feature}</li>
                         ))}
@@ -121,16 +121,16 @@ const ServicesSection = () => {
                   </div>
                   
                   {/* Price and buttons - Fixed at bottom */}
-                  <div className="bg-slate-50 p-6 md:p-8 border-t mt-auto">
-                    <div className="text-center mb-6">
-                      <div className="text-3xl md:text-4xl font-black text-orange-600 mb-1">{service.price}</div>
-                      <div className="text-slate-500 text-sm">{service.period}</div>
+                  <div className="bg-slate-50 p-6 md:p-8 lg:p-10 border-t mt-auto">
+                    <div className="text-center mb-6 md:mb-8">
+                      <div className="text-3xl md:text-4xl lg:text-5xl font-black text-orange-600 mb-1 md:mb-2">{service.price}</div>
+                      <div className="text-slate-500 text-sm md:text-base">{service.period}</div>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold min-h-[44px] transition-all duration-300 hover:scale-105">
+                    <div className="flex flex-col gap-3 md:gap-4">
+                      <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold min-h-[44px] md:min-h-[52px] lg:min-h-[60px] text-base md:text-lg transition-all duration-300 hover:scale-105">
                         Boek Nu
                       </Button>
-                      <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 min-h-[44px]">
+                      <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 min-h-[44px] md:min-h-[52px] lg:min-h-[60px] text-base md:text-lg">
                         Meer Info
                       </Button>
                     </div>

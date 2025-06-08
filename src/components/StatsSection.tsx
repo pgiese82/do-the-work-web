@@ -43,18 +43,18 @@ const StatItem = ({ icon, endValue, suffix, title, description, inView, index }:
   return (
     <div 
       ref={ref}
-      className={`text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+      className={`text-center p-6 md:p-8 lg:p-10 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
     >
-      <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+      <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6 md:mb-8 mx-auto">
         <div className="text-orange-600">
           {icon}
         </div>
       </div>
-      <div className="text-5xl md:text-6xl font-black text-orange-600 mb-2">
+      <div className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-orange-600 mb-2 md:mb-4">
         {currentValue}{suffix}
       </div>
-      <div className="text-xl font-bold text-slate-900 mb-2">{title}</div>
-      <div className="text-slate-600 text-sm leading-relaxed">{description}</div>
+      <div className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 mb-2 md:mb-4">{title}</div>
+      <div className="text-slate-600 text-sm md:text-base lg:text-lg leading-relaxed">{description}</div>
     </div>
   );
 };
@@ -83,28 +83,28 @@ const StatsSection = () => {
 
   const stats = [
     {
-      icon: <Users size={32} />,
+      icon: <Users size={32} className="md:w-10 md:h-10 lg:w-12 lg:h-12" />,
       endValue: 500,
       suffix: '+',
       title: 'Tevreden klanten',
       description: 'Mensen die hun doelen hebben bereikt met onze begeleiding'
     },
     {
-      icon: <Award size={32} />,
+      icon: <Award size={32} className="md:w-10 md:h-10 lg:w-12 lg:h-12" />,
       endValue: 5,
       suffix: '+',
       title: 'Jaar ervaring',
       description: 'Bewezen expertise in personal training en coaching'
     },
     {
-      icon: <Target size={32} />,
+      icon: <Target size={32} className="md:w-10 md:h-10 lg:w-12 lg:h-12" />,
       endValue: 95,
       suffix: '%',
       title: 'Behaalt doelen',
       description: 'Van onze klanten bereikt hun gewenste resultaten'
     },
     {
-      icon: <Clock size={32} />,
+      icon: <Clock size={32} className="md:w-10 md:h-10 lg:w-12 lg:h-12" />,
       endValue: 24,
       suffix: '/7',
       title: 'Ondersteuning',
@@ -113,19 +113,19 @@ const StatsSection = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="bg-slate-50 py-20" id="stats">
-      <div className="container mx-auto px-4 md:px-6">
-        <div ref={titleRef} className={`text-center mb-16 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 text-slate-900">
+    <section ref={sectionRef} className="bg-slate-50 py-16 md:py-20 lg:py-24 xl:py-32" id="stats">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
+        <div ref={titleRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-6 md:mb-8 text-slate-900">
             Resultaten die
             <span className="block text-orange-600">spreken voor zich</span>
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto">
             Onze aanpak werkt. Deze cijfers tonen aan waarom zoveel mensen kiezen voor onze begeleiding.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-7xl mx-auto">
           {stats.map((stat, index) => (
             <StatItem
               key={index}
