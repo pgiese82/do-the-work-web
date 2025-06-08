@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,12 +7,14 @@ import { Star, Dumbbell, Users, Calendar, Apple, Heart, Phone, Mail, MapPin } fr
 import Header from '@/components/Header';
 import DownloadModal from '@/components/DownloadModal';
 import BookingSection from '@/components/BookingSection';
+import WhatsAppButton from '@/components/WhatsAppButton';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <DownloadModal />
+      <WhatsAppButton />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-950 text-white pt-20 min-h-screen flex items-center">
