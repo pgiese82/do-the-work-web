@@ -17,16 +17,16 @@ const Index = () => {
               #DoTheWork
             </Badge>
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-              STOP MET
-              <span className="block text-orange-500">EXCUSES</span>
-              START MET RESULTATEN
+              ELKE LEEFTIJD.
+              <span className="block text-orange-500">ELKE SITUATIE.</span>
+              ÉCHTE RESULTATEN.
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Voor drukke mensen die willen stoppen met uitstellen en eindelijk de fitte, zelfverzekerde versie van zichzelf willen worden.
+              Of je nu 25 of 65 bent - met de juiste begeleiding bereik je je fitnessdoelen zonder je leven overhoop te gooien.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 py-4 h-auto transition-all duration-300 hover:scale-105">
-                Start Je Transformatie
+                Start Vandaag
               </Button>
               <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 h-auto transition-all duration-300">
                 Gratis Intake
