@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +7,7 @@ import Header from '@/components/Header';
 import DownloadModal from '@/components/DownloadModal';
 import BookingSection from '@/components/BookingSection';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import StatsSection from '@/components/StatsSection';
 
 const Index = () => {
   return (
@@ -76,28 +76,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-slate-100 py-10 md:py-20" id="stats">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-black text-slate-900 mb-2">500+</div>
-              <div className="text-slate-600 font-medium text-sm md:text-base">Tevreden klanten</div>
-            </div>
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-black text-slate-900 mb-2">5+</div>
-              <div className="text-slate-600 font-medium text-sm md:text-base">Jaar ervaring</div>
-            </div>
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-black text-slate-900 mb-2">95%</div>
-              <div className="text-slate-600 font-medium text-sm md:text-base">Behaalt doelen</div>
-            </div>
-            <div className="animate-fade-in">
-              <div className="text-3xl md:text-4xl font-black text-slate-900 mb-2">24/7</div>
-              <div className="text-slate-600 font-medium text-sm md:text-base">Ondersteuning</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <StatsSection />
 
       {/* About Section */}
       <section className="py-10 md:py-20 bg-white" id="over-mij">
