@@ -26,7 +26,7 @@ const FinalCTASection = () => {
             <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg md:text-xl lg:text-2xl px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 h-auto transition-all duration-300 hover:scale-105 min-h-[44px] md:min-h-[52px] lg:min-h-[60px] w-full sm:w-auto">
               Ja, ik wil starten
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-slate-900 text-lg md:text-xl lg:text-2xl px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 h-auto transition-all duration-300 min-h-[44px] md:min-h-[52px] lg:min-h-[60px] w-full sm:w-auto">
+            <Button variant="outline" size="lg" className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-slate-900 text-lg md:text-xl lg:text-2xl px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 h-auto transition-all duration-300 min-h-[44px] md:min-h-[52px] lg:min-h-[60px] w-full sm:w-auto">
               Gratis kennismaking
             </Button>
           </div>
