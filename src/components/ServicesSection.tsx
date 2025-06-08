@@ -25,7 +25,7 @@ const ServicesSection = () => {
     },
     {
       icon: Calendar,
-      title: 'Online trainingsschema\'s',
+      title: 'Online trainings-schema\'s',
       description: 'Klaar-voor-gebruik schema\'s die je thuis of in de sportschool kunt doen. Perfect als je zelf aan de slag wilt.',
       features: [
         '• 12 weken complete programma\'s',
@@ -38,7 +38,7 @@ const ServicesSection = () => {
     },
     {
       icon: Apple,
-      title: 'Persoonlijke voedingsschema\'s',
+      title: 'Persoonlijke voedings-schema\'s',
       description: 'Geen dieet, maar een manier van eten die bij jouw leven past. Lekker eten én afvallen kan gewoon.',
       features: [
         '• Voedingsplan speciaal voor jou',
@@ -98,8 +98,8 @@ const ServicesSection = () => {
                       <IconComponent className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-orange-600 group-hover:text-white" />
                     </div>
                     
-                    {/* Title - Fixed height */}
-                    <div className="h-16 md:h-20 lg:h-24 mb-4 md:mb-6">
+                    {/* Title - Increased height for better wrapping */}
+                    <div className="h-20 md:h-24 lg:h-28 mb-4 md:mb-6">
                       <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">{service.title}</h3>
                     </div>
                     
