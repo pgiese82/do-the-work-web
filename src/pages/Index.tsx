@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, Dumbbell, Users, Calendar, Apple, Heart, Phone, Mail, MapPin } from 'lucide-react';
 import Header from '@/components/Header';
 import DownloadModal from '@/components/DownloadModal';
+import BookingSection from '@/components/BookingSection';
 
 const Index = () => {
   return (
@@ -249,6 +249,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Booking Section */}
+      <BookingSection />
 
       {/* Testimonials Section */}
       <section className="py-10 md:py-20 bg-white" id="succesverhalen">
