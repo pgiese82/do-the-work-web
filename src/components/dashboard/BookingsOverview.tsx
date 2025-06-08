@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar as CalendarIcon, Clock, MapPin, Filter, Download, Edit, X, List } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Filter, List } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { BookingActions } from '@/components/booking/BookingActions';
 
 interface Booking {
   id: string;
@@ -85,17 +85,14 @@ export function BookingsOverview() {
   const applyFilters = () => {
     let filtered = [...bookings];
 
-    // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(booking => booking.status === statusFilter);
     }
 
-    // Payment filter
     if (paymentFilter !== 'all') {
       filtered = filtered.filter(booking => booking.payment_status === paymentFilter);
     }
 
-    // Date range filter
     if (dateRange.from && dateRange.to) {
       filtered = filtered.filter(booking => {
         const bookingDate = new Date(booking.date_time);
@@ -103,7 +100,6 @@ export function BookingsOverview() {
       });
     }
 
-    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(booking =>
         booking.services.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -148,47 +144,6 @@ export function BookingsOverview() {
     });
   };
 
-  const handleReschedule = (bookingId: string) => {
-    toast({
-      title: 'Reschedule Booking',
-      description: 'Redirecting to reschedule page...',
-    });
-    // TODO: Implement reschedule functionality
-  };
-
-  const handleCancel = async (bookingId: string) => {
-    try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', bookingId);
-
-      if (error) throw error;
-
-      toast({
-        title: 'Booking Cancelled',
-        description: 'Your booking has been cancelled successfully.',
-      });
-
-      fetchBookings(); // Refresh the list
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to cancel booking',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleDownloadReceipt = (bookingId: string) => {
-    toast({
-      title: 'Download Receipt',
-      description: 'Receipt download started...',
-    });
-    // TODO: Implement receipt download functionality
-  };
-
   const isUpcoming = (dateTime: string) => {
     return new Date(dateTime) > new Date();
   };
@@ -208,6 +163,51 @@ export function BookingsOverview() {
       </div>
     );
   }
+
+  const renderBookingCard = (booking: Booking) => {
+    const dateTime = formatDateTime(booking.date_time);
+    return (
+      <Card key={booking.id} className="bg-white/10 backdrop-blur-md border-white/20">
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-white">{booking.services.name}</CardTitle>
+              <CardDescription className="text-gray-300">
+                {dateTime.date} at {dateTime.time}
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Badge className={`${getStatusColor(booking.status)} text-white`}>
+                {booking.status}
+              </Badge>
+              <Badge className={`${getPaymentStatusColor(booking.payment_status)} text-white`}>
+                {booking.payment_status}
+              </Badge>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4 text-sm text-gray-300 mb-4">
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              {booking.services.duration} minutes
+            </div>
+            <div className="flex items-center gap-1">
+              <span>€{booking.services.price}</span>
+            </div>
+          </div>
+          
+          {booking.notes && (
+            <div className="text-sm text-gray-300 mb-4">
+              <strong>Notes:</strong> {booking.notes}
+            </div>
+          )}
+          
+          <BookingActions booking={booking} onUpdate={fetchBookings} />
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -240,7 +240,6 @@ export function BookingsOverview() {
         </div>
       </div>
 
-      {/* Filters */}
       <Card className="bg-white/10 backdrop-blur-md border-white/20">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
@@ -330,84 +329,7 @@ export function BookingsOverview() {
                 </CardContent>
               </Card>
             ) : (
-              upcomingBookings.map((booking) => {
-                const dateTime = formatDateTime(booking.date_time);
-                return (
-                  <Card key={booking.id} className="bg-white/10 backdrop-blur-md border-white/20">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-white">{booking.services.name}</CardTitle>
-                          <CardDescription className="text-gray-300">
-                            {dateTime.date} at {dateTime.time}
-                          </CardDescription>
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge className={`${getStatusColor(booking.status)} text-white`}>
-                            {booking.status}
-                          </Badge>
-                          <Badge className={`${getPaymentStatusColor(booking.payment_status)} text-white`}>
-                            {booking.payment_status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 text-sm text-gray-300 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {booking.services.duration} minutes
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>€{booking.services.price}</span>
-                        </div>
-                      </div>
-                      
-                      {booking.notes && (
-                        <div className="text-sm text-gray-300 mb-4">
-                          <strong>Notes:</strong> {booking.notes}
-                        </div>
-                      )}
-                      
-                      <div className="flex gap-2">
-                        {booking.status !== 'cancelled' && (
-                          <>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleReschedule(booking.id)}
-                              className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
-                            >
-                              <Edit className="w-4 h-4 mr-1" />
-                              Reschedule
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleCancel(booking.id)}
-                              className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-                            >
-                              <X className="w-4 h-4 mr-1" />
-                              Cancel
-                            </Button>
-                          </>
-                        )}
-                        {booking.payment_status === 'paid' && (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDownloadReceipt(booking.id)}
-                            className="border-green-500/50 text-green-400 hover:bg-green-500/10"
-                          >
-                            <Download className="w-4 h-4 mr-1" />
-                            Receipt
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
+              upcomingBookings.map(renderBookingCard)
             )}
           </TabsContent>
 
@@ -421,62 +343,7 @@ export function BookingsOverview() {
                 </CardContent>
               </Card>
             ) : (
-              pastBookings.map((booking) => {
-                const dateTime = formatDateTime(booking.date_time);
-                return (
-                  <Card key={booking.id} className="bg-white/10 backdrop-blur-md border-white/20">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-white">{booking.services.name}</CardTitle>
-                          <CardDescription className="text-gray-300">
-                            {dateTime.date} at {dateTime.time}
-                          </CardDescription>
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge className={`${getStatusColor(booking.status)} text-white`}>
-                            {booking.status}
-                          </Badge>
-                          <Badge className={`${getPaymentStatusColor(booking.payment_status)} text-white`}>
-                            {booking.payment_status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 text-sm text-gray-300 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {booking.services.duration} minutes
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>€{booking.services.price}</span>
-                        </div>
-                      </div>
-                      
-                      {booking.notes && (
-                        <div className="text-sm text-gray-300 mb-4">
-                          <strong>Notes:</strong> {booking.notes}
-                        </div>
-                      )}
-                      
-                      <div className="flex gap-2">
-                        {booking.payment_status === 'paid' && (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDownloadReceipt(booking.id)}
-                            className="border-green-500/50 text-green-400 hover:bg-green-500/10"
-                          >
-                            <Download className="w-4 h-4 mr-1" />
-                            Receipt
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
+              pastBookings.map(renderBookingCard)
             )}
           </TabsContent>
         </Tabs>

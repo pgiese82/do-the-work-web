@@ -9,6 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      booking_modifications: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          booking_id: string
+          created_at: string
+          id: string
+          modification_type: Database["public"]["Enums"]["booking_modification_type"]
+          reason: string | null
+          refund_amount: number | null
+          requested_date_time: string | null
+          status: Database["public"]["Enums"]["modification_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          booking_id: string
+          created_at?: string
+          id?: string
+          modification_type: Database["public"]["Enums"]["booking_modification_type"]
+          reason?: string | null
+          refund_amount?: number | null
+          requested_date_time?: string | null
+          status?: Database["public"]["Enums"]["modification_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          booking_id?: string
+          created_at?: string
+          id?: string
+          modification_type?: Database["public"]["Enums"]["booking_modification_type"]
+          reason?: string | null
+          refund_amount?: number | null
+          requested_date_time?: string | null
+          status?: Database["public"]["Enums"]["modification_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_modifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           created_at: string
@@ -213,9 +266,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_refund_amount: {
+        Args: { booking_date_time: string; original_amount: number }
+        Returns: number
+      }
+      can_cancel_booking: {
+        Args: { booking_date_time: string }
+        Returns: boolean
+      }
+      can_reschedule_booking: {
+        Args: { booking_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      booking_modification_type: "reschedule" | "cancel"
       booking_status:
         | "pending"
         | "confirmed"
@@ -229,6 +294,7 @@ export type Database = {
         | "program"
         | "medical"
         | "other"
+      modification_status: "pending" | "approved" | "rejected"
       payment_method: "mollie" | "cash" | "bank_transfer" | "ideal"
       payment_status: "pending" | "paid" | "failed" | "refunded"
       subscription_status: "active" | "inactive" | "trial" | "expired"
@@ -347,6 +413,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      booking_modification_type: ["reschedule", "cancel"],
       booking_status: [
         "pending",
         "confirmed",
@@ -362,6 +429,7 @@ export const Constants = {
         "medical",
         "other",
       ],
+      modification_status: ["pending", "approved", "rejected"],
       payment_method: ["mollie", "cash", "bank_transfer", "ideal"],
       payment_status: ["pending", "paid", "failed", "refunded"],
       subscription_status: ["active", "inactive", "trial", "expired"],
