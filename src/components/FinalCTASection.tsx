@@ -3,16 +3,18 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import ContactForm from '@/components/ContactForm';
 
 const FinalCTASection = () => {
-  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation();
-  const { ref: contactRef, isVisible: contactVisible } = useScrollAnimation({ delay: 300 });
+  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation<HTMLDivElement>();
+  const { ref: contactRef, isVisible: contactVisible } = useScrollAnimation<HTMLDivElement>({ delay: 300 });
+  const { ref: formRef, isVisible: formVisible } = useScrollAnimation<HTMLDivElement>({ delay: 600 });
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-10 md:py-20" id="contact">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
-      <div className="relative container mx-auto px-4 md:px-6 text-center">
-        <div ref={contentRef} className={`scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
+      <div className="relative container mx-auto px-4 md:px-6">
+        <div ref={contentRef} className={`text-center mb-12 md:mb-16 scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
           <h2 className="text-3xl md:text-4xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight px-4">
             Stop met wachten.
             <span className="block text-orange-400">Start vandaag.</span>
@@ -28,6 +30,11 @@ const FinalCTASection = () => {
               Gratis kennismaking
             </Button>
           </div>
+        </div>
+
+        {/* Contact Form */}
+        <div ref={formRef} className={`mb-12 md:mb-16 scroll-fade-in ${formVisible ? 'visible' : ''}`}>
+          <ContactForm />
         </div>
         
         <div ref={contactRef} className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto scroll-fade-in scroll-stagger-2 ${contactVisible ? 'visible' : ''}`}>
