@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import CustomCalendar from './CustomCalendar';
+import BookingConfirmation from './BookingConfirmation';
 
 interface BookingFormProps {
   open: boolean;
@@ -22,12 +23,20 @@ interface Service {
   description: string | null;
 }
 
+interface BookingData {
+  service: Service;
+  date: Date;
+  time: string;
+  notes?: string;
+}
+
 const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   const [service, setService] = useState<Service | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -58,7 +67,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
     }
   };
 
-  const handleBooking = async () => {
+  const handleProceedToConfirmation = () => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -68,7 +77,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
       return;
     }
 
-    if (!selectedDate || !selectedTime || !serviceId) {
+    if (!selectedDate || !selectedTime || !service) {
       toast({
         variant: "destructive",
         title: "Vul alle velden in",
@@ -77,91 +86,96 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
       return;
     }
 
-    setLoading(true);
+    // Prepare booking data for confirmation
+    const data: BookingData = {
+      service,
+      date: selectedDate,
+      time: selectedTime,
+      notes
+    };
 
-    try {
-      // Combine date and time
-      const [hours, minutes] = selectedTime.split(':').map(Number);
-      const dateTime = new Date(selectedDate);
-      dateTime.setHours(hours, minutes, 0, 0);
+    setBookingData(data);
+    setShowConfirmation(true);
+  };
 
-      const { error } = await supabase
-        .from('bookings')
-        .insert({
-          user_id: user.id,
-          service_id: serviceId,
-          date_time: dateTime.toISOString(),
-          notes: notes || null,
-        });
+  const handleModifyBooking = () => {
+    setShowConfirmation(false);
+  };
 
-      if (error) throw error;
+  const handleConfirmBooking = () => {
+    toast({
+      title: "Boeking succesvol",
+      description: "Je boeking is bevestigd en wacht op betaling.",
+    });
+    
+    // Reset form
+    setSelectedDate(undefined);
+    setSelectedTime('');
+    setNotes('');
+    setBookingData(null);
+    setShowConfirmation(false);
+    onOpenChange(false);
+  };
 
-      toast({
-        title: "Boeking succesvol",
-        description: "Je boeking is aangemaakt en wacht op bevestiging.",
-      });
-
-      onOpenChange(false);
-      // Reset form
-      setSelectedDate(undefined);
-      setSelectedTime('');
-      setNotes('');
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Boeking mislukt",
-        description: error.message,
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {service ? `Boek: ${service.name}` : 'Nieuwe boeking'}
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={open && !showConfirmation} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {service ? `Boek: ${service.name}` : 'Nieuwe boeking'}
+            </DialogTitle>
+          </DialogHeader>
 
-        {service && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold">{service.name}</h3>
-            <p className="text-sm text-gray-600">
-              Duur: {service.duration} minuten • Prijs: €{service.price}
-            </p>
-            {service.description && (
-              <p className="text-sm text-gray-600 mt-2">{service.description}</p>
-            )}
-          </div>
-        )}
+          {service && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="font-semibold">{service.name}</h3>
+              <p className="text-sm text-gray-600">
+                Duur: {service.duration} minuten • Prijs: €{service.price}
+              </p>
+              {service.description && (
+                <p className="text-sm text-gray-600 mt-2">{service.description}</p>
+              )}
+            </div>
+          )}
 
-        <div className="space-y-6">
-          <CustomCalendar
-            selectedDate={selectedDate}
-            onDateSelect={setSelectedDate}
-            selectedTime={selectedTime}
-            onTimeSelect={setSelectedTime}
-            serviceDuration={service?.duration || 60}
-            onConfirm={handleBooking}
-            loading={loading}
-          />
-
-          <div>
-            <Label htmlFor="notes">Opmerkingen (optioneel)</Label>
-            <Textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Bijzondere wensen of opmerkingen..."
-              className="resize-none mt-2"
+          <div className="space-y-6">
+            <CustomCalendar
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+              selectedTime={selectedTime}
+              onTimeSelect={setSelectedTime}
+              serviceDuration={service?.duration || 60}
+              onConfirm={handleProceedToConfirmation}
+              loading={false}
             />
+
+            <div>
+              <Label htmlFor="notes">Opmerkingen (optioneel)</Label>
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Bijzondere wensen of opmerkingen..."
+                className="resize-none mt-2"
+              />
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <BookingConfirmation
+        open={showConfirmation}
+        onOpenChange={handleCloseConfirmation}
+        bookingData={bookingData}
+        onModify={handleModifyBooking}
+        onConfirm={handleConfirmBooking}
+      />
+    </>
   );
 };
 
