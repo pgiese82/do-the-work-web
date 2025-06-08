@@ -81,9 +81,9 @@ const ServicesSection = () => {
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <Card key={index} className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white">
-                <CardContent className="p-0">
-                  <div className="p-6 md:p-8">
+              <Card key={index} className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white h-full flex flex-col">
+                <CardContent className="p-0 flex flex-col h-full">
+                  <div className="p-6 md:p-8 flex-grow flex flex-col">
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                       <IconComponent className="w-8 h-8 text-orange-600 group-hover:text-white" />
                     </div>
@@ -91,14 +91,14 @@ const ServicesSection = () => {
                     <p className="text-slate-600 mb-6 text-sm md:text-base leading-relaxed">
                       {service.description}
                     </p>
-                    <ul className="text-sm text-slate-500 space-y-2 mb-8">
+                    <ul className="text-sm text-slate-500 space-y-2 mb-8 flex-grow">
                       {service.features.map((feature, featureIndex) => (
                         <li key={featureIndex}>{feature}</li>
                       ))}
                     </ul>
                   </div>
                   
-                  <div className="bg-slate-50 p-6 md:p-8 border-t">
+                  <div className="bg-slate-50 p-6 md:p-8 border-t mt-auto">
                     <div className="text-center mb-6">
                       <div className="text-3xl md:text-4xl font-black text-orange-600 mb-1">{service.price}</div>
                       <div className="text-slate-500 text-sm">{service.period}</div>
