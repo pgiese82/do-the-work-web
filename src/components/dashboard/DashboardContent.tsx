@@ -4,6 +4,7 @@ import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardOverview } from './DashboardOverview';
 import { BookSession } from './BookSession';
 import { MyBookings } from './MyBookings';
+import { BookingsOverview } from './BookingsOverview';
 import { Documents } from './Documents';
 import { ProfileSettings } from './ProfileSettings';
 import { ServiceSelectionPage } from '@/components/services/ServiceSelectionPage';
@@ -21,6 +22,8 @@ export function DashboardContent() {
       case '/dashboard/book':
         return <BookSession />;
       case '/dashboard/bookings':
+        return <BookingsOverview />;
+      case '/dashboard/my-bookings':
         return <MyBookings />;
       case '/dashboard/documents':
         return <Documents />;
