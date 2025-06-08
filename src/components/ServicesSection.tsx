@@ -7,7 +7,7 @@ import { Users, Calendar, Apple, Heart } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const ServicesSection = () => {
-  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation();
+  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLDivElement>();
 
   const services = [
     {
@@ -83,29 +83,44 @@ const ServicesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {services.map((service, index) => {
             const IconComponent = service.icon;
-            const { ref, isVisible } = useScrollAnimation({ delay: index * 200 });
+            const { ref, isVisible } = useScrollAnimation<HTMLDivElement>({ delay: index * 200 });
             return (
               <Card 
                 key={index} 
                 ref={ref}
-                className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white h-full flex flex-col scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white scroll-fade-in scroll-stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="p-6 md:p-8 flex-grow flex flex-col">
+                  <div className="p-6 md:p-8 flex flex-col flex-grow">
+                    {/* Icon */}
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                       <IconComponent className="w-8 h-8 text-orange-600 group-hover:text-white" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold mb-4 text-slate-900">{service.title}</h3>
-                    <p className="text-slate-600 mb-6 text-sm md:text-base leading-relaxed">
-                      {service.description}
-                    </p>
-                    <ul className="text-sm text-slate-500 space-y-2 mb-8 flex-grow">
-                      {service.features.map((feature, featureIndex) => (
-                        <li key={featureIndex}>{feature}</li>
-                      ))}
-                    </ul>
+                    
+                    {/* Title - Fixed height */}
+                    <div className="h-16 mb-4">
+                      <h3 className="text-xl md:text-2xl font-bold text-slate-900 leading-tight">{service.title}</h3>
+                    </div>
+                    
+                    {/* Description - Fixed height */}
+                    <div className="h-20 mb-6">
+                      <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                        {service.description}
+                      </p>
+                    </div>
+                    
+                    {/* Features - Fixed height */}
+                    <div className="h-24 mb-8">
+                      <ul className="text-sm text-slate-500 space-y-2">
+                        {service.features.map((feature, featureIndex) => (
+                          <li key={featureIndex}>{feature}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                   
+                  {/* Price and buttons - Fixed at bottom */}
                   <div className="bg-slate-50 p-6 md:p-8 border-t mt-auto">
                     <div className="text-center mb-6">
                       <div className="text-3xl md:text-4xl font-black text-orange-600 mb-1">{service.price}</div>
