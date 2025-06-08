@@ -238,6 +238,7 @@ export type Database = {
           id: string
           name: string
           phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
           subscription_status: Database["public"]["Enums"]["subscription_status"]
           updated_at: string
         }
@@ -247,6 +248,7 @@ export type Database = {
           id: string
           name: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
         }
@@ -256,6 +258,7 @@ export type Database = {
           id?: string
           name?: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
         }
@@ -278,6 +281,14 @@ export type Database = {
         Args: { booking_id: string }
         Returns: boolean
       }
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       booking_modification_type: "reschedule" | "cancel"
@@ -298,6 +309,7 @@ export type Database = {
       payment_method: "mollie" | "cash" | "bank_transfer" | "ideal"
       payment_status: "pending" | "paid" | "failed" | "refunded"
       subscription_status: "active" | "inactive" | "trial" | "expired"
+      user_role: "client" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -433,6 +445,7 @@ export const Constants = {
       payment_method: ["mollie", "cash", "bank_transfer", "ideal"],
       payment_status: ["pending", "paid", "failed", "refunded"],
       subscription_status: ["active", "inactive", "trial", "expired"],
+      user_role: ["client", "admin"],
     },
   },
 } as const
