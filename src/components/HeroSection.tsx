@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { useParallax, useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -38,7 +37,7 @@ const HeroSection = () => {
       
       <div className="relative container mx-auto px-4 md:px-8 lg:px-12 xl:px-16 py-10 md:py-16 lg:py-24">
         <div ref={contentRef} className={`max-w-6xl mx-auto text-center scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
-          <Badge className="mb-6 md:mb-8 lg:mb-10 bg-orange-600/20 border border-orange-500/30 hover:bg-orange-600/30 text-orange-200 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-2 md:py-3 lg:py-4 backdrop-blur-sm min-h-[44px] flex items-center justify-center">
+          <Badge className="mb-6 md:mb-8 lg:mb-10 bg-white/10 border border-white/20 text-white/70 text-sm md:text-base px-3 md:px-4 py-1 md:py-2 backdrop-blur-sm min-h-[36px] flex items-center justify-center">
             #DoTheWork
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-black mb-6 md:mb-8 lg:mb-12 leading-[0.9] tracking-tight">
