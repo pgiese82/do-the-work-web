@@ -69,14 +69,14 @@ const Index = () => {
                 Over Mij
               </Badge>
               <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
-                Geen Bullshit,
-                <span className="block text-orange-600">Alleen Resultaten</span>
+                Dominique (27)
+                <span className="block text-orange-600">Gecertificeerde Personal Trainer</span>
               </h2>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                Ik ben hier niet om je hand vast te houden. Ik ben hier om je de tools te geven die je nodig hebt om je doelen te bereiken. Geen smoesjes, geen uitstel - alleen een bewezen aanpak die werkt.
+                Ik ben er heilig van overtuigd dat iedereen fit, sterk en zelfverzekerd kan worden. Mijn aanpak is simpel: geen gedoe, gewoon effectieve trainingen en praktisch voedingsadvies dat écht werkt in het dagelijks leven.
               </p>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                Of je nu 25 of 65 bent, of je nu een drukke carrière hebt of gezin runt - fitness past in ieders leven. Je hebt alleen de juiste begeleiding nodig.
+                Of je nu net begint of al jaren bezig bent - ik help je door alle rommel heen te kijken en te focussen op wat daadwerkelijk resultaat oplevert. Geen smoesjes, geen uitstel - alleen een bewezen aanpak die werkt.
               </p>
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex -space-x-2">
@@ -96,7 +96,7 @@ const Index = () => {
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <img 
                   src="https://images.unsplash.com/photo-1571019613914-85e3cbcc1d9f?ixlib=rb-4.0.3" 
-                  alt="Fitness Coach" 
+                  alt="Dominique - Personal Trainer" 
                   className="w-full h-[600px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
