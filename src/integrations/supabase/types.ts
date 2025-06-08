@@ -9,7 +9,205 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          date_time: string
+          id: string
+          notes: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          service_id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_time: string
+          id?: string
+          notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_id: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_time?: string
+          id?: string
+          notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          category: Database["public"]["Enums"]["document_category"]
+          created_at: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          title: string
+          upload_date: string
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          title: string
+          upload_date?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          title?: string
+          upload_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          id: string
+          mollie_payment_id: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          mollie_payment_id?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          mollie_payment_id?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          subscription_status: Database["public"]["Enums"]["subscription_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          name: string
+          phone?: string | null
+          subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +216,22 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "completed"
+        | "cancelled"
+        | "no_show"
+      document_category:
+        | "contract"
+        | "invoice"
+        | "receipt"
+        | "program"
+        | "medical"
+        | "other"
+      payment_method: "mollie" | "cash" | "bank_transfer" | "ideal"
+      payment_status: "pending" | "paid" | "failed" | "refunded"
+      subscription_status: "active" | "inactive" | "trial" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +346,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: [
+        "pending",
+        "confirmed",
+        "completed",
+        "cancelled",
+        "no_show",
+      ],
+      document_category: [
+        "contract",
+        "invoice",
+        "receipt",
+        "program",
+        "medical",
+        "other",
+      ],
+      payment_method: ["mollie", "cash", "bank_transfer", "ideal"],
+      payment_status: ["pending", "paid", "failed", "refunded"],
+      subscription_status: ["active", "inactive", "trial", "expired"],
+    },
   },
 } as const
