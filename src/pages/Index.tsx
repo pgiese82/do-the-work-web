@@ -130,13 +130,13 @@ const Index = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-slate-900">1-op-1 Coaching</h3>
                 <p className="text-slate-600 mb-6">
-                  Persoonlijke begeleiding die past bij jouw schema en doelen. Maximale resultaten, minimale tijdsinvestering.
+                  Persoonlijke begeleiding die écht bij jou past. Samen maken we een plan dat werkt met jouw agenda.
                 </p>
                 <ul className="text-sm text-slate-500 space-y-2 mb-6">
-                  <li>• Volledig op maat gemaakt</li>
-                  <li>• Wekelijkse check-ins</li>
-                  <li>• 24/7 WhatsApp support</li>
-                  <li>• Voeding en training plan</li>
+                  <li>• Plan op maat voor jou</li>
+                  <li>• Elke week even bijpraten</li>
+                  <li>• WhatsApp me wanneer je wilt</li>
+                  <li>• Training én voeding geregeld</li>
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€197/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
@@ -150,19 +150,19 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Calendar className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">Online Plannen</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">Online Trainingsschema's</h3>
                 <p className="text-slate-600 mb-6">
-                  Bewezen trainingsschema's die je thuis of in de gym kunt doen. Perfect voor self-starters.
+                  Klaar-voor-gebruik schema's die je thuis of in de sportschool kunt doen. Perfect als je zelf aan de slag wilt.
                 </p>
                 <ul className="text-sm text-slate-500 space-y-2 mb-6">
-                  <li>• 12-week programma's</li>
-                  <li>• Video instructies</li>
-                  <li>• Progressie tracking</li>
-                  <li>• App toegang</li>
+                  <li>• 12 weken complete programma's</li>
+                  <li>• Video's die alles uitleggen</li>
+                  <li>• Bijhouden hoe je vooruitgaat</li>
+                  <li>• Alles in een handige app</li>
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€67/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
-                  Bekijk Plannen
+                  Bekijk Schema's
                 </Button>
               </CardContent>
             </Card>
@@ -172,15 +172,15 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Apple className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">Voeding Coaching</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">Persoonlijke Voedingsschema's</h3>
                 <p className="text-slate-600 mb-6">
-                  Geen dieet, maar een levensstijl. Leer hoe je gezond eet zonder je leven op z'n kop te zetten.
+                  Geen dieet, maar een manier van eten die bij jouw leven past. Lekker eten én afvallen kan gewoon.
                 </p>
                 <ul className="text-sm text-slate-500 space-y-2 mb-6">
-                  <li>• Persoonlijk voedingsplan</li>
-                  <li>• Recepten en meal prep</li>
-                  <li>• Macro coaching</li>
-                  <li>• Maandelijkse evaluatie</li>
+                  <li>• Voedingsplan speciaal voor jou</li>
+                  <li>• Recepten en boodschappenlijst</li>
+                  <li>• Uitleg over wat je lichaam nodig heeft</li>
+                  <li>• Elke maand even checken hoe het gaat</li>
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€97/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
@@ -194,15 +194,15 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                   <Heart className="w-8 h-8 text-orange-600 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">Boxing for Parkinson's</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">Boksen voor Parkinson</h3>
                 <p className="text-slate-600 mb-6">
-                  Gespecialiseerde boxtraining voor mensen met Parkinson. Verbeter balans, coördinatie en zelfvertrouwen.
+                  Speciale bokstraining voor mensen met Parkinson. Helpt bij balans, coördinatie en geeft je zelfvertrouwen terug.
                 </p>
                 <ul className="text-sm text-slate-500 space-y-2 mb-6">
-                  <li>• Aangepaste technieken</li>
-                  <li>• Groeps- en privélessen</li>
-                  <li>• Medisch verantwoord</li>
-                  <li>• Familiebegeleiding</li>
+                  <li>• Technieken aangepast voor jou</li>
+                  <li>• In groepjes of alleen</li>
+                  <li>• Veilig en medisch verantwoord</li>
+                  <li>• Familie mag meedoen</li>
                 </ul>
                 <div className="text-2xl font-black text-orange-600 mb-4">€127/maand</div>
                 <Button className="w-full bg-slate-900 hover:bg-slate-800">
