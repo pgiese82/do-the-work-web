@@ -1,13 +1,15 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { useParallax, useScrollAnimation } from '@/hooks/useScrollAnimation';
-
 const HeroSection = () => {
   const parallaxRef = useParallax(-0.3);
-  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation({ delay: 300 });
-
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-950 text-white pt-20 min-h-screen flex items-center">
+  const {
+    ref: contentRef,
+    isVisible: contentVisible
+  } = useScrollAnimation({
+    delay: 300
+  });
+  return <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-950 text-white pt-20 min-h-screen flex items-center">
       {/* Parallax animated floating elements */}
       <div ref={parallaxRef} className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-4 h-4 bg-orange-500/30 rounded-full animate-float-slow"></div>
@@ -21,17 +23,11 @@ const HeroSection = () => {
       {/* Particle animation background */}
       <div className="absolute inset-0">
         <div className="particles">
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 20}s`,
-                animationDuration: `${15 + Math.random() * 10}s`
-              }}
-            ></div>
-          ))}
+          {[...Array(50)].map((_, i) => <div key={i} className="particle" style={{
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 20}s`,
+          animationDuration: `${15 + Math.random() * 10}s`
+        }}></div>)}
         </div>
       </div>
       
@@ -51,9 +47,7 @@ const HeroSection = () => {
               Échte resultaten.
             </span>
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-8 md:mb-12 lg:mb-16 text-gray-300 max-w-5xl mx-auto leading-relaxed font-light px-4">
-            Of je nu 25 of 65 bent - met de juiste begeleiding bereik je je fitnessdoelen zonder je leven overhoop te gooien.
-          </p>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-8 md:mb-12 lg:mb-16 text-gray-300 max-w-5xl mx-auto leading-relaxed font-light px-4">Of je nu 25 of 65 bent, met de juiste begeleiding bereik je je fitnessdoelen zonder je leven overhoop te gooien.</p>
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 lg:gap-8 justify-center items-center px-4">
             <button className="group relative overflow-hidden bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-lg md:text-xl lg:text-2xl font-bold px-8 md:px-10 lg:px-12 py-4 md:py-5 lg:py-6 rounded-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-2xl hover:shadow-orange-500/25 min-h-[44px] w-full sm:w-auto">
               <span className="relative z-10">Start vandaag</span>
@@ -65,8 +59,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
