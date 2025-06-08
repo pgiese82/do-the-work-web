@@ -3,13 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, Dumbbell, Users, Calendar, Apple, Heart, Phone, Mail, MapPin } from 'lucide-react';
+import Header from '@/components/Header';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
+      
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571019613914-85e3cbcc1d9f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-20"></div>
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-20">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3')] bg-cover bg-center opacity-20"></div>
         <div className="relative container mx-auto px-6 py-20 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-6 bg-orange-600 hover:bg-orange-700 text-white text-lg px-6 py-2">
@@ -36,7 +39,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-slate-100 py-16">
+      <section className="bg-slate-100 py-16" id="stats">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="animate-fade-in">
@@ -60,7 +63,7 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" id="over-mij">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -106,7 +109,7 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-slate-50" id="services">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200">
@@ -214,7 +217,7 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" id="succesverhalen">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-orange-100 text-orange-800 hover:bg-orange-200">
@@ -297,7 +300,7 @@ const Index = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-20" id="contact">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
         <div className="relative container mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
