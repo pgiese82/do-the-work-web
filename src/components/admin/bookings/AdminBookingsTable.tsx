@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -24,10 +24,8 @@ import { format } from 'date-fns';
 import { 
   Search, 
   Download, 
-  Calendar,
   User,
-  Edit,
-  Eye
+  Edit
 } from 'lucide-react';
 
 interface Booking {
@@ -151,33 +149,17 @@ export function AdminBookingsTable() {
 
   return (
     <>
-      <Card className="bg-gray-800/50 border-orange-900/20">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-orange-400" />
-              Bookings Management
-            </span>
-            <Button 
-              onClick={exportToCSV}
-              variant="outline" 
-              className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Export CSV
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4">
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          {/* Search, Filters and Export */}
+          <div className="flex flex-col lg:flex-row gap-4 justify-between">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search by client name or booking ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-700/50 border-orange-900/20 text-white placeholder:text-gray-400"
+                className="pl-10"
               />
             </div>
             
@@ -189,6 +171,14 @@ export function AdminBookingsTable() {
               dateRange={dateRange}
               setDateRange={setDateRange}
             />
+            
+            <Button 
+              onClick={exportToCSV}
+              variant="outline"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
+            </Button>
           </div>
 
           {/* Bulk Actions */}
@@ -203,63 +193,61 @@ export function AdminBookingsTable() {
           )}
 
           {/* Table */}
-          <div className="rounded-lg border border-orange-900/20 overflow-hidden">
+          <div className="rounded-lg border overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="border-orange-900/20 hover:bg-gray-700/30">
+                <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
                       checked={selectedBookings.length === bookings.length && bookings.length > 0}
                       onCheckedChange={handleSelectAll}
-                      className="border-orange-500/20"
                     />
                   </TableHead>
-                  <TableHead className="text-gray-300">Client</TableHead>
-                  <TableHead className="text-gray-300">Service</TableHead>
-                  <TableHead className="text-gray-300">Date & Time</TableHead>
-                  <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Payment</TableHead>
-                  <TableHead className="text-gray-300">Price</TableHead>
-                  <TableHead className="text-gray-300">Actions</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Service</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Payment</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Loading bookings...
                     </TableCell>
                   </TableRow>
                 ) : bookings.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       No bookings found
                     </TableCell>
                   </TableRow>
                 ) : (
                   bookings.map((booking) => (
-                    <TableRow key={booking.id} className="border-orange-900/20 hover:bg-gray-700/20">
+                    <TableRow key={booking.id}>
                       <TableCell>
                         <Checkbox
                           checked={selectedBookings.includes(booking.id)}
                           onCheckedChange={(checked) => handleSelectBooking(booking.id, checked as boolean)}
-                          className="border-orange-500/20"
                         />
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-gray-400" />
+                          <User className="w-4 h-4 text-muted-foreground" />
                           <div>
-                            <div className="text-white font-medium">{booking.user?.name || 'N/A'}</div>
-                            <div className="text-gray-400 text-xs">{booking.user?.email || 'N/A'}</div>
+                            <div className="font-medium">{booking.user?.name || 'N/A'}</div>
+                            <div className="text-muted-foreground text-xs">{booking.user?.email || 'N/A'}</div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-gray-300">{booking.service?.name || 'N/A'}</TableCell>
+                      <TableCell>{booking.service?.name || 'N/A'}</TableCell>
                       <TableCell>
-                        <div className="text-gray-300">
+                        <div>
                           <div>{format(new Date(booking.date_time), 'MMM dd, yyyy')}</div>
-                          <div className="text-xs text-gray-400">{format(new Date(booking.date_time), 'HH:mm')}</div>
+                          <div className="text-xs text-muted-foreground">{format(new Date(booking.date_time), 'HH:mm')}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -268,7 +256,7 @@ export function AdminBookingsTable() {
                       <TableCell>
                         <PaymentStatusBadge status={booking.payment_status} />
                       </TableCell>
-                      <TableCell className="text-gray-300">
+                      <TableCell>
                         €{booking.service?.price || 0}
                       </TableCell>
                       <TableCell>
@@ -277,7 +265,6 @@ export function AdminBookingsTable() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleEditBooking(booking.id)}
-                            className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
                           >
                             <Edit className="w-4 h-4 mr-1" />
                             Edit
