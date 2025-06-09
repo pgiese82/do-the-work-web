@@ -35,7 +35,7 @@ export function Documents() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('document_assignments')
         .select(`
           *,
@@ -55,7 +55,7 @@ export function Documents() {
     doc.category.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  const filteredAssignments = assignments?.filter(assignment =>
+  const filteredAssignments = assignments?.filter((assignment: any) =>
     assignment.document_templates?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     assignment.document_templates?.category?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -190,7 +190,7 @@ export function Documents() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAssignments.map((assignment) => (
+                  {filteredAssignments.map((assignment: any) => (
                     <TableRow key={assignment.id} className="border-white/10">
                       <TableCell className="text-white font-medium">
                         {assignment.document_templates?.name}

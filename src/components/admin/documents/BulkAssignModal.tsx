@@ -24,7 +24,7 @@ export function BulkAssignModal({ open, onOpenChange, onSuccess }: BulkAssignMod
   const { data: templates } = useQuery({
     queryKey: ['templates-for-assignment'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('document_templates')
         .select('id, name, category')
         .eq('is_active', true)
@@ -59,7 +59,7 @@ export function BulkAssignModal({ open, onOpenChange, onSuccess }: BulkAssignMod
         assigned_by: user?.id
       }));
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('document_assignments')
         .insert(assignments);
 
@@ -130,7 +130,7 @@ export function BulkAssignModal({ open, onOpenChange, onSuccess }: BulkAssignMod
                 <SelectValue placeholder="Select template" />
               </SelectTrigger>
               <SelectContent className="bg-gray-700 border-gray-600">
-                {templates?.map((template) => (
+                {templates?.map((template: any) => (
                   <SelectItem key={template.id} value={template.id}>
                     {template.name} ({template.category})
                   </SelectItem>

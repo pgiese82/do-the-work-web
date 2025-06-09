@@ -29,12 +29,12 @@ export function CreateTemplateModal({ open, onOpenChange, onSuccess }: CreateTem
 
   const createTemplateMutation = useMutation({
     mutationFn: async (data: typeof formData & { filePath: string }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('document_templates')
         .insert({
           name: data.name,
           description: data.description,
-          category: data.category as any,
+          category: data.category,
           file_path: data.filePath,
           auto_deliver_on: data.autoDeliverOn === 'manual' ? null : data.autoDeliverOn
         });

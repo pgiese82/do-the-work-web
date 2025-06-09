@@ -25,7 +25,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
   const { data: assignments, isLoading } = useQuery({
     queryKey: ['document-assignments'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('document_assignments')
         .select(`
           *,
@@ -46,7 +46,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
         updates.delivery_date = new Date().toISOString();
       }
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('document_assignments')
         .update(updates)
         .eq('id', id);
@@ -63,7 +63,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
     },
   });
 
-  const filteredAssignments = assignments?.filter(assignment =>
+  const filteredAssignments = assignments?.filter((assignment: any) =>
     assignment.document_templates?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     assignment.users?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -119,7 +119,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAssignments.map((assignment) => (
+              {filteredAssignments.map((assignment: any) => (
                 <TableRow key={assignment.id} className="border-gray-700">
                   <TableCell className="text-white font-medium">
                     {assignment.document_templates?.name}

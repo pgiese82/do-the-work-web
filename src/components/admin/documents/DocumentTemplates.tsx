@@ -25,7 +25,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
   const { data: templates, isLoading } = useQuery({
     queryKey: ['document-templates'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('document_templates')
         .select('*')
         .order('created_at', { ascending: false });
@@ -37,7 +37,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
 
   const toggleActiveMutation = useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('document_templates')
         .update({ is_active: !isActive })
         .eq('id', id);
@@ -56,7 +56,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('document_templates')
         .delete()
         .eq('id', id);
@@ -73,7 +73,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
     },
   });
 
-  const filteredTemplates = templates?.filter(template =>
+  const filteredTemplates = templates?.filter((template: any) =>
     template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     template.category.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -128,7 +128,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTemplates.map((template) => (
+              {filteredTemplates.map((template: any) => (
                 <TableRow key={template.id} className="border-gray-700">
                   <TableCell className="text-white font-medium">
                     {template.name}

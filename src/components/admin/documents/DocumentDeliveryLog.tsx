@@ -19,7 +19,7 @@ export function DocumentDeliveryLog({}: DocumentDeliveryLogProps) {
   const { data: deliveryLogs, isLoading } = useQuery({
     queryKey: ['document-delivery-log'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('document_delivery_log')
         .select(`
           *,
@@ -34,7 +34,7 @@ export function DocumentDeliveryLog({}: DocumentDeliveryLogProps) {
     },
   });
 
-  const filteredLogs = deliveryLogs?.filter(log => {
+  const filteredLogs = deliveryLogs?.filter((log: any) => {
     const matchesSearch = 
       log.users?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.document_templates?.name?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -107,7 +107,7 @@ export function DocumentDeliveryLog({}: DocumentDeliveryLogProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLogs.map((log) => (
+              {filteredLogs.map((log: any) => (
                 <TableRow key={log.id} className="border-gray-700">
                   <TableCell className="text-white">
                     <div>

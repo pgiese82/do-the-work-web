@@ -11,9 +11,9 @@ export function DocumentOverview({ key: refreshKey }: { key: number }) {
     queryFn: async () => {
       const [documentsResult, templatesResult, assignmentsResult, deliveryResult] = await Promise.all([
         supabase.from('documents').select('category, created_at'),
-        supabase.from('document_templates').select('is_active, auto_deliver_on'),
-        supabase.from('document_assignments').select('status'),
-        supabase.from('document_delivery_log').select('status, delivered_at')
+        (supabase as any).from('document_templates').select('is_active, auto_deliver_on'),
+        (supabase as any).from('document_assignments').select('status'),
+        (supabase as any).from('document_delivery_log').select('status, delivered_at')
       ]);
 
       const documents = documentsResult.data || [];
@@ -27,13 +27,13 @@ export function DocumentOverview({ key: refreshKey }: { key: number }) {
       return {
         totalDocuments: documents.length,
         totalTemplates: templates.length,
-        activeTemplates: templates.filter(t => t.is_active).length,
-        autoDeliveryTemplates: templates.filter(t => t.auto_deliver_on !== 'manual').length,
-        pendingAssignments: assignments.filter(a => a.status === 'pending').length,
-        completedAssignments: assignments.filter(a => a.status === 'completed').length,
-        recentDeliveries: deliveries.filter(d => new Date(d.delivered_at) >= thirtyDaysAgo).length,
-        failedDeliveries: deliveries.filter(d => d.status === 'failed').length,
-        categoryCounts: documents.reduce((acc: Record<string, number>, doc) => {
+        activeTemplates: templates.filter((t: any) => t.is_active).length,
+        autoDeliveryTemplates: templates.filter((t: any) => t.auto_deliver_on !== 'manual').length,
+        pendingAssignments: assignments.filter((a: any) => a.status === 'pending').length,
+        completedAssignments: assignments.filter((a: any) => a.status === 'completed').length,
+        recentDeliveries: deliveries.filter((d: any) => new Date(d.delivered_at) >= thirtyDaysAgo).length,
+        failedDeliveries: deliveries.filter((d: any) => d.status === 'failed').length,
+        categoryCounts: documents.reduce((acc: Record<string, number>, doc: any) => {
           acc[doc.category] = (acc[doc.category] || 0) + 1;
           return acc;
         }, {})
