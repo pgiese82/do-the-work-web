@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
@@ -38,7 +37,7 @@ export const MobileMenu = ({ isOpen, user, scrollToSection, onLogout }: MobileMe
           onClick={() => scrollToSection('services')}
           className="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
         >
-          Services
+          Diensten
         </button>
         <button
           onClick={() => scrollToSection('services')}
