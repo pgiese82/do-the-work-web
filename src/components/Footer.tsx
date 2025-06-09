@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dumbbell, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -118,13 +117,7 @@ const Footer = () => {
                   </a>
                 </li>)}
             </ul>
-            <ul className="space-y-3 pt-4">
-              {companyLinks.map(link => <li key={link.name}>
-                  <a href={link.href} className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm md:text-base block py-1">
-                    {link.name}
-                  </a>
-                </li>)}
-            </ul>
+            
           </div>
 
           {/* Newsletter & Social */}
