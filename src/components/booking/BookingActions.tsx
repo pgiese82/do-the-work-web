@@ -13,6 +13,7 @@ interface BookingActionsProps {
     date_time: string;
     status: string;
     payment_status: string;
+    service_id: string;
     services: {
       name: string;
       price: number;
