@@ -40,7 +40,7 @@ const menuItems = [
     icon: Calendar,
   },
   {
-    title: "Mijn Boekingen",
+    title: "Mijn Boekingen", 
     url: "/dashboard/bookings",
     icon: CalendarCheck,
   },
@@ -89,6 +89,11 @@ export function DashboardSidebar() {
     }
   };
 
+  const handleNavigation = (url: string) => {
+    console.log('Sidebar navigating to:', url);
+    navigate(url);
+  };
+
   return (
     <Sidebar className="border-r bg-background md:flex hidden">
       <SidebarHeader className="p-4 border-b">
@@ -115,7 +120,7 @@ export function DashboardSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      onClick={() => navigate(item.url)}
+                      onClick={() => handleNavigation(item.url)}
                       className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
                         isActive
                           ? 'bg-primary text-primary-foreground shadow-sm'
@@ -140,7 +145,7 @@ export function DashboardSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      onClick={() => navigate(item.url)}
+                      onClick={() => handleNavigation(item.url)}
                       className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
                         isActive
                           ? 'bg-primary text-primary-foreground shadow-sm'

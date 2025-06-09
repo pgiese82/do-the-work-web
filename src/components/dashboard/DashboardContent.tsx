@@ -30,12 +30,12 @@ const mobileMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Boeken",
+    title: "Sessie Boeken",
     url: "/dashboard/book",
     icon: Calendar,
   },
   {
-    title: "Boekingen",
+    title: "Mijn Boekingen",
     url: "/dashboard/bookings",
     icon: CalendarCheck,
   },
@@ -78,6 +78,8 @@ export function DashboardContent() {
   };
 
   const renderContent = () => {
+    console.log('Current pathname:', location.pathname);
+    
     switch (location.pathname) {
       case '/dashboard':
         return <DashboardOverview />;
@@ -94,6 +96,7 @@ export function DashboardContent() {
       case '/dashboard/profile':
         return <ProfileSettings />;
       default:
+        console.log('No matching route, showing dashboard');
         return <DashboardOverview />;
     }
   };
@@ -146,7 +149,10 @@ export function DashboardContent() {
                 <Button
                   key={item.title}
                   variant="ghost"
-                  onClick={() => navigate(item.url)}
+                  onClick={() => {
+                    console.log('Navigating to:', item.url);
+                    navigate(item.url);
+                  }}
                   className={`flex flex-col items-center justify-center h-full rounded-none border-0 ${
                     isActive
                       ? 'text-primary bg-primary/5'
