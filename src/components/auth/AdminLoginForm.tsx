@@ -23,7 +23,7 @@ const AdminLoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signInAsAdmin } = useAdminAuth();
+  const { signInAsAdmin, isAdmin, user } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -36,6 +36,7 @@ const AdminLoginForm = () => {
   });
 
   const onSubmit = async (data: AdminLoginFormData) => {
+    console.log('🔐 Form submitted for:', data.email);
     setLoading(true);
     setError(null);
 
@@ -43,6 +44,7 @@ const AdminLoginForm = () => {
       const { error } = await signInAsAdmin(data.email, data.password);
 
       if (error) {
+        console.error('❌ Login error:', error);
         if (error.message.includes('Invalid login credentials')) {
           setError('Invalid email or password');
         } else if (error.message.includes('permissions')) {
@@ -53,13 +55,29 @@ const AdminLoginForm = () => {
         return;
       }
 
-      toast({
-        title: "Admin login successful",
-        description: "Welcome to the admin dashboard!",
-      });
+      console.log('✅ Login successful, waiting for auth state update...');
+      
+      // Give some time for the auth state to update
+      setTimeout(() => {
+        console.log('⏱️ Checking auth state after login...');
+        console.log('Current user:', user?.email);
+        console.log('Is admin:', isAdmin);
+        
+        if (isAdmin) {
+          console.log('🎯 Redirecting to admin dashboard');
+          toast({
+            title: "Admin login successful",
+            description: "Welcome to the admin dashboard!",
+          });
+          navigate('/admin/dashboard');
+        } else {
+          console.log('⚠️ User logged in but not admin');
+          setError('Access denied. Admin privileges required.');
+        }
+      }, 1000);
 
-      navigate('/admin/dashboard');
     } catch (error: any) {
+      console.error('💥 Unexpected error:', error);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
