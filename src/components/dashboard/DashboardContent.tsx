@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardOverview } from './DashboardOverview';
 import { BookSession } from './BookSession';
-import { MyBookings } from './MyBookings';
 import { BookingsOverview } from './BookingsOverview';
 import { Documents } from './Documents';
 import { ProfileSettings } from './ProfileSettings';
@@ -89,8 +87,6 @@ export function DashboardContent() {
         return <BookSession />;
       case '/dashboard/bookings':
         return <BookingsOverview />;
-      case '/dashboard/my-bookings':
-        return <MyBookings />;
       case '/dashboard/documents':
         return <Documents />;
       case '/dashboard/profile':
