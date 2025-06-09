@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,6 +35,18 @@ const AdminLoginForm = () => {
     resolver: zodResolver(adminLoginSchema),
   });
 
+  // Handle navigation after successful admin login
+  useEffect(() => {
+    if (!loading && user && isAdmin) {
+      console.log('🎯 Admin authenticated, redirecting to dashboard');
+      toast({
+        title: "Admin login successful",
+        description: "Welcome to the admin dashboard!",
+      });
+      navigate('/admin/dashboard');
+    }
+  }, [user, isAdmin, loading, navigate, toast]);
+
   const onSubmit = async (data: AdminLoginFormData) => {
     console.log('🔐 Form submitted for:', data.email);
     setLoading(true);
@@ -52,34 +64,16 @@ const AdminLoginForm = () => {
         } else {
           setError(error.message);
         }
+        setLoading(false);
         return;
       }
 
       console.log('✅ Login successful, waiting for auth state update...');
+      // Don't set loading to false here - let the useEffect handle navigation
       
-      // Give some time for the auth state to update
-      setTimeout(() => {
-        console.log('⏱️ Checking auth state after login...');
-        console.log('Current user:', user?.email);
-        console.log('Is admin:', isAdmin);
-        
-        if (isAdmin) {
-          console.log('🎯 Redirecting to admin dashboard');
-          toast({
-            title: "Admin login successful",
-            description: "Welcome to the admin dashboard!",
-          });
-          navigate('/admin/dashboard');
-        } else {
-          console.log('⚠️ User logged in but not admin');
-          setError('Access denied. Admin privileges required.');
-        }
-      }, 1000);
-
     } catch (error: any) {
       console.error('💥 Unexpected error:', error);
       setError('An unexpected error occurred');
-    } finally {
       setLoading(false);
     }
   };
@@ -110,6 +104,7 @@ const AdminLoginForm = () => {
           type="email"
           placeholder="admin@example.com"
           className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-red-500"
+          disabled={loading}
         />
         {errors.email && (
           <p className="text-red-400 text-sm">{errors.email.message}</p>
@@ -127,11 +122,13 @@ const AdminLoginForm = () => {
             type={showPassword ? 'text' : 'password'}
             placeholder="Your admin password"
             className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-red-500 pr-10"
+            disabled={loading}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            disabled={loading}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -154,6 +151,7 @@ const AdminLoginForm = () => {
           type="button"
           onClick={() => navigate('/auth')}
           className="text-red-400 hover:text-red-300 text-sm underline"
+          disabled={loading}
         >
           Back to Client Login
         </button>

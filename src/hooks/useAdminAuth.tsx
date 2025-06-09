@@ -44,9 +44,12 @@ export const useAdminAuth = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('🔄 Auth state change:', event, session?.user?.email);
-        await updateAuthState(session);
+        // Use setTimeout to defer the async operation
+        setTimeout(() => {
+          updateAuthState(session);
+        }, 0);
       }
     );
 
@@ -125,7 +128,7 @@ export const useAdminAuth = () => {
         return { error };
       }
 
-      console.log('✅ Sign in successful, user will be updated via auth state change');
+      console.log('✅ Sign in successful, auth state will update via listener');
       return { data, error: null };
     } catch (error: any) {
       console.error('💥 Unexpected error during sign in:', error);

@@ -12,7 +12,8 @@ const AdminLogin = () => {
   useEffect(() => {
     // Redirect authenticated admin users to admin dashboard
     if (!loading && user && isAdmin) {
-      navigate('/admin/dashboard');
+      console.log('🎯 Already authenticated admin, redirecting to dashboard');
+      navigate('/admin/dashboard', { replace: true });
     }
   }, [user, isAdmin, loading, navigate]);
 
@@ -22,6 +23,13 @@ const AdminLogin = () => {
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500"></div>
       </div>
     );
+  }
+
+  // If user is authenticated but not admin, redirect to client auth
+  if (!loading && user && !isAdmin) {
+    console.log('⚠️ User authenticated but not admin, redirecting to client auth');
+    navigate('/auth', { replace: true });
+    return null;
   }
 
   return (
