@@ -11,9 +11,14 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAdminDashboardStats } from '@/hooks/useAdminDashboardData';
 
 const AdminDashboard = () => {
   const isMobile = useIsMobile();
+  const { data: stats, isLoading: statsLoading } = useAdminDashboardStats();
+
+  console.log('🎛️ Admin Dashboard - Stats loading:', statsLoading);
+  console.log('📊 Admin Dashboard - Stats data:', stats);
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -28,52 +33,74 @@ const AdminDashboard = () => {
       {/* Stats Cards with Real-time Updates */}
       <AdminStatsCards />
 
-      {/* Today's Schedule - Moved to second row */}
+      {/* Today's Schedule */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm md:text-base">
             <Calendar className="h-4 w-4 md:h-5 md:w-5" />
             Planning Vandaag
+            {stats && (
+              <Badge variant="outline" className="ml-2">
+                {stats.todayBookings} boekingen
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs">9:00</Badge>
-                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-              </div>
-              <h4 className="font-medium mt-2 text-sm">Personal Training</h4>
-              <p className="text-xs text-muted-foreground">met Jan de Vries</p>
+          {statsLoading ? (
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="rounded-lg border p-4 animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-6 bg-gray-200 rounded w-1/2 mb-1"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))}
             </div>
-            
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs">11:00</Badge>
-                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-              </div>
-              <h4 className="font-medium mt-2 text-sm">Voedingsadvies</h4>
-              <p className="text-xs text-muted-foreground">met Sarah Smit</p>
+          ) : stats?.todayBookings === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Geen boekingen vandaag gepland</p>
             </div>
-            
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs">14:00</Badge>
-                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+          ) : (
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="text-xs">9:00</Badge>
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+                </div>
+                <h4 className="font-medium mt-2 text-sm">Personal Training</h4>
+                <p className="text-xs text-muted-foreground">met Jan de Vries</p>
               </div>
-              <h4 className="font-medium mt-2 text-sm">Groepssessie</h4>
-              <p className="text-xs text-muted-foreground">HIIT Training</p>
-            </div>
-            
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs">16:00</Badge>
-                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              
+              <div className="rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="text-xs">11:00</Badge>
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+                </div>
+                <h4 className="font-medium mt-2 text-sm">Voedingsadvies</h4>
+                <p className="text-xs text-muted-foreground">met Sarah Smit</p>
               </div>
-              <h4 className="font-medium mt-2 text-sm">Personal Training</h4>
-              <p className="text-xs text-muted-foreground">met Mike Jansen</p>
+              
+              <div className="rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="text-xs">14:00</Badge>
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+                </div>
+                <h4 className="font-medium mt-2 text-sm">Groepssessie</h4>
+                <p className="text-xs text-muted-foreground">HIIT Training</p>
+              </div>
+              
+              <div className="rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="text-xs">16:00</Badge>
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+                </div>
+                <h4 className="font-medium mt-2 text-sm">Personal Training</h4>
+                <p className="text-xs text-muted-foreground">met Mike Jansen</p>
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -99,30 +126,55 @@ const AdminDashboard = () => {
             <div className="space-y-2">
               <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">Sessies Vandaag</span>
-                <span className="font-medium">12/15</span>
+                <span className="font-medium">
+                  {stats?.completedSessionsToday || 0}/{stats?.todayBookings || 0}
+                </span>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 w-4/5 rounded-full bg-primary"></div>
+                <div 
+                  className="h-2 rounded-full bg-primary" 
+                  style={{ 
+                    width: stats?.todayBookings 
+                      ? `${Math.min((stats.completedSessionsToday / stats.todayBookings) * 100, 100)}%` 
+                      : '0%' 
+                  }}
+                ></div>
               </div>
             </div>
             
             <div className="space-y-2">
               <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">Maandelijks Doel</span>
-                <span className="font-medium">€35K/€50K</span>
+                <span className="font-medium">€{stats?.monthlyRevenue?.toFixed(0) || 0}/€50K</span>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 w-3/4 rounded-full bg-green-500"></div>
+                <div 
+                  className="h-2 rounded-full bg-green-500" 
+                  style={{ 
+                    width: `${Math.min(((stats?.monthlyRevenue || 0) / 50000) * 100, 100)}%` 
+                  }}
+                ></div>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between text-xs md:text-sm">
                 <span className="text-muted-foreground">Klantenbehoud</span>
-                <span className="font-medium">94%</span>
+                <span className="font-medium">
+                  {stats?.activeClients && stats?.totalClients 
+                    ? Math.round((stats.activeClients / stats.totalClients) * 100)
+                    : 0}%
+                </span>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 w-[94%] rounded-full bg-blue-500"></div>
+                <div 
+                  className="h-2 rounded-full bg-blue-500" 
+                  style={{ 
+                    width: stats?.activeClients && stats?.totalClients 
+                      ? `${(stats.activeClients / stats.totalClients) * 100}%` 
+                      : '0%' 
+                  }}
+                ></div>
               </div>
             </div>
           </CardContent>

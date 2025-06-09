@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,12 +41,25 @@ export const useDashboardStats = () => {
     queryFn: async (): Promise<DashboardStats> => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      const today = new Date().toISOString().split('T')[0];
+      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      console.log('🔍 Fetching dashboard stats for user:', user.id);
+      console.log('📅 Today:', today);
+
       const [bookingsCount, completedCount, upcomingCount, documentsCount] = await Promise.all([
         supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id),
         supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id).eq('status', 'completed'),
         supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id).gte('date_time', new Date().toISOString()),
         supabase.from('documents').select('id', { count: 'exact' }).eq('user_id', user.id),
       ]);
+
+      console.log('📊 Raw counts:', {
+        total: bookingsCount.count,
+        completed: completedCount.count,
+        upcoming: upcomingCount.count,
+        documents: documentsCount.count
+      });
 
       // Get user profile for last session and total spent
       const { data: userProfile } = await supabase
@@ -54,7 +68,7 @@ export const useDashboardStats = () => {
         .eq('id', user.id)
         .single();
 
-      return {
+      const stats = {
         totalBookings: bookingsCount.count || 0,
         completedSessions: completedCount.count || 0,
         upcomingBookings: upcomingCount.count || 0,
@@ -62,6 +76,10 @@ export const useDashboardStats = () => {
         lastSessionDate: userProfile?.last_session_date || null,
         totalSpent: userProfile?.total_spent || 0,
       };
+
+      console.log('📈 Final dashboard stats:', stats);
+
+      return stats;
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -77,6 +95,8 @@ export const useNextBooking = () => {
     queryFn: async (): Promise<NextBooking | null> => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      console.log('🔍 Fetching next booking for user:', user.id);
+
       const { data, error } = await supabase
         .from('bookings')
         .select(`
@@ -91,12 +111,17 @@ export const useNextBooking = () => {
         `)
         .eq('user_id', user.id)
         .gte('date_time', new Date().toISOString())
-        .eq('status', 'confirmed')
+        .in('status', ['confirmed', 'pending'])
         .order('date_time', { ascending: true })
         .limit(1)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching next booking:', error);
+        throw error;
+      }
+
+      console.log('📅 Next booking found:', data);
       return data;
     },
     enabled: !!user?.id,
