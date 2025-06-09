@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dumbbell, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,17 +46,11 @@ const Footer = () => {
     href: '#services'
   }];
   const quickLinks = [{
-    name: 'Boek een sessie',
-    href: '#contact'
-  }, {
-    name: 'Succesverhalen',
-    href: '#succesverhalen'
-  }, {
-    name: 'Blog',
-    href: '#'
-  }, {
     name: 'FAQ',
-    href: '#'
+    href: '#faq'
+  }, {
+    name: 'Mijn verhaal',
+    href: '#mijn-verhaal'
   }];
   const socialLinks = [{
     name: 'Facebook',
@@ -118,7 +113,9 @@ const Footer = () => {
             <h3 className="text-lg md:text-xl font-bold text-white">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map(link => <li key={link.name}>
-                  
+                  <a href={link.href} className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm md:text-base block py-1">
+                    {link.name}
+                  </a>
                 </li>)}
             </ul>
             <ul className="space-y-3 pt-4">
