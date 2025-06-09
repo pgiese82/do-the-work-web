@@ -38,32 +38,32 @@ const adminMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Bookings",
+    title: "Boekingen",
     url: "/admin/bookings", 
     icon: CalendarCheck,
   },
   {
-    title: "Calendar",
+    title: "Kalender",
     url: "/admin/calendar",
     icon: Calendar,
   },
   {
-    title: "Clients",
+    title: "Klanten",
     url: "/admin/clients",
     icon: Users,
   },
   {
-    title: "Payments",
+    title: "Betalingen",
     url: "/admin/payments",
     icon: CreditCard,
   },
   {
-    title: "Documents", 
+    title: "Documenten", 
     url: "/admin/documents",
     icon: FileText,
   },
   {
-    title: "Notifications",
+    title: "Meldingen",
     url: "/admin/notifications",
     icon: Bell,
   },
@@ -81,7 +81,7 @@ const bottomMenuItems = [
     icon: Activity,
   },
   {
-    title: "Settings",
+    title: "Instellingen",
     url: "/admin/settings",
     icon: Settings,
   },
@@ -97,14 +97,14 @@ export function AdminSidebar() {
     try {
       await signOut();
       toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of the admin panel.",
+        title: "Succesvol uitgelogd",
+        description: "Je bent uitgelogd van het admin portaal.",
       });
       navigate('/admin/login');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error logging out",
+        title: "Fout bij uitloggen",
         description: error.message,
       });
     }
@@ -119,14 +119,14 @@ export function AdminSidebar() {
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">DO THE WORK</span>
-            <span className="truncate text-xs text-muted-foreground">Admin Portal</span>
+            <span className="truncate text-xs text-muted-foreground">Admin Portaal</span>
           </div>
         </div>
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>Administratie</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminMenuItems.map((item) => {
@@ -194,10 +194,10 @@ export function AdminSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={handleLogout}
-              tooltip="Logout"
+              tooltip="Uitloggen"
             >
               <LogOut className="h-4 w-4" />
-              <span>Logout</span>
+              <span>Uitloggen</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
