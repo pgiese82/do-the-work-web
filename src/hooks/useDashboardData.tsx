@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -143,6 +142,7 @@ export const useRecentBookings = (limit: number = 5) => {
           date_time,
           status,
           payment_status,
+          service_id,
           notes,
           services (
             name,

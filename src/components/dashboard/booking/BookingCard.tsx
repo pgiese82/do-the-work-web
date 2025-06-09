@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ interface Booking {
   date_time: string;
   status: string;
   payment_status: string;
+  service_id: string;
   notes?: string;
   services: {
     name: string;
