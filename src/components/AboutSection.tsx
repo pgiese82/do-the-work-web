@@ -3,18 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
 const AboutSection = () => {
   const {
     ref: contentRef,
     isVisible: contentVisible
   } = useScrollAnimation();
+
   const {
     ref: imageRef,
     isVisible: imageVisible
   } = useScrollAnimation({
     delay: 200
   });
-  return <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-white" id="over-mij">
+
+  return (
+    <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-white" id="about">
       <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 xl:gap-20 items-center max-w-7xl mx-auto">
           <div ref={contentRef} className={`order-2 lg:order-1 scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
@@ -49,6 +53,8 @@ const AboutSection = () => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default AboutSection;

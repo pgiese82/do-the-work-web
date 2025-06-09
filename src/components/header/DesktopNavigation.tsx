@@ -23,7 +23,14 @@ export const DesktopNavigation = ({ scrollToSection }: DesktopNavigationProps) =
         <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#ff6b35] transition-all duration-300 group-hover:w-full"></span>
       </button>
       <button
-        onClick={() => scrollToSection('testimonials')}
+        onClick={() => scrollToSection('boeken')}
+        className="text-gray-200 hover:text-[#ff6b35] transition-colors duration-200 relative group"
+      >
+        Boeken
+        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#ff6b35] transition-all duration-300 group-hover:w-full"></span>
+      </button>
+      <button
+        onClick={() => scrollToSection('succesverhalen')}
         className="text-gray-200 hover:text-[#ff6b35] transition-colors duration-200 relative group"
       >
         Succesverhalen
