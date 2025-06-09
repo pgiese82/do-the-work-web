@@ -13,19 +13,25 @@ export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
         return {
           variant: 'default' as const,
           className: 'bg-emerald-500/10 text-emerald-700 border-emerald-200',
-          label: 'Paid'
+          label: 'Betaald'
         };
       case 'pending':
         return {
           variant: 'outline' as const,
           className: 'bg-amber-500/10 text-amber-700 border-amber-200',
-          label: 'Pending'
+          label: 'Wachtend op Betaling'
         };
       case 'failed':
         return {
           variant: 'outline' as const,
           className: 'bg-red-500/10 text-red-700 border-red-200',
-          label: 'Failed'
+          label: 'Betaling Mislukt'
+        };
+      case 'refunded':
+        return {
+          variant: 'outline' as const,
+          className: 'bg-blue-500/10 text-blue-700 border-blue-200',
+          label: 'Terugbetaald'
         };
       default:
         return {
@@ -40,7 +46,7 @@ export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
 
   return (
     <Badge variant={config.variant} className={`text-xs font-medium ${config.className}`}>
-      {config.label}
+      Betaling: {config.label}
     </Badge>
   );
 }

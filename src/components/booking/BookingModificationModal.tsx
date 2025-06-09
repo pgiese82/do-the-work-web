@@ -83,6 +83,14 @@ export function BookingModificationModal({
     setLoading(true);
 
     try {
+      // Update booking status to pending when modification is requested
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .update({ status: 'pending' })
+        .eq('id', booking.id);
+
+      if (bookingError) throw bookingError;
+
       const modificationData = {
         booking_id: booking.id,
         modification_type: type,
@@ -110,7 +118,7 @@ export function BookingModificationModal({
 
       toast({
         title: 'Verzoek Verzonden',
-        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden en wacht op goedkeuring.`,
+        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden. De boeking status is gewijzigd naar 'wachtend op goedkeuring'.`,
       });
 
       onSuccess();
@@ -149,6 +157,13 @@ export function BookingModificationModal({
               Duur: {booking.services.duration} minuten • Prijs: €{booking.services.price}
             </p>
           </div>
+
+          <Alert className="border-blue-200 bg-blue-50">
+            <AlertTriangle className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              <strong>Let op:</strong> Na het indienen van dit verzoek wordt de boeking status gewijzigd naar "Wachtend op Goedkeuring" totdat een admin het verzoek behandelt.
+            </AlertDescription>
+          </Alert>
 
           {type === 'cancel' && (
             <Alert className={canCancel ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
