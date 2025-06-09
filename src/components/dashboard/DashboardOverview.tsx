@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, FileText, Plus, ArrowRight, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Booking {
   id: string;
@@ -25,6 +26,7 @@ export function DashboardOverview() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [nextBooking, setNextBooking] = useState<Booking | null>(null);
   const [stats, setStats] = useState({
     totalBookings: 0,
@@ -107,10 +109,10 @@ export function DashboardOverview() {
 
   if (loading) {
     return (
-      <div className="space-y-6 p-8 max-w-7xl mx-auto">
+      <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-8'} max-w-7xl mx-auto`}>
         <div className="animate-pulse space-y-6">
           <div className="h-8 bg-muted rounded w-64"></div>
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-2' : 'md:grid-cols-4'}`}>
             {[...Array(4)].map((_, i) => (
               <div key={i} className="h-24 bg-muted rounded-lg"></div>
             ))}
@@ -129,25 +131,25 @@ export function DashboardOverview() {
   };
 
   return (
-    <div className="space-y-8 p-8 max-w-7xl mx-auto">
+    <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-8'} max-w-7xl mx-auto`}>
       {/* Welcome Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-semibold text-foreground">
+        <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-semibold text-foreground`}>
           {getGreeting()}, {user?.user_metadata?.name || 'daar'}
         </h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-muted-foreground text-base">
           Hier is wat er gebeurt met je training
         </p>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-0 shadow-sm bg-card">
-          <CardContent className="p-6">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
+        <Card className="border-0 shadow-sm bg-card hover:shadow-md transition-shadow">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Totaal Sessies</p>
-                <p className="text-2xl font-semibold">{stats.totalBookings}</p>
+                <p className="text-xs font-medium text-muted-foreground">Totaal Sessies</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.totalBookings}</p>
               </div>
               <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -156,12 +158,12 @@ export function DashboardOverview() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-card">
-          <CardContent className="p-6">
+        <Card className="border-0 shadow-sm bg-card hover:shadow-md transition-shadow">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Voltooid</p>
-                <p className="text-2xl font-semibold">{stats.completedSessions}</p>
+                <p className="text-xs font-medium text-muted-foreground">Voltooid</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.completedSessions}</p>
               </div>
               <div className="h-8 w-8 bg-green-500/10 rounded-lg flex items-center justify-center">
                 <Clock className="h-4 w-4 text-green-600" />
@@ -170,12 +172,12 @@ export function DashboardOverview() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-card">
-          <CardContent className="p-6">
+        <Card className="border-0 shadow-sm bg-card hover:shadow-md transition-shadow">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Aankomend</p>
-                <p className="text-2xl font-semibold">{stats.upcomingBookings}</p>
+                <p className="text-xs font-medium text-muted-foreground">Aankomend</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.upcomingBookings}</p>
               </div>
               <div className="h-8 w-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
                 <Calendar className="h-4 w-4 text-blue-600" />
@@ -184,12 +186,12 @@ export function DashboardOverview() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-card">
-          <CardContent className="p-6">
+        <Card className="border-0 shadow-sm bg-card hover:shadow-md transition-shadow">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Documenten</p>
-                <p className="text-2xl font-semibold">{stats.totalDocuments}</p>
+                <p className="text-xs font-medium text-muted-foreground">Documenten</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.totalDocuments}</p>
               </div>
               <div className="h-8 w-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
                 <FileText className="h-4 w-4 text-purple-600" />
@@ -200,12 +202,12 @@ export function DashboardOverview() {
       </div>
 
       {/* Next Session - Full Width */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-semibold">Volgende Sessie</CardTitle>
-              <CardDescription className="text-base">
+              <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold`}>Volgende Sessie</CardTitle>
+              <CardDescription className="text-sm">
                 Je aankomende trainingsessie
               </CardDescription>
             </div>
@@ -214,16 +216,16 @@ export function DashboardOverview() {
         </CardHeader>
         <CardContent>
           {nextBooking ? (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="p-4 rounded-lg border bg-muted/30">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg">{nextBooking.services.name}</h3>
+                    <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>{nextBooking.services.name}</h3>
                     <Badge variant="secondary" className="bg-green-500/10 text-green-700 border-green-200">
                       Bevestigd
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                  <div className={`flex items-center gap-4 text-sm text-muted-foreground ${isMobile ? 'flex-col items-start gap-2' : 'flex-row gap-6'}`}>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       <span>{formatDateTime(nextBooking.date_time).date}</span>
@@ -238,11 +240,12 @@ export function DashboardOverview() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className={`flex gap-3 ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
                 <Button 
                   onClick={() => navigate('/dashboard/bookings')}
                   className="flex-1"
                   variant="outline"
+                  size={isMobile ? "lg" : "default"}
                 >
                   Alle Boekingen Bekijken
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -250,6 +253,7 @@ export function DashboardOverview() {
                 <Button 
                   onClick={() => navigate('/dashboard/book')}
                   className="flex-1"
+                  size={isMobile ? "lg" : "default"}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Nieuwe Sessie Boeken
@@ -267,7 +271,8 @@ export function DashboardOverview() {
               </p>
               <Button 
                 onClick={() => navigate('/dashboard/book')}
-                className="w-full max-w-xs mx-auto"
+                className={`${isMobile ? 'w-full' : 'w-full max-w-xs mx-auto'}`}
+                size={isMobile ? "lg" : "default"}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Boek Je Eerste Sessie

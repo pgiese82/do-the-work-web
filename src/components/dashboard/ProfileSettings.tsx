@@ -8,10 +8,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, Mail, Phone, Shield, Settings } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function ProfileSettings() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({
     name: '',
@@ -79,33 +81,33 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto p-8">
+    <div className={`space-y-6 max-w-4xl mx-auto ${isMobile ? 'p-4' : 'p-8'}`}>
       {/* Header Section */}
-      <div className="space-y-3">
-        <h1 className="text-3xl font-semibold text-foreground">Profiel Instellingen</h1>
-        <p className="text-muted-foreground text-lg">
+      <div className="space-y-2">
+        <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-semibold text-foreground`}>Profiel Instellingen</h1>
+        <p className="text-muted-foreground">
           Beheer je accountinformatie en voorkeuren
         </p>
       </div>
 
       {/* Profile Information Card */}
       <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-6">
+        <CardHeader className={`${isMobile ? 'pb-4 px-4 pt-4' : 'pb-6'}`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-xl font-semibold text-foreground">
+              <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold text-foreground`}>
                 Persoonlijke Informatie
               </CardTitle>
-              <CardDescription className="text-base text-muted-foreground">
+              <CardDescription className="text-sm text-muted-foreground">
                 Werk je persoonlijke gegevens bij
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className={`space-y-6 ${isMobile ? 'px-4 pb-4' : ''}`}>
           <form onSubmit={handleUpdateProfile} className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -115,7 +117,7 @@ export function ProfileSettings() {
                 id="name"
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary"
+                className={`${isMobile ? 'h-12' : 'h-11'} bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary`}
                 placeholder="Voer je volledige naam in"
               />
             </div>
@@ -130,9 +132,9 @@ export function ProfileSettings() {
                   type="email"
                   value={profile.email}
                   disabled
-                  className="h-11 bg-muted/50 border-border text-muted-foreground pl-10"
+                  className={`${isMobile ? 'h-12' : 'h-11'} bg-muted/50 border-border text-muted-foreground pl-10`}
                 />
-                <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
+                <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
               <p className="text-xs text-muted-foreground">
                 E-mailadres kan niet worden gewijzigd. Neem contact op met support indien nodig.
@@ -148,10 +150,10 @@ export function ProfileSettings() {
                   id="phone"
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary pl-10"
+                  className={`${isMobile ? 'h-12' : 'h-11'} bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary pl-10`}
                   placeholder="Voer je telefoonnummer in"
                 />
-                <Phone className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
+                <Phone className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
             </div>
 
@@ -159,7 +161,7 @@ export function ProfileSettings() {
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
+                className={`w-full ${isMobile ? 'h-12' : 'h-11'} bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200`}
                 size="lg"
               >
                 {loading ? 'Profiel Bijwerken...' : 'Profiel Bijwerken'}
@@ -171,33 +173,33 @@ export function ProfileSettings() {
 
       {/* Account Security Card */}
       <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-6">
+        <CardHeader className={`${isMobile ? 'pb-4 px-4 pt-4' : 'pb-6'}`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-orange-600" />
             </div>
             <div>
-              <CardTitle className="text-xl font-semibold text-foreground">
+              <CardTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold text-foreground`}>
                 Account Beveiliging
               </CardTitle>
-              <CardDescription className="text-base text-muted-foreground">
+              <CardDescription className="text-sm text-muted-foreground">
                 Beheer je wachtwoord en beveiligingsinstellingen
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2">
+        <CardContent className={`space-y-4 ${isMobile ? 'px-4 pb-4' : ''}`}>
+          <div className={`grid gap-3 ${isMobile ? 'grid-cols-1' : 'sm:grid-cols-2'}`}>
             <Button 
               variant="outline"
-              className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
+              className={`${isMobile ? 'h-12' : 'h-11'} bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200`}
               size="lg"
             >
               Wachtwoord Wijzigen
             </Button>
             <Button 
               variant="outline"
-              className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
+              className={`${isMobile ? 'h-12' : 'h-11'} bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200`}
               size="lg"
             >
               2FA Inschakelen

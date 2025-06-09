@@ -90,14 +90,14 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar className="border-r bg-background">
-      <SidebarHeader className="p-6 border-b">
+    <Sidebar className="border-r bg-background md:flex hidden">
+      <SidebarHeader className="p-4 border-b">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-            <Dumbbell className="w-4 h-4 text-primary-foreground" />
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <Dumbbell className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="font-semibold text-foreground">DO THE WORK</h2>
+            <h2 className="font-semibold text-foreground text-lg">DO THE WORK</h2>
             <p className="text-xs text-muted-foreground">Klantenportaal</p>
           </div>
         </div>
@@ -116,14 +116,14 @@ export function DashboardSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => navigate(item.url)}
-                      className={`w-full justify-start px-3 py-2 h-9 rounded-md transition-colors ${
+                      className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
                         isActive
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground'
                       }`}
                     >
-                      <item.icon className="w-4 h-4 mr-3" />
-                      <span className="text-sm">{item.title}</span>
+                      <item.icon className="w-5 h-5 mr-3" />
+                      <span className="text-sm font-medium">{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -141,14 +141,14 @@ export function DashboardSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => navigate(item.url)}
-                      className={`w-full justify-start px-3 py-2 h-9 rounded-md transition-colors ${
+                      className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
                         isActive
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground'
                       }`}
                     >
-                      <item.icon className="w-4 h-4 mr-3" />
-                      <span className="text-sm">{item.title}</span>
+                      <item.icon className="w-5 h-5 mr-3" />
+                      <span className="text-sm font-medium">{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -162,10 +162,10 @@ export function DashboardSidebar() {
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start h-9 text-muted-foreground hover:text-foreground"
+          className="w-full justify-start h-12 text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-lg"
         >
-          <LogOut className="w-4 h-4 mr-3" />
-          <span className="text-sm">Uitloggen</span>
+          <LogOut className="w-5 h-5 mr-3" />
+          <span className="text-sm font-medium">Uitloggen</span>
         </Button>
       </SidebarFooter>
     </Sidebar>
