@@ -192,125 +192,83 @@ export function DashboardOverview() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Next Session */}
-        <Card className="lg:col-span-2 border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl font-semibold">Next Session</CardTitle>
-                <CardDescription className="text-base">
-                  Your upcoming training session
-                </CardDescription>
-              </div>
-              <Calendar className="h-5 w-5 text-muted-foreground" />
+      {/* Next Session - Full Width */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl font-semibold">Next Session</CardTitle>
+              <CardDescription className="text-base">
+                Your upcoming training session
+              </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent>
-            {nextBooking ? (
-              <div className="space-y-6">
-                <div className="p-4 rounded-lg border bg-muted/30">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg">{nextBooking.services.name}</h3>
-                      <Badge variant="secondary" className="bg-green-500/10 text-green-700 border-green-200">
-                        Confirmed
-                      </Badge>
+            <Calendar className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {nextBooking ? (
+            <div className="space-y-6">
+              <div className="p-4 rounded-lg border bg-muted/30">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">{nextBooking.services.name}</h3>
+                    <Badge variant="secondary" className="bg-green-500/10 text-green-700 border-green-200">
+                      Confirmed
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{formatDateTime(nextBooking.date_time).date}</span>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        <span>{formatDateTime(nextBooking.date_time).date}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        <span>{formatDateTime(nextBooking.date_time).time}</span>
-                      </div>
-                      <span className="text-xs bg-muted px-2 py-1 rounded">
-                        {nextBooking.services.duration} min
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{formatDateTime(nextBooking.date_time).time}</span>
                     </div>
+                    <span className="text-xs bg-muted px-2 py-1 rounded">
+                      {nextBooking.services.duration} min
+                    </span>
                   </div>
                 </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => navigate('/dashboard/bookings')}
-                  className="w-full"
+                  className="flex-1"
                   variant="outline"
                 >
                   View All Bookings
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <h3 className="font-semibold mb-2">No upcoming sessions</h3>
-                <p className="text-muted-foreground mb-4 text-sm">
-                  Ready to start your fitness journey?
-                </p>
                 <Button 
                   onClick={() => navigate('/dashboard/book')}
-                  className="w-full"
+                  className="flex-1"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Book Your First Session
+                  Book New Session
                 </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">Quick Actions</CardTitle>
-            <CardDescription className="text-base">
-              Common tasks and shortcuts
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold mb-2">No upcoming sessions</h3>
+              <p className="text-muted-foreground mb-4 text-sm">
+                Ready to start your fitness journey?
+              </p>
               <Button 
                 onClick={() => navigate('/dashboard/book')}
-                variant="outline"
-                className="w-full justify-between h-12"
+                className="w-full max-w-xs mx-auto"
               >
-                <div className="flex items-center">
-                  <Plus className="w-4 h-4 mr-3" />
-                  <span>Book New Session</span>
-                </div>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-              
-              <Button 
-                onClick={() => navigate('/dashboard/bookings')}
-                variant="outline"
-                className="w-full justify-between h-12"
-              >
-                <div className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-3" />
-                  <span>View My Bookings</span>
-                </div>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-              
-              <Button 
-                onClick={() => navigate('/dashboard/documents')}
-                variant="outline"
-                className="w-full justify-between h-12"
-              >
-                <div className="flex items-center">
-                  <FileText className="w-4 h-4 mr-3" />
-                  <span>Access Documents</span>
-                </div>
-                <ArrowRight className="w-4 h-4" />
+                <Plus className="w-4 h-4 mr-2" />
+                Book Your First Session
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
