@@ -166,26 +166,27 @@ export function AdminCalendar() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-white mb-2">Calendar Management</h2>
-          <p className="text-gray-300">
+          <h1 className="text-2xl font-semibold text-gray-900">Calendar</h1>
+          <p className="text-gray-600 mt-1">
             Manage bookings, availability, and schedules across all services.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button
             onClick={() => setShowAvailability(true)}
             variant="outline"
-            className="border-orange-500/20 text-orange-300 hover:bg-orange-500/20"
+            size="sm"
+            className="text-gray-700 border-gray-300 hover:bg-gray-50"
           >
             <Settings className="w-4 h-4 mr-2" />
             Availability
@@ -193,7 +194,8 @@ export function AdminCalendar() {
           <Button
             onClick={() => setShowHolidays(true)}
             variant="outline"
-            className="border-orange-500/20 text-orange-300 hover:bg-orange-500/20"
+            size="sm"
+            className="text-gray-700 border-gray-300 hover:bg-gray-50"
           >
             <Calendar className="w-4 h-4 mr-2" />
             Holidays
@@ -202,52 +204,52 @@ export function AdminCalendar() {
       </div>
 
       {/* Calendar Controls */}
-      <Card className="bg-white/10 backdrop-blur-md border-white/20">
-        <CardHeader>
+      <Card className="border-gray-200">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => navigateDate('prev')}
                 variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="text-gray-600 border-gray-300 hover:bg-gray-50"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
               
-              <h3 className="text-xl font-semibold text-white min-w-[300px] text-center">
+              <h2 className="text-xl font-semibold text-gray-900 min-w-[300px] text-center">
                 {formatDateRange()}
-              </h3>
+              </h2>
               
               <Button
                 onClick={() => navigateDate('next')}
                 variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="text-gray-600 border-gray-300 hover:bg-gray-50"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 onClick={() => setCurrentDate(new Date())}
                 variant="outline"
                 size="sm"
-                className="border-orange-500/20 text-orange-300 hover:bg-orange-500/20"
+                className="text-gray-600 border-gray-300 hover:bg-gray-50"
               >
                 Today
               </Button>
               
               <Tabs value={view} onValueChange={(value) => setView(value as any)}>
-                <TabsList className="bg-white/10">
-                  <TabsTrigger value="day" className="text-white data-[state=active]:bg-orange-500">
+                <TabsList className="bg-gray-100">
+                  <TabsTrigger value="day" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
                     Day
                   </TabsTrigger>
-                  <TabsTrigger value="week" className="text-white data-[state=active]:bg-orange-500">
+                  <TabsTrigger value="week" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
                     Week
                   </TabsTrigger>
-                  <TabsTrigger value="month" className="text-white data-[state=active]:bg-orange-500">
+                  <TabsTrigger value="month" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
                     Month
                   </TabsTrigger>
                 </TabsList>
@@ -256,7 +258,7 @@ export function AdminCalendar() {
           </div>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="p-0">
           {view === 'day' && (
             <CalendarDayView
               date={currentDate}
@@ -290,9 +292,9 @@ export function AdminCalendar() {
       </Card>
 
       {/* Service Legend */}
-      <Card className="bg-white/10 backdrop-blur-md border-white/20">
-        <CardHeader>
-          <CardTitle className="text-white">Service Types</CardTitle>
+      <Card className="border-gray-200">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-gray-900">Service Types</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
@@ -301,7 +303,7 @@ export function AdminCalendar() {
               return service ? (
                 <Badge
                   key={serviceId}
-                  className={`${getServiceColor(serviceId)} text-white`}
+                  className="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200"
                 >
                   {service.name}
                 </Badge>

@@ -82,17 +82,17 @@ export function CalendarWeekView({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
         <div className="min-w-[800px]">
           {/* Header with days */}
-          <div className="grid grid-cols-8 gap-1 mb-2">
-            <div className="h-12"></div> {/* Time column header */}
+          <div className="grid grid-cols-8 gap-0 border-b border-gray-200">
+            <div className="h-16 bg-gray-50 border-r border-gray-200"></div>
             {days.map((day, index) => (
-              <div key={index} className="text-center p-2 bg-white/5 rounded-lg">
-                <div className="text-sm text-gray-300 font-medium">
+              <div key={index} className="text-center p-4 bg-gray-50 border-r border-gray-200 last:border-r-0">
+                <div className="text-sm text-gray-600 font-medium">
                   {format(day, 'EEE')}
                 </div>
-                <div className="text-lg text-white font-semibold">
+                <div className="text-lg text-gray-900 font-semibold mt-1">
                   {format(day, 'd')}
                 </div>
               </div>
@@ -100,11 +100,11 @@ export function CalendarWeekView({
           </div>
 
           {/* Time slots grid */}
-          <div className="grid grid-cols-8 gap-1">
+          <div className="grid grid-cols-8 gap-0">
             {hours.map(hour => (
               <React.Fragment key={hour}>
                 {/* Time label */}
-                <div className="text-right pr-2 py-2 text-sm text-gray-400 font-medium">
+                <div className="text-right pr-3 py-4 text-sm font-medium text-gray-700 bg-gray-50 border-r border-gray-200 border-b border-gray-100">
                   {formatTime(hour)}
                 </div>
                 
@@ -121,8 +121,8 @@ export function CalendarWeekView({
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
-                          className={`min-h-[60px] p-1 border border-white/10 rounded transition-colors ${
-                            snapshot.isDraggingOver ? 'bg-orange-500/20' : 'bg-white/5'
+                          className={`min-h-[70px] p-2 border-r border-gray-200 border-b border-gray-100 last:border-r-0 transition-colors ${
+                            snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
                           }`}
                         >
                           {timeSlotBookings.map((booking, index) => (
@@ -136,31 +136,31 @@ export function CalendarWeekView({
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className={`p-2 mb-1 border-l-4 cursor-move transition-all ${
-                                    getServiceColor(booking.services.id)
-                                  } ${getStatusColor(booking.status)} ${
-                                    snapshot.isDragging ? 'opacity-75 rotate-3 scale-105' : ''
+                                  className={`p-2 mb-1 border-l-4 cursor-move transition-all bg-white hover:shadow-md border border-gray-200 ${
+                                    getStatusColor(booking.status)
+                                  } ${
+                                    snapshot.isDragging ? 'shadow-lg rotate-2 scale-105' : ''
                                   }`}
                                   onMouseEnter={() => onBookingDrag(booking)}
                                   onMouseLeave={() => onBookingDrag(null)}
                                 >
-                                  <div className="text-xs">
-                                    <div className="font-semibold text-white truncate">
+                                  <div className="text-xs space-y-1">
+                                    <div className="font-semibold text-gray-900 truncate">
                                       {booking.users.name}
                                     </div>
-                                    <div className="text-gray-300 truncate">
+                                    <div className="text-gray-700 truncate font-medium">
                                       {booking.services.name}
                                     </div>
-                                    <div className="flex justify-between items-center mt-1">
-                                      <span className="text-gray-400">
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-gray-600 font-medium">
                                         {format(parseISO(booking.date_time), 'HH:mm')}
                                       </span>
                                       <Badge 
                                         className={`text-xs ${
-                                          booking.status === 'confirmed' ? 'bg-green-600' :
-                                          booking.status === 'pending' ? 'bg-yellow-600' :
-                                          booking.status === 'cancelled' ? 'bg-red-600' :
-                                          'bg-gray-600'
+                                          booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                          booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                          booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                          'bg-gray-100 text-gray-800'
                                         }`}
                                       >
                                         {booking.status}

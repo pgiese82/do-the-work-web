@@ -79,14 +79,14 @@ export function CalendarDayView({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {hours.map(hour => {
           const hourBookings = getBookingsForHour(hour);
           
           return (
-            <div key={hour} className="flex">
+            <div key={hour} className="flex border-b border-gray-200/20">
               {/* Time label */}
-              <div className="w-20 text-right pr-4 py-2 text-sm text-gray-400 font-medium">
+              <div className="w-20 text-right pr-4 py-3 text-sm font-medium text-gray-900 bg-gray-50/10 border-r border-gray-200/20">
                 {formatTime(hour)}
               </div>
               
@@ -96,11 +96,11 @@ export function CalendarDayView({
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`flex-1 min-h-[80px] p-3 border border-white/10 rounded-lg transition-colors ${
-                      snapshot.isDraggingOver ? 'bg-orange-500/20' : 'bg-white/5'
+                    className={`flex-1 min-h-[80px] p-3 transition-colors ${
+                      snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white hover:bg-gray-50/30'
                     }`}
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {hourBookings.map((booking, index) => (
                         <Draggable
                           key={booking.id}
@@ -112,49 +112,49 @@ export function CalendarDayView({
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`p-3 border-l-4 cursor-move transition-all ${
-                                getServiceColor(booking.services.id)
-                              } ${getStatusColor(booking.status)} ${
-                                snapshot.isDragging ? 'opacity-75 rotate-2 scale-105' : ''
+                              className={`p-4 border-l-4 cursor-move transition-all bg-white hover:shadow-md border border-gray-200 ${
+                                getStatusColor(booking.status)
+                              } ${
+                                snapshot.isDragging ? 'shadow-lg rotate-2 scale-105' : ''
                               }`}
                               onMouseEnter={() => onBookingDrag(booking)}
                               onMouseLeave={() => onBookingDrag(null)}
                             >
-                              <div className="space-y-2">
+                              <div className="space-y-3">
                                 <div className="flex justify-between items-start">
                                   <div>
-                                    <div className="font-semibold text-white">
+                                    <div className="font-semibold text-gray-900 text-sm">
                                       {booking.users.name}
                                     </div>
-                                    <div className="text-sm text-gray-300">
+                                    <div className="text-xs text-gray-600">
                                       {booking.users.email}
                                     </div>
                                   </div>
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-xs font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
                                     {format(parseISO(booking.date_time), 'HH:mm')}
                                   </span>
                                 </div>
                                 
-                                <div className="text-sm text-gray-300">
+                                <div className="text-sm font-medium text-gray-800">
                                   {booking.services.name}
                                 </div>
                                 
-                                <div className="flex justify-between items-center">
+                                <div className="flex justify-between items-center gap-2">
                                   <Badge 
-                                    className={`text-xs ${
-                                      booking.status === 'confirmed' ? 'bg-green-600' :
-                                      booking.status === 'pending' ? 'bg-yellow-600' :
-                                      booking.status === 'cancelled' ? 'bg-red-600' :
-                                      'bg-gray-600'
+                                    className={`text-xs font-medium ${
+                                      booking.status === 'confirmed' ? 'bg-green-100 text-green-800 border-green-200' :
+                                      booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                      booking.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' :
+                                      'bg-gray-100 text-gray-800 border-gray-200'
                                     }`}
                                   >
                                     {booking.status}
                                   </Badge>
                                   <Badge 
-                                    className={`text-xs ${
-                                      booking.payment_status === 'paid' ? 'bg-green-600' :
-                                      booking.payment_status === 'pending' ? 'bg-yellow-600' :
-                                      'bg-red-600'
+                                    className={`text-xs font-medium ${
+                                      booking.payment_status === 'paid' ? 'bg-green-100 text-green-800 border-green-200' :
+                                      booking.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                      'bg-red-100 text-red-800 border-red-200'
                                     }`}
                                   >
                                     {booking.payment_status}

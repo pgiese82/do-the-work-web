@@ -87,85 +87,87 @@ export function CalendarMonthView({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-7 gap-1">
-        {/* Day headers */}
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-          <div key={day} className="p-2 text-center text-sm font-medium text-gray-300 bg-white/5 rounded">
-            {day}
-          </div>
-        ))}
-        
-        {/* Calendar days */}
-        {days.map((day, index) => {
-          const dayBookings = getBookingsForDay(day);
-          const isCurrentMonth = isSameMonth(day, month);
-          const isToday = isSameDay(day, new Date());
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="grid grid-cols-7 gap-0">
+          {/* Day headers */}
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+            <div key={day} className="p-4 text-center text-sm font-semibold text-gray-700 bg-gray-50 border-b border-gray-200">
+              {day}
+            </div>
+          ))}
           
-          return (
-            <Droppable key={index} droppableId={index.toString()}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`min-h-[120px] p-1 border border-white/10 rounded transition-colors ${
-                    snapshot.isDraggingOver ? 'bg-orange-500/20' : 'bg-white/5'
-                  } ${!isCurrentMonth ? 'opacity-50' : ''} ${
-                    isToday ? 'ring-2 ring-orange-500' : ''
-                  }`}
-                >
-                  <div className={`text-sm font-medium mb-1 ${
-                    isToday ? 'text-orange-400' : 'text-white'
-                  }`}>
-                    {format(day, 'd')}
-                  </div>
-                  
-                  <div className="space-y-1">
-                    {dayBookings.slice(0, 3).map((booking, bookingIndex) => (
-                      <Draggable
-                        key={booking.id}
-                        draggableId={booking.id}
-                        index={bookingIndex}
-                      >
-                        {(provided, snapshot) => (
-                          <Card
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`p-1 text-xs cursor-move border-l-2 transition-all ${
-                              getServiceColor(booking.services.id)
-                            } ${getStatusColor(booking.status)} ${
-                              snapshot.isDragging ? 'opacity-75 rotate-1 scale-105' : ''
-                            }`}
-                            onMouseEnter={() => onBookingDrag(booking)}
-                            onMouseLeave={() => onBookingDrag(null)}
-                          >
-                            <div className="truncate text-white font-medium">
-                              {format(parseISO(booking.date_time), 'HH:mm')}
-                            </div>
-                            <div className="truncate text-gray-300">
-                              {booking.users.name}
-                            </div>
-                            <div className="truncate text-gray-400">
-                              {booking.services.name}
-                            </div>
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
+          {/* Calendar days */}
+          {days.map((day, index) => {
+            const dayBookings = getBookingsForDay(day);
+            const isCurrentMonth = isSameMonth(day, month);
+            const isToday = isSameDay(day, new Date());
+            
+            return (
+              <Droppable key={index} droppableId={index.toString()}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`min-h-[140px] p-2 border-b border-gray-100 border-r border-gray-100 transition-colors ${
+                      snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
+                    } ${!isCurrentMonth ? 'opacity-40 bg-gray-50' : ''} ${
+                      isToday ? 'ring-2 ring-blue-500 ring-inset' : ''
+                    }`}
+                  >
+                    <div className={`text-sm font-semibold mb-2 ${
+                      isToday ? 'text-blue-600' : isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                    }`}>
+                      {format(day, 'd')}
+                    </div>
                     
-                    {dayBookings.length > 3 && (
-                      <div className="text-xs text-gray-400 pl-1">
-                        +{dayBookings.length - 3} more
-                      </div>
-                    )}
+                    <div className="space-y-1">
+                      {dayBookings.slice(0, 3).map((booking, bookingIndex) => (
+                        <Draggable
+                          key={booking.id}
+                          draggableId={booking.id}
+                          index={bookingIndex}
+                        >
+                          {(provided, snapshot) => (
+                            <Card
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={`p-2 text-xs cursor-move border-l-2 transition-all bg-white hover:shadow-md border border-gray-200 ${
+                                getStatusColor(booking.status)
+                              } ${
+                                snapshot.isDragging ? 'shadow-lg rotate-1 scale-105' : ''
+                              }`}
+                              onMouseEnter={() => onBookingDrag(booking)}
+                              onMouseLeave={() => onBookingDrag(null)}
+                            >
+                              <div className="truncate text-gray-900 font-semibold mb-1">
+                                {format(parseISO(booking.date_time), 'HH:mm')}
+                              </div>
+                              <div className="truncate text-gray-700 font-medium">
+                                {booking.users.name}
+                              </div>
+                              <div className="truncate text-gray-600 text-xs">
+                                {booking.services.name}
+                              </div>
+                            </Card>
+                          )}
+                        </Draggable>
+                      ))}
+                      
+                      {dayBookings.length > 3 && (
+                        <div className="text-xs text-gray-500 font-medium pl-2">
+                          +{dayBookings.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                    
+                    {provided.placeholder}
                   </div>
-                  
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          );
-        })}
+                )}
+              </Droppable>
+            );
+          })}
+        </div>
       </div>
     </DragDropContext>
   );
