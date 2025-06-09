@@ -1,13 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Dumbbell } from 'lucide-react';
+import { Menu, X, Dumbbell, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -17,9 +19,12 @@ const Header = () => {
     }
   };
 
-  const handleLoginClick = () => {
-    console.log('Login button clicked');
-    navigate('/auth');
+  const handleAccountClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
     setIsMenuOpen(false);
   };
 
@@ -72,11 +77,18 @@ const Header = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
-              onClick={handleLoginClick}
+              onClick={handleAccountClick}
               variant="outline"
               className="border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
             >
-              Login
+              {user ? (
+                <>
+                  <User className="w-4 h-4 mr-2" />
+                  Account
+                </>
+              ) : (
+                'Login'
+              )}
             </Button>
           </div>
 
@@ -127,11 +139,18 @@ const Header = () => {
               </button>
               <div className="px-3 py-2 space-y-2">
                 <Button
-                  onClick={handleLoginClick}
+                  onClick={handleAccountClick}
                   variant="outline"
                   className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
                 >
-                  Login
+                  {user ? (
+                    <>
+                      <User className="w-4 h-4 mr-2" />
+                      Account
+                    </>
+                  ) : (
+                    'Login'
+                  )}
                 </Button>
               </div>
             </div>
