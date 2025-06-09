@@ -109,13 +109,13 @@ const BookingConfirmation = ({
 
       if (error) throw error;
 
-      // Create payment record
+      // Create payment record with correct field names and payment method
       const { error: paymentError } = await supabase
         .from('payments')
         .insert({
           booking_id: data.id,
           amount: bookingDetails.amount,
-          payment_method: 'online',
+          payment_method: 'mollie', // Use valid payment method from enum
           status: 'pending'
         });
 
