@@ -77,7 +77,7 @@ const bottomMenuItems = [
   },
   {
     title: "Audit Logs",
-    url: "/admin/audit-logs",
+    url: "/admin/audit",
     icon: Activity,
   },
   {
@@ -138,17 +138,13 @@ export function AdminSidebar() {
                       isActive={isActive}
                       tooltip={item.title}
                     >
-                      <a 
-                        href={item.url}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate(item.url);
-                        }}
-                        className="flex items-center gap-2"
+                      <button
+                        onClick={() => navigate(item.url)}
+                        className="flex items-center gap-2 w-full"
                       >
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                      </a>
+                      </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -169,17 +165,13 @@ export function AdminSidebar() {
                       isActive={isActive}
                       tooltip={item.title}
                     >
-                      <a 
-                        href={item.url}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate(item.url);
-                        }}
-                        className="flex items-center gap-2"
+                      <button
+                        onClick={() => navigate(item.url)}
+                        className="flex items-center gap-2 w-full"
                       >
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                      </a>
+                      </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
