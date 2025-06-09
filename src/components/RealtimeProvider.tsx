@@ -1,11 +1,9 @@
 
-import React, { createContext, useContext, useEffect } from 'react';
-import { useBookingRealtimeUpdates } from '@/hooks/useBookingRealtimeUpdates';
-import { useDocumentRealtimeUpdates } from '@/hooks/useDocumentRealtimeUpdates';
-import { useAvailabilityRealtimeUpdates } from '@/hooks/useAvailabilityRealtimeUpdates';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRealtimeSubscriptions } from '@/hooks/useRealtimeSubscriptions';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface RealtimeContextType {
   isConnected: boolean;
@@ -25,26 +23,71 @@ interface RealtimeProviderProps {
 
 export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) => {
   const { user } = useAuth();
-  const { isConnected, reconnectAttempts } = useRealtimeSubscriptions();
+  const { isConnected, reconnectAttempts, createSubscription } = useRealtimeSubscriptions();
   const { toast } = useToast();
-
-  // Initialize all realtime subscriptions
-  useBookingRealtimeUpdates();
-  useDocumentRealtimeUpdates();
-  useAvailabilityRealtimeUpdates();
+  const queryClient = useQueryClient();
+  const [hasShownConnectionError, setHasShownConnectionError] = useState(false);
 
   useEffect(() => {
-    if (user && isConnected) {
-      console.log('🟢 Realtime subscriptions active');
-    } else if (user && !isConnected && reconnectAttempts > 0) {
+    if (!user) return;
+
+    console.log('🔄 Setting up realtime subscriptions for user:', user.id);
+
+    const handleRealtimeUpdate = (table: string) => (payload: any) => {
+      console.log(`📡 Realtime update for ${table}:`, payload);
+      
+      // Invalidate relevant queries based on table
+      switch (table) {
+        case 'bookings':
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
+          queryClient.invalidateQueries({ queryKey: ['recent-bookings'] });
+          queryClient.invalidateQueries({ queryKey: ['next-booking'] });
+          break;
+        case 'payments':
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
+          break;
+        case 'documents':
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+          break;
+        case 'users':
+          queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
+          break;
+      }
+    };
+
+    // Set up subscriptions for different tables
+    const tables = ['bookings', 'payments', 'documents', 'users', 'services'];
+    const events = ['INSERT', 'UPDATE', 'DELETE'];
+    
+    tables.forEach(table => {
+      events.forEach(event => {
+        createSubscription(table, event, handleRealtimeUpdate(table));
+      });
+    });
+
+  }, [user, createSubscription, queryClient]);
+
+  useEffect(() => {
+    if (user && !isConnected && reconnectAttempts > 0 && !hasShownConnectionError) {
       console.log('🔴 Realtime subscriptions disconnected');
       toast({
         title: "Connection Issues",
         description: "Trying to reconnect to live updates...",
         variant: "destructive"
       });
+      setHasShownConnectionError(true);
+    } else if (isConnected && hasShownConnectionError) {
+      console.log('🟢 Realtime subscriptions reconnected');
+      toast({
+        title: "Connected",
+        description: "Live updates are working again!",
+      });
+      setHasShownConnectionError(false);
     }
-  }, [user, isConnected, reconnectAttempts, toast]);
+  }, [user, isConnected, reconnectAttempts, toast, hasShownConnectionError]);
 
   return (
     <RealtimeContext.Provider value={{ isConnected, reconnectAttempts }}>
