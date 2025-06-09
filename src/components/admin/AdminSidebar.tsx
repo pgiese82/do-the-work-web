@@ -29,21 +29,62 @@ import {
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
-import { getMainAdminRoutes, getSecondaryAdminRoutes } from '@/config/adminRoutes';
 
-const iconMap = {
-  LayoutDashboard,
-  Calendar,
-  CalendarCheck,
-  Users,
-  CreditCard,
-  FileText,
-  Settings,
-  Activity,
-  Bell,
-  Globe,
-  Shield
-};
+const mainMenuItems = [
+  {
+    title: 'Dashboard',
+    path: '/admin/dashboard',
+    icon: LayoutDashboard,
+  },
+  {
+    title: 'Boekingen',
+    path: '/admin/bookings',
+    icon: CalendarCheck,
+  },
+  {
+    title: 'Kalender',
+    path: '/admin/calendar',
+    icon: Calendar,
+  },
+  {
+    title: 'Klanten',
+    path: '/admin/clients',
+    icon: Users,
+  },
+  {
+    title: 'Betalingen',
+    path: '/admin/payments',
+    icon: CreditCard,
+  },
+  {
+    title: 'Documenten',
+    path: '/admin/documents',
+    icon: FileText,
+  },
+];
+
+const secondaryMenuItems = [
+  {
+    title: 'Meldingen',
+    path: '/admin/notifications',
+    icon: Bell,
+  },
+  {
+    title: 'Website Beheer',
+    path: '/admin/cms',
+    icon: Globe,
+  },
+  {
+    title: 'Activiteitenlog',
+    path: '/admin/audit',
+    icon: Activity,
+  },
+  {
+    title: 'Instellingen',
+    path: '/admin/settings',
+    icon: Settings,
+  },
+];
 
 export function AdminSidebar() {
   const navigate = useNavigate();
@@ -51,8 +92,7 @@ export function AdminSidebar() {
   const { signOut } = useAdminAuth();
   const { toast } = useToast();
 
-  const mainRoutes = getMainAdminRoutes();
-  const secondaryRoutes = getSecondaryAdminRoutes();
+  console.log('AdminSidebar rendering, current path:', location.pathname);
 
   const handleLogout = async () => {
     try {
@@ -72,7 +112,7 @@ export function AdminSidebar() {
   };
 
   const handleNavigation = (path: string) => {
-    console.log('Admin sidebar navigating to:', path);
+    console.log('Navigating to:', path);
     navigate(path);
   };
 
@@ -95,19 +135,17 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Hoofdmenu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainRoutes.map((route) => {
-                const isActive = location.pathname === route.path;
-                const IconComponent = iconMap[route.icon as keyof typeof iconMap] || LayoutDashboard;
+              {mainMenuItems.map((item) => {
+                const isActive = location.pathname === item.path;
                 
                 return (
-                  <SidebarMenuItem key={route.path}>
+                  <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      tooltip={route.title}
-                      onClick={() => handleNavigation(route.path)}
+                      onClick={() => handleNavigation(item.path)}
                     >
-                      <IconComponent className="h-4 w-4" />
-                      <span>{route.title}</span>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -120,19 +158,17 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Beheer</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {secondaryRoutes.map((route) => {
-                const isActive = location.pathname === route.path;
-                const IconComponent = iconMap[route.icon as keyof typeof iconMap] || Settings;
+              {secondaryMenuItems.map((item) => {
+                const isActive = location.pathname === item.path;
                 
                 return (
-                  <SidebarMenuItem key={route.path}>
+                  <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      tooltip={route.title}
-                      onClick={() => handleNavigation(route.path)}
+                      onClick={() => handleNavigation(item.path)}
                     >
-                      <IconComponent className="h-4 w-4" />
-                      <span>{route.title}</span>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -145,10 +181,7 @@ export function AdminSidebar() {
       <SidebarFooter className="border-t border-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={handleLogout}
-              tooltip="Uitloggen"
-            >
+            <SidebarMenuButton onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
               <span>Uitloggen</span>
             </SidebarMenuButton>

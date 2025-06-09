@@ -2,30 +2,13 @@
 import React from 'react';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AdminSidebar } from './AdminSidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { AdminMobileNavigation } from './AdminMobileNavigation';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const isMobile = useIsMobile();
-
-  console.log('AdminLayout rendering, isMobile:', isMobile);
-
-  if (isMobile) {
-    return (
-      <div className="min-h-screen bg-background">
-        <AdminMobileNavigation />
-        <main className="pb-20 pt-4">
-          <div className="container mx-auto px-4 max-w-full">
-            {children}
-          </div>
-        </main>
-      </div>
-    );
-  }
+  console.log('AdminLayout rendering');
 
   return (
     <SidebarProvider defaultOpen={true}>
