@@ -22,7 +22,8 @@ export const useAuditLog = () => {
       // Get client IP and user agent from browser
       const userAgent = navigator.userAgent;
       
-      const { error } = await supabase
+      // Use type assertion to work around TypeScript type issues
+      const { error } = await (supabase as any)
         .from('audit_logs')
         .insert({
           user_id: user.id,

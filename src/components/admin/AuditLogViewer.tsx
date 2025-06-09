@@ -32,7 +32,8 @@ export const AuditLogViewer = () => {
 
   const fetchAuditLogs = async () => {
     try {
-      const { data, error } = await supabase
+      // Use type assertion to work around TypeScript type issues
+      const { data, error } = await (supabase as any)
         .from('audit_logs')
         .select('*')
         .order('created_at', { ascending: false })
