@@ -1,82 +1,78 @@
 
 import React from 'react';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { useLocation } from 'react-router-dom';
-
-// Lazy load components to catch import errors
-const DashboardOverview = React.lazy(() => import('./DashboardOverview').then(module => ({ default: module.DashboardOverview })));
-const BookSession = React.lazy(() => import('./BookSession').then(module => ({ default: module.BookSession })));
-const BookingsOverview = React.lazy(() => import('./BookingsOverview').then(module => ({ default: module.BookingsOverview })));
-const Documents = React.lazy(() => import('./Documents').then(module => ({ default: module.Documents })));
-const ProfileSettings = React.lazy(() => import('./ProfileSettings').then(module => ({ default: module.ProfileSettings })));
+import { DashboardOverview } from './DashboardOverview';
+import { BookSession } from './BookSession';
+import { BookingsOverview } from './BookingsOverview';
+import { Documents } from './Documents';
+import { ProfileSettings } from './ProfileSettings';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  CalendarCheck, 
+  FileText, 
+  Settings,
+  LogOut,
+  ArrowLeft
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { dashboardRoutes } from '@/config/dashboardRoutes';
 
 export function DashboardContent() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  console.log('DashboardContent rendering, current path:', location.pathname);
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast({
+        title: "Succesvol uitgelogd",
+        description: "Je bent uitgelogd van je account.",
+      });
+      
+      navigate('/auth');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Fout bij uitloggen",
+        description: error.message,
+      });
+    }
+  };
 
   const renderContent = () => {
     const currentPath = location.pathname;
-    console.log('Rendering content for path:', currentPath);
+    console.log('Current route:', currentPath);
     
-    try {
-      switch (currentPath) {
-        case '/dashboard':
-          console.log('Loading DashboardOverview');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <DashboardOverview />
-            </React.Suspense>
-          );
-        case '/dashboard/book':
-          console.log('Loading BookSession');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <BookSession />
-            </React.Suspense>
-          );
-        case '/dashboard/bookings':
-          console.log('Loading BookingsOverview');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <BookingsOverview />
-            </React.Suspense>
-          );
-        case '/dashboard/documents':
-          console.log('Loading Documents');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <Documents />
-            </React.Suspense>
-          );
-        case '/dashboard/profile':
-          console.log('Loading ProfileSettings');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <ProfileSettings />
-            </React.Suspense>
-          );
-        default:
-          console.log('Unknown route, showing dashboard overview');
-          return (
-            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
-              <DashboardOverview />
-            </React.Suspense>
-          );
-      }
-    } catch (error) {
-      console.error('Error rendering dashboard content:', error);
-      return (
-        <div className="p-6">
-          <h1 className="text-2xl font-semibold mb-4">Error Loading Dashboard</h1>
-          <p className="text-muted-foreground">
-            There was an error loading the dashboard content. Please try refreshing the page.
-          </p>
-          <pre className="mt-4 p-4 bg-red-50 text-red-800 text-sm rounded">
-            {error instanceof Error ? error.message : String(error)}
-          </pre>
-        </div>
-      );
+    // Exact path matching
+    switch (currentPath) {
+      case '/dashboard':
+        return <DashboardOverview />;
+      case '/dashboard/book':
+        return <BookSession />;
+      case '/dashboard/bookings':
+        return <BookingsOverview />;
+      case '/dashboard/documents':
+        return <Documents />;
+      case '/dashboard/profile':
+        return <ProfileSettings />;
+      default:
+        console.log('Unknown route, showing 404');
+        return (
+          <div className="p-8 text-center">
+            <h2 className="text-xl font-semibold mb-2">Pagina niet gevonden</h2>
+            <p className="text-muted-foreground mb-4">Deze pagina bestaat niet of is verplaatst.</p>
+            <Button onClick={() => navigate('/dashboard')}>
+              Terug naar Dashboard
+            </Button>
+          </div>
+        );
     }
   };
 
