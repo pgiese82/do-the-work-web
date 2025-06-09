@@ -41,7 +41,7 @@ export function AdminDocumentManager() {
       </TabsContent>
 
       <TabsContent value="delivery-log" className="space-y-6">
-        <DocumentDeliveryLog key={refreshKey} onUpdate={handleRefresh} />
+        <DocumentDeliveryLog key={refreshKey} />
       </TabsContent>
     </Tabs>
   );
