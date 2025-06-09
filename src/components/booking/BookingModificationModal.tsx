@@ -46,17 +46,16 @@ export function BookingModificationModal({
 
   const hoursUntilBooking = differenceInHours(new Date(booking.date_time), new Date());
   const canCancel = hoursUntilBooking >= 24;
-  const refundAmount = calculateRefund(hoursUntilBooking, booking.services.price);
-
+  
   function calculateRefund(hours: number, originalAmount: number): number {
     if (hours >= 48) return originalAmount;
     if (hours >= 24) return originalAmount * 0.5;
     return 0;
   }
 
+  const refundAmount = calculateRefund(hoursUntilBooking, booking.services.price);
+
   const handleSubmit = async () => {
-    console.log('Starting modification submission:', { type, bookingId: booking.id, reason, selectedDate, selectedTime });
-    
     if (!reason.trim()) {
       toast({
         title: 'Fout',
@@ -66,15 +65,13 @@ export function BookingModificationModal({
       return;
     }
 
-    if (type === 'reschedule') {
-      if (!selectedDate || !selectedTime) {
-        toast({
-          title: 'Fout',
-          description: 'Selecteer een nieuwe datum en tijd.',
-          variant: 'destructive',
-        });
-        return;
-      }
+    if (type === 'reschedule' && (!selectedDate || !selectedTime)) {
+      toast({
+        title: 'Fout',
+        description: 'Selecteer een nieuwe datum en tijd.',
+        variant: 'destructive',
+      });
+      return;
     }
 
     if (type === 'cancel' && !canCancel) {
@@ -89,22 +86,15 @@ export function BookingModificationModal({
     setLoading(true);
 
     try {
-      console.log('Step 1: Updating booking status to pending');
-      
-      // Update booking status to pending when modification is requested
+      // Update booking status to pending
       const { error: bookingError } = await supabase
         .from('bookings')
         .update({ status: 'pending' })
         .eq('id', booking.id);
 
-      if (bookingError) {
-        console.error('Error updating booking status:', bookingError);
-        throw bookingError;
-      }
+      if (bookingError) throw bookingError;
 
-      console.log('Step 2: Creating booking modification record');
-
-      // Create the full date-time for reschedule
+      // Create modification request
       let requestedDateTime = null;
       if (type === 'reschedule' && selectedDate && selectedTime) {
         const [hours, minutes] = selectedTime.split(':').map(Number);
@@ -112,29 +102,20 @@ export function BookingModificationModal({
         requestedDateTime.setHours(hours, minutes, 0, 0);
       }
 
-      const modificationData = {
-        booking_id: booking.id,
-        modification_type: type,
-        reason,
-        refund_amount: type === 'cancel' ? refundAmount : 0,
-        ...(type === 'reschedule' && requestedDateTime && { requested_date_time: requestedDateTime.toISOString() })
-      };
-
-      console.log('Modification data:', modificationData);
-
       const { error: modificationError } = await supabase
         .from('booking_modifications')
-        .insert(modificationData);
+        .insert({
+          booking_id: booking.id,
+          modification_type: type,
+          reason,
+          refund_amount: type === 'cancel' ? refundAmount : 0,
+          ...(requestedDateTime && { requested_date_time: requestedDateTime.toISOString() })
+        });
 
-      if (modificationError) {
-        console.error('Error creating modification record:', modificationError);
-        throw modificationError;
-      }
-
-      console.log('Step 3: Sending notification email');
+      if (modificationError) throw modificationError;
 
       // Send notification email
-      const { error: emailError } = await supabase.functions.invoke('send-booking-modification-email', {
+      await supabase.functions.invoke('send-booking-modification-email', {
         body: {
           bookingId: booking.id,
           modificationType: type,
@@ -144,16 +125,9 @@ export function BookingModificationModal({
         }
       });
 
-      if (emailError) {
-        console.error('Error sending email:', emailError);
-        // Don't throw here, email is not critical for the modification request
-      }
-
-      console.log('Modification request completed successfully');
-
       toast({
         title: 'Verzoek Verzonden',
-        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden. Je ontvangt een bevestiging per e-mail.`,
+        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden.`,
       });
 
       onSuccess();
@@ -162,10 +136,9 @@ export function BookingModificationModal({
       setSelectedDate(undefined);
       setSelectedTime('');
     } catch (error: any) {
-      console.error('Error submitting modification:', error);
       toast({
         title: 'Fout',
-        description: `Kon verzoek niet verzenden: ${error.message || 'Onbekende fout'}. Probeer het opnieuw.`,
+        description: `Kon verzoek niet verzenden: ${error.message}`,
         variant: 'destructive',
       });
     } finally {
@@ -173,15 +146,15 @@ export function BookingModificationModal({
     }
   };
 
-  const handleClose = () => {
-    onOpenChange(false);
-    setReason('');
-    setSelectedDate(undefined);
-    setSelectedTime('');
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={(open) => {
+      onOpenChange(open);
+      if (!open) {
+        setReason('');
+        setSelectedDate(undefined);
+        setSelectedTime('');
+      }
+    }}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -232,7 +205,7 @@ export function BookingModificationModal({
                 selectedTime={selectedTime}
                 onTimeSelect={setSelectedTime}
                 serviceDuration={booking.services.duration}
-                onConfirm={() => {}} // We handle confirmation in handleSubmit
+                onConfirm={() => {}}
                 serviceId={booking.service_id}
               />
             </div>
@@ -253,7 +226,7 @@ export function BookingModificationModal({
           <div className="flex gap-3">
             <Button
               variant="outline"
-              onClick={handleClose}
+              onClick={() => onOpenChange(false)}
               className="flex-1"
               disabled={loading}
             >
@@ -261,11 +234,11 @@ export function BookingModificationModal({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={loading || (type === 'cancel' && !canCancel) || (type === 'reschedule' && (!selectedDate || !selectedTime))}
+              disabled={loading || (type === 'cancel' && !canCancel)}
               className="flex-1"
               variant={type === 'cancel' ? 'destructive' : 'default'}
             >
-              {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzetverzoek' : 'Annuleringsverzoek'} Verzenden`}
+              {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzetten' : 'Annuleren'}`}
             </Button>
           </div>
         </div>
