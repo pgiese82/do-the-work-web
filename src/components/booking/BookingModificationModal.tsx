@@ -53,6 +53,8 @@ export function BookingModificationModal({
   }
 
   const handleSubmit = async () => {
+    console.log('Starting modification submission:', { type, bookingId: booking.id, reason, newDateTime });
+    
     if (!reason.trim()) {
       toast({
         title: 'Fout',
@@ -83,13 +85,20 @@ export function BookingModificationModal({
     setLoading(true);
 
     try {
+      console.log('Step 1: Updating booking status to pending');
+      
       // Update booking status to pending when modification is requested
       const { error: bookingError } = await supabase
         .from('bookings')
         .update({ status: 'pending' })
         .eq('id', booking.id);
 
-      if (bookingError) throw bookingError;
+      if (bookingError) {
+        console.error('Error updating booking status:', bookingError);
+        throw bookingError;
+      }
+
+      console.log('Step 2: Creating booking modification record');
 
       const modificationData = {
         booking_id: booking.id,
@@ -99,14 +108,21 @@ export function BookingModificationModal({
         ...(type === 'reschedule' && { requested_date_time: newDateTime })
       };
 
-      const { error } = await supabase
+      console.log('Modification data:', modificationData);
+
+      const { error: modificationError } = await supabase
         .from('booking_modifications')
         .insert(modificationData);
 
-      if (error) throw error;
+      if (modificationError) {
+        console.error('Error creating modification record:', modificationError);
+        throw modificationError;
+      }
+
+      console.log('Step 3: Sending notification email');
 
       // Send notification email
-      await supabase.functions.invoke('send-booking-modification-email', {
+      const { error: emailError } = await supabase.functions.invoke('send-booking-modification-email', {
         body: {
           bookingId: booking.id,
           modificationType: type,
@@ -115,6 +131,13 @@ export function BookingModificationModal({
           refundAmount: type === 'cancel' ? refundAmount : 0
         }
       });
+
+      if (emailError) {
+        console.error('Error sending email:', emailError);
+        // Don't throw here, email is not critical for the modification request
+      }
+
+      console.log('Modification request completed successfully');
 
       toast({
         title: 'Verzoek Verzonden',
@@ -129,7 +152,7 @@ export function BookingModificationModal({
       console.error('Error submitting modification:', error);
       toast({
         title: 'Fout',
-        description: 'Kon verzoek niet verzenden. Probeer het opnieuw.',
+        description: `Kon verzoek niet verzenden: ${error.message || 'Onbekende fout'}. Probeer het opnieuw.`,
         variant: 'destructive',
       });
     } finally {
