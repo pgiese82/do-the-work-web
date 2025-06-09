@@ -63,14 +63,14 @@ export function ProfileSettings() {
       if (error) throw error;
 
       toast({
-        title: 'Success',
-        description: 'Profile updated successfully',
+        title: 'Succesvol',
+        description: 'Profiel succesvol bijgewerkt',
       });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update profile',
+        title: 'Fout',
+        description: 'Kon profiel niet bijwerken',
         variant: 'destructive',
       });
     } finally {
@@ -82,9 +82,9 @@ export function ProfileSettings() {
     <div className="space-y-8 max-w-4xl mx-auto p-8">
       {/* Header Section */}
       <div className="space-y-3">
-        <h1 className="text-3xl font-semibold text-foreground">Profile Settings</h1>
+        <h1 className="text-3xl font-semibold text-foreground">Profiel Instellingen</h1>
         <p className="text-muted-foreground text-lg">
-          Manage your account information and preferences
+          Beheer je accountinformatie en voorkeuren
         </p>
       </div>
 
@@ -97,10 +97,10 @@ export function ProfileSettings() {
             </div>
             <div>
               <CardTitle className="text-xl font-semibold text-foreground">
-                Personal Information
+                Persoonlijke Informatie
               </CardTitle>
               <CardDescription className="text-base text-muted-foreground">
-                Update your personal details
+                Werk je persoonlijke gegevens bij
               </CardDescription>
             </div>
           </div>
@@ -109,20 +109,20 @@ export function ProfileSettings() {
           <form onSubmit={handleUpdateProfile} className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-sm font-medium text-foreground">
-                Full Name
+                Volledige Naam
               </Label>
               <Input
                 id="name"
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                 className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary"
-                placeholder="Enter your full name"
+                placeholder="Voer je volledige naam in"
               />
             </div>
 
             <div className="space-y-3">
               <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                Email Address
+                E-mailadres
               </Label>
               <div className="relative">
                 <Input
@@ -135,13 +135,13 @@ export function ProfileSettings() {
                 <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
               </div>
               <p className="text-xs text-muted-foreground">
-                Email cannot be changed. Contact support if needed.
+                E-mailadres kan niet worden gewijzigd. Neem contact op met support indien nodig.
               </p>
             </div>
 
             <div className="space-y-3">
               <Label htmlFor="phone" className="text-sm font-medium text-foreground">
-                Phone Number
+                Telefoonnummer
               </Label>
               <div className="relative">
                 <Input
@@ -149,7 +149,7 @@ export function ProfileSettings() {
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                   className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary pl-10"
-                  placeholder="Enter your phone number"
+                  placeholder="Voer je telefoonnummer in"
                 />
                 <Phone className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
               </div>
@@ -162,7 +162,7 @@ export function ProfileSettings() {
                 className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
                 size="lg"
               >
-                {loading ? 'Updating Profile...' : 'Update Profile'}
+                {loading ? 'Profiel Bijwerken...' : 'Profiel Bijwerken'}
               </Button>
             </div>
           </form>
@@ -178,10 +178,10 @@ export function ProfileSettings() {
             </div>
             <div>
               <CardTitle className="text-xl font-semibold text-foreground">
-                Account Security
+                Account Beveiliging
               </CardTitle>
               <CardDescription className="text-base text-muted-foreground">
-                Manage your password and security settings
+                Beheer je wachtwoord en beveiligingsinstellingen
               </CardDescription>
             </div>
           </div>
@@ -193,14 +193,14 @@ export function ProfileSettings() {
               className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
               size="lg"
             >
-              Change Password
+              Wachtwoord Wijzigen
             </Button>
             <Button 
               variant="outline"
               className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
               size="lg"
             >
-              Enable 2FA
+              2FA Inschakelen
             </Button>
           </div>
         </CardContent>
