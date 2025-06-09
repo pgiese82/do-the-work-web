@@ -7,13 +7,22 @@ import BookingForm from '@/components/booking/BookingForm';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+interface Service {
+  id: string;
+  name: string;
+  price: number;
+  duration: number;
+  description: string | null;
+  active: boolean;
+}
+
 export function BookSession() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
 
-  const { data: services, isLoading } = useQuery({
+  const { data: services, isLoading } = useQuery<Service[]>({
     queryKey: ['services'],
-    queryFn: async () => {
+    queryFn: async (): Promise<Service[]> => {
       const { data, error } = await supabase
         .from('services')
         .select('*')
@@ -21,7 +30,7 @@ export function BookSession() {
         .order('name');
       
       if (error) throw error;
-      return data;
+      return data || [];
     }
   });
 
