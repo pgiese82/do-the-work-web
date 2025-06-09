@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Clock, Euro, Users, Target } from 'lucide-react';
+import { Calendar, Clock, Money, Users, Target } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type Service = Database['public']['Tables']['services']['Row'];
@@ -101,8 +101,8 @@ export function BookSession() {
           {services.map((service) => {
             const ServiceIcon = getServiceIcon(service.name);
             return (
-              <Card key={service.id} className="border-0 shadow-sm hover:shadow-md transition-all duration-300 group">
-                <CardHeader className="pb-4">
+              <Card key={service.id} className="border-0 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col h-full">
+                <CardHeader className="pb-4 flex-shrink-0">
                   <div className="flex items-center justify-between mb-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                       <ServiceIcon className="w-5 h-5 text-primary" />
@@ -111,31 +111,43 @@ export function BookSession() {
                       €{service.price}
                     </Badge>
                   </div>
-                  <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                    {service.name}
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground line-clamp-2">
-                    {service.description || "Professional training session tailored to your needs"}
-                  </CardDescription>
+                  {/* Fixed height for title */}
+                  <div className="h-14 flex items-start">
+                    <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
+                      {service.name}
+                    </CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <CardContent className="flex flex-col flex-grow">
+                  {/* Fixed height for description */}
+                  <div className="h-16 mb-4">
+                    <CardDescription className="text-muted-foreground line-clamp-3 leading-relaxed">
+                      {service.description || "Professional training session tailored to your needs"}
+                    </CardDescription>
+                  </div>
+                  
+                  {/* Fixed height for info section */}
+                  <div className="h-6 mb-6 flex items-center justify-between text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span>{service.duration} minutes</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Euro className="w-4 h-4" />
+                      <Money className="w-4 h-4" />
                       <span className="font-medium">€{service.price}</span>
                     </div>
                   </div>
-                  <Button
-                    onClick={() => handleBookService(service.id)}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 hover:scale-105"
-                    size="lg"
-                  >
-                    Book Now
-                  </Button>
+                  
+                  {/* Button pushed to bottom */}
+                  <div className="mt-auto">
+                    <Button
+                      onClick={() => handleBookService(service.id)}
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 hover:scale-105"
+                      size="lg"
+                    >
+                      Book Now
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
