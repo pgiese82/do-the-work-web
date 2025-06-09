@@ -24,45 +24,18 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { dashboardRoutes } from '@/config/dashboardRoutes';
 
-const menuItems = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Sessie Boeken",
-    url: "/dashboard/book",
-    icon: Calendar,
-  },
-  {
-    title: "Mijn Boekingen", 
-    url: "/dashboard/bookings",
-    icon: CalendarCheck,
-  },
-  {
-    title: "Documenten",
-    url: "/dashboard/documents",
-    icon: FileText,
-  },
-];
-
-const bottomMenuItems = [
-  {
-    title: "Terug naar Website",
-    url: "/",
-    icon: ArrowLeft,
-  },
-  {
-    title: "Profiel Instellingen",
-    url: "/dashboard/profile",
-    icon: Settings,
-  },
-];
+const iconMap = {
+  LayoutDashboard,
+  Calendar,
+  CalendarCheck,
+  FileText,
+  Settings,
+  ArrowLeft
+};
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
@@ -89,9 +62,9 @@ export function DashboardSidebar() {
     }
   };
 
-  const handleNavigation = (url: string) => {
-    console.log('Sidebar navigating to:', url);
-    navigate(url);
+  const handleNavigation = (path: string) => {
+    console.log('Sidebar navigating to:', path);
+    navigate(path);
   };
 
   return (
@@ -115,20 +88,22 @@ export function DashboardSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {menuItems.map((item) => {
-                const isActive = location.pathname === item.url;
+              {dashboardRoutes.filter(route => route.showInNav).map((route) => {
+                const isActive = location.pathname === route.path;
+                const IconComponent = iconMap[route.icon as keyof typeof iconMap] || LayoutDashboard;
+                
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={route.path}>
                     <SidebarMenuButton
-                      onClick={() => handleNavigation(item.url)}
+                      onClick={() => handleNavigation(route.path)}
                       className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
                         isActive
                           ? 'bg-primary text-primary-foreground shadow-sm'
                           : 'text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground'
                       }`}
                     >
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <span className="text-sm font-medium">{item.title}</span>
+                      <IconComponent className="w-5 h-5 mr-3" />
+                      <span className="text-sm font-medium">{route.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -140,24 +115,15 @@ export function DashboardSidebar() {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {bottomMenuItems.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      onClick={() => handleNavigation(item.url)}
-                      className={`w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 ${
-                        isActive
-                          ? 'bg-primary text-primary-foreground shadow-sm'
-                          : 'text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground'
-                      }`}
-                    >
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => handleNavigation('/')}
+                  className="w-full justify-start px-3 py-3 h-12 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-3" />
+                  <span className="text-sm font-medium">Terug naar Website</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

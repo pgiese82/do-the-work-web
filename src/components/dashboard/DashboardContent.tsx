@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { DashboardOverview } from './DashboardOverview';
 import { BookSession } from './BookSession';
 import { BookingsOverview } from './BookingsOverview';
 import { Documents } from './Documents';
 import { ProfileSettings } from './ProfileSettings';
-import { ServiceSelectionPage } from '@/components/services/ServiceSelectionPage';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -20,34 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-const mobileMenuItems = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Sessie Boeken",
-    url: "/dashboard/book",
-    icon: Calendar,
-  },
-  {
-    title: "Mijn Boekingen",
-    url: "/dashboard/bookings",
-    icon: CalendarCheck,
-  },
-  {
-    title: "Documenten",
-    url: "/dashboard/documents",
-    icon: FileText,
-  },
-  {
-    title: "Profiel",
-    url: "/dashboard/profile",
-    icon: Settings,
-  },
-];
+import { dashboardRoutes } from '@/config/dashboardRoutes';
 
 export function DashboardContent() {
   const location = useLocation();
@@ -76,39 +49,32 @@ export function DashboardContent() {
   };
 
   const renderContent = () => {
-    console.log('Current pathname:', location.pathname);
+    const currentPath = location.pathname;
+    console.log('Current route:', currentPath);
     
-    try {
-      const path = location.pathname.toLowerCase();
-      
-      if (path === '/dashboard' || path === '/dashboard/') {
+    // Exact path matching
+    switch (currentPath) {
+      case '/dashboard':
         return <DashboardOverview />;
-      } else if (path === '/dashboard/services') {
-        return <ServiceSelectionPage />;
-      } else if (path === '/dashboard/book') {
+      case '/dashboard/book':
         return <BookSession />;
-      } else if (path === '/dashboard/bookings') {
+      case '/dashboard/bookings':
         return <BookingsOverview />;
-      } else if (path === '/dashboard/documents') {
+      case '/dashboard/documents':
         return <Documents />;
-      } else if (path === '/dashboard/profile') {
+      case '/dashboard/profile':
         return <ProfileSettings />;
-      } else {
-        console.log('Unknown route, redirecting to dashboard');
-        navigate('/dashboard');
-        return <DashboardOverview />;
-      }
-    } catch (error) {
-      console.error('Error rendering content:', error);
-      return (
-        <div className="p-8 text-center">
-          <h2 className="text-xl font-semibold mb-2">Er is een fout opgetreden</h2>
-          <p className="text-muted-foreground mb-4">Probeer de pagina te vernieuwen of ga terug naar het dashboard.</p>
-          <Button onClick={() => navigate('/dashboard')}>
-            Terug naar Dashboard
-          </Button>
-        </div>
-      );
+      default:
+        console.log('Unknown route, showing 404');
+        return (
+          <div className="p-8 text-center">
+            <h2 className="text-xl font-semibold mb-2">Pagina niet gevonden</h2>
+            <p className="text-muted-foreground mb-4">Deze pagina bestaat niet of is verplaatst.</p>
+            <Button onClick={() => navigate('/dashboard')}>
+              Terug naar Dashboard
+            </Button>
+          </div>
+        );
     }
   };
 
@@ -154,25 +120,30 @@ export function DashboardContent() {
         {/* Mobile Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-t">
           <div className="grid grid-cols-5 h-16">
-            {mobileMenuItems.map((item) => {
-              const isActive = location.pathname === item.url;
+            {dashboardRoutes.filter(route => route.showInNav).map((route) => {
+              const isActive = location.pathname === route.path;
+              const IconComponent = {
+                LayoutDashboard,
+                Calendar,
+                CalendarCheck,
+                FileText,
+                Settings
+              }[route.icon] || LayoutDashboard;
+
               return (
                 <Button
-                  key={item.title}
+                  key={route.path}
                   variant="ghost"
-                  onClick={() => {
-                    console.log('Navigating to:', item.url);
-                    navigate(item.url);
-                  }}
+                  onClick={() => navigate(route.path)}
                   className={`flex flex-col items-center justify-center h-full rounded-none border-0 ${
                     isActive
                       ? 'text-primary bg-primary/5'
                       : 'text-muted-foreground'
                   }`}
                 >
-                  <item.icon className={`w-5 h-5 mb-1 ${isActive ? 'text-primary' : ''}`} />
+                  <IconComponent className={`w-5 h-5 mb-1 ${isActive ? 'text-primary' : ''}`} />
                   <span className={`text-xs font-medium ${isActive ? 'text-primary' : ''}`}>
-                    {item.title}
+                    {route.title.includes(' ') ? route.title.split(' ')[0] : route.title}
                   </span>
                 </Button>
               );

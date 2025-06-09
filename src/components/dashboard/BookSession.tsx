@@ -7,30 +7,37 @@ import BookingForm from '@/components/booking/BookingForm';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Service {
+// Use the exact type from the database schema
+type DatabaseService = {
   id: string;
   name: string;
   price: number;
   duration: number;
   description: string | null;
-  active: boolean;
-}
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
 
 export function BookSession() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
 
-  const { data: services, isLoading } = useQuery<Service[]>({
-    queryKey: ['services'],
-    queryFn: async (): Promise<Service[]> => {
+  const { data: services = [], isLoading, error } = useQuery({
+    queryKey: ['active-services'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .eq('active', true)
+        .eq('is_active', true)
         .order('name');
       
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        console.error('Services fetch error:', error);
+        throw error;
+      }
+      
+      return (data as DatabaseService[]) || [];
     }
   });
 
@@ -43,6 +50,17 @@ export function BookSession() {
     setShowBookingForm(false);
     setSelectedServiceId(null);
   };
+
+  if (error) {
+    return (
+      <div className="space-y-6 p-6 max-w-4xl mx-auto">
+        <div className="text-center py-8">
+          <h2 className="text-xl font-semibold mb-2">Kon services niet laden</h2>
+          <p className="text-muted-foreground">Er is een probleem opgetreden bij het laden van de beschikbare services.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6 max-w-4xl mx-auto">
@@ -70,9 +88,17 @@ export function BookSession() {
             </Card>
           ))}
         </div>
+      ) : services.length === 0 ? (
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <p className="text-muted-foreground">
+              Er zijn momenteel geen services beschikbaar voor boeking.
+            </p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {services?.map((service) => (
+          {services.map((service) => (
             <Card key={service.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -104,16 +130,6 @@ export function BookSession() {
             </Card>
           ))}
         </div>
-      )}
-
-      {!isLoading && services?.length === 0 && (
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">
-              Er zijn momenteel geen services beschikbaar voor boeking.
-            </p>
-          </CardContent>
-        </Card>
       )}
 
       <BookingForm
