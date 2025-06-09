@@ -196,6 +196,60 @@ export type Database = {
           },
         ]
       }
+      communication_history: {
+        Row: {
+          admin_id: string | null
+          communication_type: string
+          content: string
+          created_at: string
+          direction: string
+          id: string
+          status: string | null
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_id?: string | null
+          communication_type: string
+          content: string
+          created_at?: string
+          direction?: string
+          id?: string
+          status?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_id?: string | null
+          communication_type?: string
+          content?: string
+          created_at?: string
+          direction?: string
+          id?: string
+          status?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_history_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           category: Database["public"]["Enums"]["document_category"]
@@ -233,6 +287,63 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follow_ups: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          description: string | null
+          follow_up_type: string
+          id: string
+          priority: string | null
+          scheduled_date: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          description?: string | null
+          follow_up_type: string
+          id?: string
+          priority?: string | null
+          scheduled_date: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          description?: string | null
+          follow_up_type?: string
+          id?: string
+          priority?: string | null
+          scheduled_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_ups_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_ups_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -369,33 +480,66 @@ export type Database = {
       }
       users: {
         Row: {
+          acquisition_source: string | null
+          address: string | null
+          client_status: string | null
           created_at: string
+          date_of_birth: string | null
           email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          health_notes: string | null
           id: string
+          last_session_date: string | null
           name: string
+          notes: string | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           subscription_status: Database["public"]["Enums"]["subscription_status"]
+          total_spent: number | null
+          training_preferences: string | null
           updated_at: string
         }
         Insert: {
+          acquisition_source?: string | null
+          address?: string | null
+          client_status?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          health_notes?: string | null
           id: string
+          last_session_date?: string | null
           name: string
+          notes?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          total_spent?: number | null
+          training_preferences?: string | null
           updated_at?: string
         }
         Update: {
+          acquisition_source?: string | null
+          address?: string | null
+          client_status?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          health_notes?: string | null
           id?: string
+          last_session_date?: string | null
           name?: string
+          notes?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
+          total_spent?: number | null
+          training_preferences?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -490,6 +634,10 @@ export type Database = {
           user_id_param?: string
         }
         Returns: boolean
+      }
+      mark_overdue_followups: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
