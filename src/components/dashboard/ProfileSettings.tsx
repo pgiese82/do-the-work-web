@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone, Shield } from 'lucide-react';
+import { User, Mail, Phone, Shield, Settings } from 'lucide-react';
 
 export function ProfileSettings() {
   const { user } = useAuth();
@@ -79,102 +79,132 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-black text-white mb-2">Profile Settings</h1>
-        <p className="text-gray-300">
+    <div className="space-y-8 max-w-4xl mx-auto p-8">
+      {/* Header Section */}
+      <div className="space-y-3">
+        <h1 className="text-3xl font-semibold text-foreground">Profile Settings</h1>
+        <p className="text-muted-foreground text-lg">
           Manage your account information and preferences
         </p>
       </div>
 
-      <div className="grid gap-6">
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Personal Information
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Update your personal details
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-white">Full Name</Label>
-                <Input
-                  id="name"
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  placeholder="Enter your full name"
-                />
-              </div>
+      {/* Profile Information Card */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <User className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-semibold text-foreground">
+                Personal Information
+              </CardTitle>
+              <CardDescription className="text-base text-muted-foreground">
+                Update your personal details
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="name" className="text-sm font-medium text-foreground">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                value={profile.name}
+                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary"
+                placeholder="Enter your full name"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">Email</Label>
+            <div className="space-y-3">
+              <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                Email Address
+              </Label>
+              <div className="relative">
                 <Input
                   id="email"
                   type="email"
                   value={profile.email}
                   disabled
-                  className="bg-white/5 border-white/10 text-gray-400"
+                  className="h-11 bg-muted/50 border-border text-muted-foreground pl-10"
                 />
-                <p className="text-xs text-gray-400">
-                  Email cannot be changed. Contact support if needed.
-                </p>
+                <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
               </div>
+              <p className="text-xs text-muted-foreground">
+                Email cannot be changed. Contact support if needed.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-white">Phone Number</Label>
+            <div className="space-y-3">
+              <Label htmlFor="phone" className="text-sm font-medium text-foreground">
+                Phone Number
+              </Label>
+              <div className="relative">
                 <Input
                   id="phone"
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                  className="h-11 bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-primary/20 focus:border-primary pl-10"
                   placeholder="Enter your phone number"
                 />
+                <Phone className="w-4 h-4 text-muted-foreground absolute left-3 top-3.5" />
               </div>
+            </div>
 
+            <div className="pt-4">
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#d67b1e] text-white"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
+                size="lg"
               >
-                {loading ? 'Updating...' : 'Update Profile'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Shield className="w-5 h-5" />
-              Account Security
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Manage your password and security settings
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button 
-                variant="outline"
-                className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
-              >
-                Change Password
-              </Button>
-              <Button 
-                variant="outline"
-                className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
-              >
-                Enable Two-Factor Authentication
+                {loading ? 'Updating Profile...' : 'Update Profile'}
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Account Security Card */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-semibold text-foreground">
+                Account Security
+              </CardTitle>
+              <CardDescription className="text-base text-muted-foreground">
+                Manage your password and security settings
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button 
+              variant="outline"
+              className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
+              size="lg"
+            >
+              Change Password
+            </Button>
+            <Button 
+              variant="outline"
+              className="h-11 bg-background border-border text-foreground hover:bg-muted/50 transition-all duration-200"
+              size="lg"
+            >
+              Enable 2FA
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
