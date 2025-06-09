@@ -139,7 +139,7 @@ export type Database = {
           booking_id: string
           created_at: string
           id: string
-          modification_type: Database["public"]["Enums"]["booking_modification_type"]
+          modification_type: Database["public"]["Enums"]["modification_type"]
           reason: string | null
           refund_amount: number | null
           requested_date_time: string | null
@@ -153,7 +153,7 @@ export type Database = {
           booking_id: string
           created_at?: string
           id?: string
-          modification_type: Database["public"]["Enums"]["booking_modification_type"]
+          modification_type: Database["public"]["Enums"]["modification_type"]
           reason?: string | null
           refund_amount?: number | null
           requested_date_time?: string | null
@@ -167,7 +167,7 @@ export type Database = {
           booking_id?: string
           created_at?: string
           id?: string
-          modification_type?: Database["public"]["Enums"]["booking_modification_type"]
+          modification_type?: Database["public"]["Enums"]["modification_type"]
           reason?: string | null
           refund_amount?: number | null
           requested_date_time?: string | null
@@ -990,6 +990,7 @@ export type Database = {
         | "medical"
         | "other"
       modification_status: "pending" | "approved" | "rejected"
+      modification_type: "reschedule" | "cancel"
       notification_priority: "low" | "medium" | "high" | "critical"
       notification_type:
         | "new_booking"
@@ -1136,6 +1137,7 @@ export const Constants = {
         "other",
       ],
       modification_status: ["pending", "approved", "rejected"],
+      modification_type: ["reschedule", "cancel"],
       notification_priority: ["low", "medium", "high", "critical"],
       notification_type: [
         "new_booking",

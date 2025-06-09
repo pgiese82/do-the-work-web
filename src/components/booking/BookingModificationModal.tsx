@@ -153,7 +153,7 @@ export function BookingModificationModal({
 
       toast({
         title: 'Verzoek Verzonden',
-        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden. De boeking status is gewijzigd naar 'wachtend op goedkeuring'.`,
+        description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden. Je ontvangt een bevestiging per e-mail.`,
       });
 
       onSuccess();
@@ -173,8 +173,15 @@ export function BookingModificationModal({
     }
   };
 
+  const handleClose = () => {
+    onOpenChange(false);
+    setReason('');
+    setSelectedDate(undefined);
+    setSelectedTime('');
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -193,13 +200,6 @@ export function BookingModificationModal({
               Duur: {booking.services.duration} minuten • Prijs: €{booking.services.price}
             </p>
           </div>
-
-          <Alert className="border-blue-200 bg-blue-50">
-            <AlertTriangle className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
-              <strong>Let op:</strong> Na het indienen van dit verzoek wordt de boeking status gewijzigd naar "Wachtend op Goedkeuring" totdat een admin het verzoek behandelt.
-            </AlertDescription>
-          </Alert>
 
           {type === 'cancel' && (
             <Alert className={canCancel ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
@@ -253,8 +253,9 @@ export function BookingModificationModal({
           <div className="flex gap-3">
             <Button
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={handleClose}
               className="flex-1"
+              disabled={loading}
             >
               Annuleren
             </Button>
@@ -262,8 +263,9 @@ export function BookingModificationModal({
               onClick={handleSubmit}
               disabled={loading || (type === 'cancel' && !canCancel) || (type === 'reschedule' && (!selectedDate || !selectedTime))}
               className="flex-1"
+              variant={type === 'cancel' ? 'destructive' : 'default'}
             >
-              {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzet' : 'Annulerings'}verzoek Verzenden`}
+              {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzetverzoek' : 'Annuleringsverzoek'} Verzenden`}
             </Button>
           </div>
         </div>
