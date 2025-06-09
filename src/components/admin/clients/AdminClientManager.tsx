@@ -22,19 +22,19 @@ export function AdminClientManager() {
         <TabsTrigger value="followups">Follow-ups</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview" className="space-y-6">
+      <TabsContent value="overview">
         <ClientsOverview key={refreshKey} />
       </TabsContent>
 
-      <TabsContent value="profiles" className="space-y-6">
+      <TabsContent value="profiles">
         <ClientProfilesTable key={refreshKey} onUpdate={handleRefresh} />
       </TabsContent>
 
-      <TabsContent value="communication" className="space-y-6">
+      <TabsContent value="communication">
         <CommunicationHistory key={refreshKey} onUpdate={handleRefresh} />
       </TabsContent>
 
-      <TabsContent value="followups" className="space-y-6">
+      <TabsContent value="followups">
         <FollowUpScheduler key={refreshKey} onUpdate={handleRefresh} />
       </TabsContent>
     </Tabs>
