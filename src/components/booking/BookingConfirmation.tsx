@@ -15,6 +15,8 @@ import { nl } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useBookingValidation } from '@/hooks/useBookingValidation';
 
 interface BookingConfirmationProps {
   open: boolean;
@@ -45,10 +47,11 @@ const BookingConfirmation = ({
   const [specialRequests, setSpecialRequests] = useState('');
   const [emergencyContact, setEmergencyContact] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [userDetails, setUserDetails] = useState<any>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { validateBooking } = useBookingValidation();
 
   useEffect(() => {
     if (user && open) {
@@ -76,6 +79,99 @@ const BookingConfirmation = ({
     }
   };
 
+  // Mutation for creating booking
+  const createBookingMutation = useMutation({
+    mutationFn: async (bookingDetails: any) => {
+      // Validate booking first
+      const validation = await validateBooking(
+        bookingDetails.service_id,
+        new Date(bookingDetails.date_time),
+        user?.id
+      );
+
+      if (!validation.isValid) {
+        throw new Error(validation.errors.join(', '));
+      }
+
+      // Create booking
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user!.id,
+          service_id: bookingDetails.service_id,
+          date_time: bookingDetails.date_time,
+          notes: bookingDetails.notes || null,
+          status: 'confirmed',
+          payment_status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Create payment record
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .insert({
+          booking_id: data.id,
+          amount: bookingDetails.amount,
+          payment_method: 'online',
+          status: 'pending'
+        });
+
+      if (paymentError) throw paymentError;
+
+      return data;
+    },
+    onMutate: async (bookingDetails) => {
+      // Optimistic update - add booking to cache
+      await queryClient.cancelQueries({ queryKey: ['recent-bookings'] });
+      
+      const previousBookings = queryClient.getQueryData(['recent-bookings']);
+      
+      const optimisticBooking = {
+        id: 'temp-' + Date.now(),
+        ...bookingDetails,
+        status: 'confirmed',
+        payment_status: 'pending',
+        created_at: new Date().toISOString(),
+        services: bookingData?.service
+      };
+
+      queryClient.setQueryData(['recent-bookings'], (old: any) => {
+        return [optimisticBooking, ...(old || [])];
+      });
+
+      return { previousBookings };
+    },
+    onError: (error, variables, context) => {
+      // Revert optimistic update
+      if (context?.previousBookings) {
+        queryClient.setQueryData(['recent-bookings'], context.previousBookings);
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Boeking mislukt",
+        description: error.message,
+      });
+    },
+    onSuccess: (data) => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['recent-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['next-booking'] });
+      
+      toast({
+        title: "Boeking bevestigd",
+        description: "Je boeking is aangemaakt en wacht op betaling.",
+      });
+
+      onConfirm();
+      onOpenChange(false);
+    }
+  });
+
   const handleProceedToPayment = async () => {
     if (!termsAccepted) {
       toast({
@@ -88,50 +184,25 @@ const BookingConfirmation = ({
 
     if (!bookingData || !user) return;
 
-    setLoading(true);
+    // Combine date and time
+    const [hours, minutes] = bookingData.time.split(':').map(Number);
+    const dateTime = new Date(bookingData.date);
+    dateTime.setHours(hours, minutes, 0, 0);
 
-    try {
-      // Combine date and time
-      const [hours, minutes] = bookingData.time.split(':').map(Number);
-      const dateTime = new Date(bookingData.date);
-      dateTime.setHours(hours, minutes, 0, 0);
+    // Prepare final notes
+    const finalNotes = [
+      bookingData.notes,
+      specialRequests,
+      emergencyContact ? `Noodcontact: ${emergencyContact}` : ''
+    ].filter(Boolean).join('\n\n');
 
-      // Create booking with special requests
-      const finalNotes = [
-        bookingData.notes,
-        specialRequests,
-        emergencyContact ? `Noodcontact: ${emergencyContact}` : ''
-      ].filter(Boolean).join('\n\n');
-
-      const { error } = await supabase
-        .from('bookings')
-        .insert({
-          user_id: user.id,
-          service_id: bookingData.service.id,
-          date_time: dateTime.toISOString(),
-          notes: finalNotes || null,
-          status: 'confirmed',
-          payment_status: 'pending'
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Boeking bevestigd",
-        description: "Je boeking is aangemaakt en wacht op betaling.",
-      });
-
-      onConfirm();
-      onOpenChange(false);
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Boeking mislukt",
-        description: error.message,
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Create booking
+    createBookingMutation.mutate({
+      service_id: bookingData.service.id,
+      date_time: dateTime.toISOString(),
+      notes: finalNotes || null,
+      amount: bookingData.service.price
+    });
   };
 
   const handleCancel = () => {
@@ -330,6 +401,7 @@ const BookingConfirmation = ({
               variant="outline"
               onClick={onModify}
               className="flex items-center gap-2"
+              disabled={createBookingMutation.isPending}
             >
               <Edit className="w-4 h-4" />
               Wijzigen
@@ -339,6 +411,7 @@ const BookingConfirmation = ({
               variant="outline"
               onClick={handleCancel}
               className="flex items-center gap-2"
+              disabled={createBookingMutation.isPending}
             >
               <Trash2 className="w-4 h-4" />
               Annuleren
@@ -346,11 +419,11 @@ const BookingConfirmation = ({
             
             <Button
               onClick={handleProceedToPayment}
-              disabled={!termsAccepted || loading}
+              disabled={!termsAccepted || createBookingMutation.isPending}
               className="flex-1 bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-2"
             >
               <CreditCard className="w-4 h-4" />
-              {loading ? 'Bezig...' : 'Doorgaan naar betaling'}
+              {createBookingMutation.isPending ? 'Bezig...' : 'Doorgaan naar betaling'}
             </Button>
           </div>
         </div>

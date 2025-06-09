@@ -37,6 +37,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   const [notes, setNotes] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -49,6 +50,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   const fetchService = async () => {
     if (!serviceId) return;
     
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('services')
@@ -64,6 +66,8 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
         title: "Fout bij laden service",
         description: error.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,11 +107,6 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   };
 
   const handleConfirmBooking = () => {
-    toast({
-      title: "Boeking succesvol",
-      description: "Je boeking is bevestigd en wacht op betaling.",
-    });
-    
     // Reset form
     setSelectedDate(undefined);
     setSelectedTime('');
@@ -151,7 +150,8 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
               onTimeSelect={setSelectedTime}
               serviceDuration={service?.duration || 60}
               onConfirm={handleProceedToConfirmation}
-              loading={false}
+              loading={loading}
+              serviceId={serviceId || undefined}
             />
 
             <div>

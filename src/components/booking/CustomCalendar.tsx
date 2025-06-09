@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, Calendar as CalendarIcon, Check } from 'lucide-react';
 import { format, addDays, isSameDay, isToday, isBefore, getDay } from 'date-fns';
 import { nl } from 'date-fns/locale';
+import { useBookingValidation } from '@/hooks/useBookingValidation';
+import { useToast } from '@/hooks/use-toast';
 
 interface TimeSlot {
   time: string;
@@ -22,6 +24,7 @@ interface CustomCalendarProps {
   serviceDuration: number;
   onConfirm: () => void;
   loading?: boolean;
+  serviceId?: string;
 }
 
 const CustomCalendar = ({
@@ -31,10 +34,14 @@ const CustomCalendar = ({
   onTimeSelect,
   serviceDuration,
   onConfirm,
-  loading = false
+  loading = false,
+  serviceId
 }: CustomCalendarProps) => {
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [confirming, setConfirming] = useState(false);
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+  const { checkAvailability } = useBookingValidation();
+  const { toast } = useToast();
 
   // Business hours: Monday-Friday 9:00-17:00, Saturday 9:00-15:00
   const businessHours = {
@@ -46,6 +53,13 @@ const CustomCalendar = ({
     saturday: { start: 9, end: 15 },
     sunday: null // Closed
   };
+
+  // Fetch booked times when date changes
+  useEffect(() => {
+    if (selectedDate) {
+      checkAvailability(selectedDate).then(setBookedTimes);
+    }
+  }, [selectedDate, checkAvailability]);
 
   // Generate time slots for the selected date
   useEffect(() => {
@@ -65,7 +79,6 @@ const CustomCalendar = ({
     }
 
     const slots: TimeSlot[] = [];
-    const slotDuration = 60; // 60 minutes per slot
     const serviceDurationHours = serviceDuration / 60;
     
     // Generate slots every 30 minutes
@@ -76,20 +89,27 @@ const CustomCalendar = ({
       
       // Check if there's enough time for the service before closing
       const slotEndTime = hour + serviceDurationHours;
-      const isAvailable = slotEndTime <= hours.end;
+      const hasEnoughTime = slotEndTime <= hours.end;
       
-      // Mock some booked slots for demonstration
-      const isBooked = ['14:00', '15:30'].includes(timeString) && isToday(selectedDate);
+      // Check if this time is already booked
+      const isBooked = bookedTimes.includes(timeString);
+      
+      // Check if it's in the past (for today)
+      const slotDateTime = new Date(selectedDate);
+      slotDateTime.setHours(wholeHour, minutes, 0, 0);
+      const isPast = isBefore(slotDateTime, new Date());
+      
+      const isAvailable = hasEnoughTime && !isBooked && !isPast;
       
       slots.push({
         time: timeString,
-        available: isAvailable && !isBooked,
+        available: isAvailable,
         booked: isBooked
       });
     }
 
     setAvailableSlots(slots);
-  }, [selectedDate, serviceDuration]);
+  }, [selectedDate, serviceDuration, bookedTimes]);
 
   const isDateDisabled = (date: Date) => {
     // Disable past dates
@@ -103,22 +123,46 @@ const CustomCalendar = ({
       return true;
     }
     
-    // Mock blocked dates (e.g., holidays)
-    const blockedDates = [
-      new Date(2024, 11, 25), // Christmas
-      new Date(2024, 11, 26), // Boxing Day
-      new Date(2025, 0, 1),   // New Year
-    ];
+    // Disable dates more than 60 days in the future
+    const daysFromNow = (date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+    if (daysFromNow > 60) {
+      return true;
+    }
     
-    return blockedDates.some(blockedDate => isSameDay(date, blockedDate));
+    return false;
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    if (!selectedDate || !selectedTime || !serviceId) {
+      toast({
+        variant: "destructive",
+        title: "Incomplete booking",
+        description: "Please select a date and time for your booking.",
+      });
+      return;
+    }
+
     setConfirming(true);
-    setTimeout(() => {
+    
+    try {
+      // Create the full date-time
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const bookingDateTime = new Date(selectedDate);
+      bookingDateTime.setHours(hours, minutes, 0, 0);
+
+      // Small delay to show confirming state
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       onConfirm();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Booking error",
+        description: "Er is een fout opgetreden bij het bevestigen van de boeking.",
+      });
+    } finally {
       setConfirming(false);
-    }, 1000);
+    }
   };
 
   return (
