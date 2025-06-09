@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -95,6 +94,7 @@ export const useClientLifecycle = () => {
           user_id: clientId,
           follow_up_type: followUpType,
           scheduled_date: scheduledDate,
+          title: `Follow-up: ${followUpType}`,
           description,
           status: 'pending',
           admin_id: (await supabase.auth.getUser()).data.user?.id
@@ -152,7 +152,6 @@ export const useClientLifecycle = () => {
     }
   };
 
-  // Auto-schedule follow-ups based on lifecycle stage
   const autoScheduleFollowUps = async () => {
     const clientsNeedingFollowUp = clients.filter(client => {
       const hasActiveFollowUp = client.next_follow_up_date && new Date(client.next_follow_up_date) > new Date();

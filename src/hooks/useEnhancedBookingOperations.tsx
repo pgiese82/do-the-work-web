@@ -17,17 +17,23 @@ export const useEnhancedBookingOperations = () => {
   const performBulkUpdate = async (bookingIds: string[], updateData: BulkUpdateData) => {
     setLoading(true);
     try {
-      // Convert to proper format for database function
-      const dbUpdateData = {
-        status: updateData.status,
-        payment_status: updateData.payment_status,
-        internal_notes: updateData.internal_notes
-      };
+      // Convert to proper JSON format for database function
+      const dbUpdateData: Record<string, any> = {};
+      
+      if (updateData.status !== undefined) {
+        dbUpdateData.status = updateData.status;
+      }
+      if (updateData.payment_status !== undefined) {
+        dbUpdateData.payment_status = updateData.payment_status;
+      }
+      if (updateData.internal_notes !== undefined) {
+        dbUpdateData.internal_notes = updateData.internal_notes;
+      }
 
       // Use the database function for atomic bulk operations
       const { data, error } = await supabase.rpc('bulk_update_bookings', {
         booking_ids: bookingIds,
-        update_data: dbUpdateData as any
+        update_data: dbUpdateData
       });
 
       if (error) throw error;

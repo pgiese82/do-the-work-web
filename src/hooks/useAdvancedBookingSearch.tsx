@@ -41,13 +41,19 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
           )
         `);
 
-      // Apply filters with proper type casting
+      // Apply filters with proper type validation
       if (filters.statusFilter !== 'all') {
-        query = query.eq('status', filters.statusFilter as any);
+        const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled', 'no_show'];
+        if (validStatuses.includes(filters.statusFilter)) {
+          query = query.eq('status', filters.statusFilter);
+        }
       }
 
       if (filters.paymentFilter !== 'all') {
-        query = query.eq('payment_status', filters.paymentFilter as any);
+        const validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
+        if (validPaymentStatuses.includes(filters.paymentFilter)) {
+          query = query.eq('payment_status', filters.paymentFilter);
+        }
       }
 
       if (filters.serviceFilter !== 'all') {
