@@ -24,6 +24,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -32,37 +33,31 @@ const menuItems = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
-    description: "Overview & stats"
   },
   {
     title: "Services",
     url: "/dashboard/services",
     icon: ShoppingBag,
-    description: "Browse services"
   },
   {
     title: "Book Session",
     url: "/dashboard/book",
     icon: Calendar,
-    description: "Schedule training"
   },
   {
     title: "My Bookings",
     url: "/dashboard/bookings",
     icon: CalendarCheck,
-    description: "View sessions"
   },
   {
     title: "Documents",
     url: "/dashboard/documents",
     icon: FileText,
-    description: "Access files"
   },
   {
     title: "Profile Settings",
     url: "/dashboard/profile",
     icon: Settings,
-    description: "Update profile"
   },
 ];
 
@@ -92,51 +87,40 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-white/10 bg-gradient-to-b from-[#1a1a2e]/98 to-[#16213e]/98 backdrop-blur-md w-64">
-      <SidebarHeader className="p-6 border-b border-white/10">
+    <Sidebar className="border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <SidebarHeader className="p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#ff6b35] to-[#f7931e] rounded-xl flex items-center justify-center shadow-lg">
-            <Dumbbell className="w-7 h-7 text-white" />
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <Dumbbell className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-white">DO THE WORK</h2>
-            <p className="text-xs text-orange-300 font-medium">Client Portal</p>
+            <h2 className="font-semibold text-foreground">DO THE WORK</h2>
+            <p className="text-xs text-muted-foreground">Client Portal</p>
           </div>
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="px-4 py-6">
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-400 text-xs uppercase tracking-wider mb-4 font-semibold px-3">
-            Navigation
+          <SidebarGroupLabel className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-3">
+            Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
+            <SidebarMenu className="space-y-1">
               {menuItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => navigate(item.url)}
-                      className={`w-full justify-start text-left px-4 py-4 rounded-xl transition-all duration-300 group ${
+                      className={`w-full justify-start px-3 py-2 h-10 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#ff6b35] to-[#f7931e] text-white shadow-lg shadow-orange-500/25'
-                          : 'text-gray-300 hover:bg-white/10 hover:text-white hover:shadow-md'
+                          ? 'bg-primary text-primary-foreground shadow-sm'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       }`}
                     >
-                      <div className="flex items-center w-full">
-                        <item.icon className={`w-5 h-5 mr-4 transition-transform duration-300 ${
-                          isActive ? 'text-white' : 'text-gray-400 group-hover:text-white group-hover:scale-110'
-                        }`} />
-                        <div className="flex-1">
-                          <div className={`font-semibold text-sm ${isActive ? 'text-white' : 'text-gray-200'}`}>
-                            {item.title}
-                          </div>
-                          <div className={`text-xs ${isActive ? 'text-orange-100' : 'text-gray-500 group-hover:text-gray-400'}`}>
-                            {item.description}
-                          </div>
-                        </div>
-                      </div>
+                      <item.icon className="w-4 h-4 mr-3" />
+                      <span className="font-medium">{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -146,14 +130,14 @@ export function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-6 border-t border-white/10">
+      <SidebarFooter className="p-4 border-t border-border/50">
         <Button
           onClick={handleLogout}
           variant="outline"
-          className="w-full border-red-500/30 text-red-300 hover:bg-red-500/20 hover:border-red-500/50 hover:text-white transition-all duration-300 py-3 rounded-xl font-medium"
+          className="w-full justify-start h-10 text-muted-foreground hover:text-foreground"
         >
-          <LogOut className="w-4 h-4 mr-2" />
-          Logout
+          <LogOut className="w-4 h-4 mr-3" />
+          <span>Logout</span>
         </Button>
       </SidebarFooter>
     </Sidebar>
