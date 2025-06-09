@@ -97,7 +97,7 @@ const Footer = () => {
 
           {/* Services */}
           <div className="space-y-6">
-            <h3 className="text-lg md:text-xl font-bold text-white">Services</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white">Diensten</h3>
             <ul className="space-y-3">
               {serviceLinks.map(link => <li key={link.name}>
                   <a href={link.href} className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm md:text-base block py-1">
