@@ -8,49 +8,16 @@ import { Documents } from './Documents';
 import { ProfileSettings } from './ProfileSettings';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  CalendarCheck, 
-  FileText, 
-  Settings,
-  LogOut,
-  ArrowLeft
-} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { dashboardRoutes } from '@/config/dashboardRoutes';
 
 export function DashboardContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
-      toast({
-        title: "Succesvol uitgelogd",
-        description: "Je bent uitgelogd van je account.",
-      });
-      
-      navigate('/auth');
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Fout bij uitloggen",
-        description: error.message,
-      });
-    }
-  };
 
   const renderContent = () => {
     const currentPath = location.pathname;
     console.log('Current route:', currentPath);
     
-    // Exact path matching
+    // Exact path matching with fallback
     switch (currentPath) {
       case '/dashboard':
         return <DashboardOverview />;
@@ -63,16 +30,8 @@ export function DashboardContent() {
       case '/dashboard/profile':
         return <ProfileSettings />;
       default:
-        console.log('Unknown route, showing 404');
-        return (
-          <div className="p-8 text-center">
-            <h2 className="text-xl font-semibold mb-2">Pagina niet gevonden</h2>
-            <p className="text-muted-foreground mb-4">Deze pagina bestaat niet of is verplaatst.</p>
-            <Button onClick={() => navigate('/dashboard')}>
-              Terug naar Dashboard
-            </Button>
-          </div>
-        );
+        console.log('Unknown route, showing dashboard overview');
+        return <DashboardOverview />;
     }
   };
 
