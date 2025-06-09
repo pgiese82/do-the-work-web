@@ -110,7 +110,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-border">
+    <Sidebar variant="sidebar" className="border-r border-border">
       <SidebarHeader className="border-b border-border">
         <div className="flex items-center gap-2 px-4 py-4">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
@@ -133,17 +133,12 @@ export function AdminSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      asChild
                       isActive={isActive}
                       tooltip={item.title}
+                      onClick={() => navigate(item.url)}
                     >
-                      <button
-                        onClick={() => navigate(item.url)}
-                        className="flex items-center gap-2 w-full"
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </button>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -160,17 +155,12 @@ export function AdminSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      asChild
                       isActive={isActive}
                       tooltip={item.title}
+                      onClick={() => navigate(item.url)}
                     >
-                      <button
-                        onClick={() => navigate(item.url)}
-                        className="flex items-center gap-2 w-full"
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </button>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
