@@ -34,7 +34,7 @@ const HeroSection = () => {
       <div className="relative container mx-auto px-4 md:px-8 lg:px-12 xl:px-16 py-10 md:py-16 lg:py-24">
         <div ref={contentRef} className={`max-w-6xl mx-auto text-center scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
           <div className="mb-6 md:mb-8 lg:mb-10">
-            <span className="text-orange-400/80 text-xs md:text-sm font-medium tracking-wider uppercase">
+            <span className="text-orange-400/80 text-xs font-medium tracking-wider uppercase md:text-4xl">
               #DoTheWork
             </span>
           </div>
