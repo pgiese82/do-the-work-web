@@ -23,7 +23,8 @@ import {
   Settings,
   Shield,
   LogOut,
-  Activity
+  Activity,
+  Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -39,6 +40,11 @@ const adminMenuItems = [
     title: "Bookings",
     url: "/admin/bookings",
     icon: CalendarCheck,
+  },
+  {
+    title: "Notifications",
+    url: "/admin/notifications",
+    icon: Bell,
   },
   {
     title: "Audit Logs",

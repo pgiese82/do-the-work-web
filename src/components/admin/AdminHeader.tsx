@@ -1,19 +1,11 @@
 
 import React from 'react';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { NotificationBell } from './notifications/NotificationBell';
 
 export function AdminHeader() {
   const { user, signOut } = useAdminAuth();
@@ -37,52 +29,29 @@ export function AdminHeader() {
     }
   };
 
-  const getUserInitials = (email: string) => {
-    return email.substring(0, 2).toUpperCase();
-  };
-
   return (
-    <header className="h-16 border-b border-orange-900/20 bg-gray-900/95 backdrop-blur-md">
-      <div className="flex items-center justify-between px-6 h-full">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-white">Admin Dashboard</h1>
+    <header className="bg-gray-800 border-b border-orange-900/20 px-6 py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-bold text-white">Admin Panel</h1>
         </div>
         
-        <div className="flex items-center space-x-4">
-          <div className="text-right">
-            <p className="text-sm text-orange-300 font-medium">
-              {user?.email}
-            </p>
-            <p className="text-xs text-gray-400">Administrator</p>
+        <div className="flex items-center gap-4">
+          <NotificationBell />
+          
+          <div className="flex items-center gap-2 text-gray-300">
+            <User className="w-4 h-4" />
+            <span className="text-sm">{user?.email}</span>
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
-                <Avatar className="h-10 w-10 border-2 border-orange-500/20">
-                  <AvatarFallback className="bg-orange-500 text-white text-sm">
-                    {user?.email ? getUserInitials(user.email) : 'AD'}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-gray-800 border-orange-900/20" align="end">
-              <DropdownMenuLabel className="text-orange-300">Admin Account</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-orange-900/20" />
-              <DropdownMenuItem className="text-gray-300 hover:bg-orange-500/10 hover:text-orange-300">
-                <User className="mr-2 h-4 w-4" />
-                Profile Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-orange-900/20" />
-              <DropdownMenuItem 
-                onClick={handleLogout}
-                className="text-gray-300 hover:bg-red-500/10 hover:text-red-300"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            onClick={handleLogout}
+            variant="ghost"
+            size="sm"
+            className="text-gray-300 hover:text-white hover:bg-red-500/20"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </header>

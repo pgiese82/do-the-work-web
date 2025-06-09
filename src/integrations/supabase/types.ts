@@ -351,6 +351,130 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          admin_id: string
+          created_at: string
+          email_enabled: boolean
+          id: string
+          in_app_enabled: boolean
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          toast_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          in_app_enabled?: boolean
+          notification_type: Database["public"]["Enums"]["notification_type"]
+          toast_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          in_app_enabled?: boolean
+          notification_type?: Database["public"]["Enums"]["notification_type"]
+          toast_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          admin_id: string | null
+          booking_id: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_email_sent: boolean
+          is_read: boolean
+          message: string
+          metadata: Json | null
+          payment_id: string | null
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_email_sent?: boolean
+          is_read?: boolean
+          message: string
+          metadata?: Json | null
+          payment_id?: string | null
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_email_sent?: boolean
+          is_read?: boolean
+          message?: string
+          metadata?: Json | null
+          payment_id?: string | null
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -615,6 +739,19 @@ export type Database = {
         Args: { booking_id: string }
         Returns: boolean
       }
+      create_notification: {
+        Args: {
+          p_type: Database["public"]["Enums"]["notification_type"]
+          p_title: string
+          p_message: string
+          p_user_id?: string
+          p_booking_id?: string
+          p_payment_id?: string
+          p_priority?: Database["public"]["Enums"]["notification_priority"]
+          p_metadata?: Json
+        }
+        Returns: string
+      }
       get_effective_price: {
         Args: { service_id_param: string; booking_datetime: string }
         Returns: number
@@ -656,6 +793,16 @@ export type Database = {
         | "medical"
         | "other"
       modification_status: "pending" | "approved" | "rejected"
+      notification_priority: "low" | "medium" | "high" | "critical"
+      notification_type:
+        | "new_booking"
+        | "payment_confirmation"
+        | "payment_failed"
+        | "booking_cancelled"
+        | "booking_modified"
+        | "same_day_cancellation"
+        | "no_show"
+        | "system_alert"
       payment_method: "mollie" | "cash" | "bank_transfer" | "ideal"
       payment_status: "pending" | "paid" | "failed" | "refunded"
       subscription_status: "active" | "inactive" | "trial" | "expired"
@@ -792,6 +939,17 @@ export const Constants = {
         "other",
       ],
       modification_status: ["pending", "approved", "rejected"],
+      notification_priority: ["low", "medium", "high", "critical"],
+      notification_type: [
+        "new_booking",
+        "payment_confirmation",
+        "payment_failed",
+        "booking_cancelled",
+        "booking_modified",
+        "same_day_cancellation",
+        "no_show",
+        "system_alert",
+      ],
       payment_method: ["mollie", "cash", "bank_transfer", "ideal"],
       payment_status: ["pending", "paid", "failed", "refunded"],
       subscription_status: ["active", "inactive", "trial", "expired"],
