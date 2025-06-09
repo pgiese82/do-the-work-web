@@ -20,11 +20,11 @@ const AdminNotifications = () => {
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="notifications" className="mt-6">
+        <TabsContent value="notifications" className="space-y-6">
           <NotificationPanel />
         </TabsContent>
 
-        <TabsContent value="preferences" className="mt-6">
+        <TabsContent value="preferences" className="space-y-6">
           <NotificationPreferences />
         </TabsContent>
       </Tabs>

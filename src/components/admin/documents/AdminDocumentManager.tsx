@@ -15,53 +15,34 @@ export function AdminDocumentManager() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-black text-white mb-2">Document Management</h2>
-        <p className="text-gray-300">
-          Manage client documents, templates, assignments, and automated delivery
-        </p>
-      </div>
+    <Tabs defaultValue="overview" className="w-full">
+      <TabsList className="grid w-full grid-cols-5">
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="templates">Templates</TabsTrigger>
+        <TabsTrigger value="client-documents">Client Documents</TabsTrigger>
+        <TabsTrigger value="assignments">Assignments</TabsTrigger>
+        <TabsTrigger value="delivery-log">Delivery Log</TabsTrigger>
+      </TabsList>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 bg-gray-700">
-          <TabsTrigger value="overview" className="text-gray-300 data-[state=active]:text-orange-400">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="templates" className="text-gray-300 data-[state=active]:text-orange-400">
-            Templates
-          </TabsTrigger>
-          <TabsTrigger value="documents" className="text-gray-300 data-[state=active]:text-orange-400">
-            Client Documents
-          </TabsTrigger>
-          <TabsTrigger value="assignments" className="text-gray-300 data-[state=active]:text-orange-400">
-            Assignments
-          </TabsTrigger>
-          <TabsTrigger value="delivery" className="text-gray-300 data-[state=active]:text-orange-400">
-            Delivery Log
-          </TabsTrigger>
-        </TabsList>
+      <TabsContent value="overview" className="space-y-6">
+        <DocumentOverview key={refreshKey} />
+      </TabsContent>
 
-        <TabsContent value="overview" className="space-y-6">
-          <DocumentOverview key={refreshKey} />
-        </TabsContent>
+      <TabsContent value="templates" className="space-y-6">
+        <DocumentTemplates key={refreshKey} onUpdate={handleRefresh} />
+      </TabsContent>
 
-        <TabsContent value="templates" className="space-y-6">
-          <DocumentTemplates key={refreshKey} onUpdate={handleRefresh} />
-        </TabsContent>
+      <TabsContent value="client-documents" className="space-y-6">
+        <ClientDocuments key={refreshKey} onUpdate={handleRefresh} />
+      </TabsContent>
 
-        <TabsContent value="documents" className="space-y-6">
-          <ClientDocuments key={refreshKey} onUpdate={handleRefresh} />
-        </TabsContent>
+      <TabsContent value="assignments" className="space-y-6">
+        <DocumentAssignments key={refreshKey} onUpdate={handleRefresh} />
+      </TabsContent>
 
-        <TabsContent value="assignments" className="space-y-6">
-          <DocumentAssignments key={refreshKey} onUpdate={handleRefresh} />
-        </TabsContent>
-
-        <TabsContent value="delivery" className="space-y-6">
-          <DocumentDeliveryLog key={refreshKey} />
-        </TabsContent>
-      </Tabs>
-    </div>
+      <TabsContent value="delivery-log" className="space-y-6">
+        <DocumentDeliveryLog key={refreshKey} onUpdate={handleRefresh} />
+      </TabsContent>
+    </Tabs>
   );
 }
