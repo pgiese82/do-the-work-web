@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AdminSidebar } from './AdminSidebar';
 
 interface AdminLayoutProps {
@@ -10,21 +10,16 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full">
         <AdminSidebar />
-        <main className="flex-1 flex flex-col">
-          <header className="border-b bg-background px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold text-foreground">Admin Portal</h1>
-                <p className="text-sm text-muted-foreground">Manage your fitness business</p>
-              </div>
-            </div>
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <h1 className="text-lg font-semibold">Admin Portal</h1>
           </header>
-          <div className="flex-1 p-6">
+          <div className="flex flex-1 flex-col gap-4 p-4">
             {children}
           </div>
-        </main>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   );

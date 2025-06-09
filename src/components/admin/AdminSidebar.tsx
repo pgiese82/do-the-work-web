@@ -102,8 +102,8 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar className="border-r bg-background">
-      <SidebarHeader className="p-6 border-b">
+    <Sidebar>
+      <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
             <Shield className="w-4 h-4 text-primary-foreground" />
@@ -115,27 +115,21 @@ export function AdminSidebar() {
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs text-muted-foreground mb-2 px-2">
-            Administration
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Administration</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu>
               {adminMenuItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => navigate(item.url)}
-                      className={`w-full justify-start px-3 py-2 h-9 rounded-md transition-colors ${
-                        isActive
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
-                      }`}
+                      isActive={isActive}
                     >
-                      <item.icon className="w-4 h-4 mr-3" />
-                      <span className="text-sm">{item.title}</span>
+                      <item.icon />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -145,14 +139,14 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 border-t">
+      <SidebarFooter className="p-4">
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start h-9 text-muted-foreground hover:text-foreground"
+          className="w-full justify-start"
         >
-          <LogOut className="w-4 h-4 mr-3" />
-          <span className="text-sm">Logout</span>
+          <LogOut className="w-4 h-4 mr-2" />
+          <span>Logout</span>
         </Button>
       </SidebarFooter>
     </Sidebar>
