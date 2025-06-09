@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +15,8 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-black text-white mb-2">Dashboard Overview</h2>
-        <p className="text-gray-300">
+        <h2 className="text-3xl font-semibold text-foreground mb-2">Dashboard Overview</h2>
+        <p className="text-muted-foreground">
           Welcome to the admin dashboard. Monitor your business performance and manage operations.
         </p>
       </div>
@@ -26,77 +27,77 @@ const AdminDashboard = () => {
       {/* Dashboard Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
-        <Card className="bg-gray-800/50 border-orange-900/20">
+        <Card className="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-400" />
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Clock className="w-5 h-5 text-muted-foreground" />
               Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+              <CheckCircle className="w-4 h-4 text-green-600" />
               <div className="flex-1">
-                <p className="text-white text-sm">New booking confirmed</p>
-                <p className="text-gray-400 text-xs">John Doe - Personal Training</p>
+                <p className="text-foreground text-sm">New booking confirmed</p>
+                <p className="text-muted-foreground text-xs">John Doe - Personal Training</p>
               </div>
-              <span className="text-xs text-gray-400">2 min ago</span>
+              <span className="text-xs text-muted-foreground">2 min ago</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
-              <Users className="w-4 h-4 text-blue-400" />
+            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+              <Users className="w-4 h-4 text-blue-600" />
               <div className="flex-1">
-                <p className="text-white text-sm">New client registered</p>
-                <p className="text-gray-400 text-xs">Sarah Smith joined</p>
+                <p className="text-foreground text-sm">New client registered</p>
+                <p className="text-muted-foreground text-xs">Sarah Smith joined</p>
               </div>
-              <span className="text-xs text-gray-400">15 min ago</span>
+              <span className="text-xs text-muted-foreground">15 min ago</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
-              <AlertCircle className="w-4 h-4 text-yellow-400" />
+            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-yellow-600" />
               <div className="flex-1">
-                <p className="text-white text-sm">Payment pending review</p>
-                <p className="text-gray-400 text-xs">Mike Johnson - $150</p>
+                <p className="text-foreground text-sm">Payment pending review</p>
+                <p className="text-muted-foreground text-xs">Mike Johnson - $150</p>
               </div>
-              <span className="text-xs text-gray-400">1 hour ago</span>
+              <span className="text-xs text-muted-foreground">1 hour ago</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="bg-gray-800/50 border-orange-900/20">
+        {/* Performance Summary */}
+        <Card className="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-orange-400" />
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-muted-foreground" />
               Performance Summary
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-300">Today's Sessions</span>
-                <span className="text-white font-semibold">12/15</span>
+                <span className="text-muted-foreground">Today's Sessions</span>
+                <span className="text-foreground font-semibold">12/15</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div className="bg-orange-500 h-2 rounded-full" style={{ width: '80%' }}></div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: '80%' }}></div>
               </div>
             </div>
             
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-300">Monthly Goal</span>
-                <span className="text-white font-semibold">$35K/$50K</span>
+                <span className="text-muted-foreground">Monthly Goal</span>
+                <span className="text-foreground font-semibold">$35K/$50K</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{ width: '70%' }}></div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-green-600 h-2 rounded-full" style={{ width: '70%' }}></div>
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-300">Client Retention</span>
-                <span className="text-white font-semibold">94%</span>
+                <span className="text-muted-foreground">Client Retention</span>
+                <span className="text-foreground font-semibold">94%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '94%' }}></div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '94%' }}></div>
               </div>
             </div>
           </CardContent>
@@ -104,34 +105,34 @@ const AdminDashboard = () => {
       </div>
 
       {/* Today's Schedule */}
-      <Card className="bg-gray-800/50 border-orange-900/20">
+      <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-orange-400" />
+          <CardTitle className="text-foreground flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-muted-foreground" />
             Today's Schedule
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-gray-700/30 rounded-lg">
-              <div className="text-orange-400 text-sm font-medium">9:00 AM</div>
-              <div className="text-white font-semibold">Personal Training</div>
-              <div className="text-gray-400 text-sm">with John Doe</div>
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <div className="text-primary text-sm font-medium">9:00 AM</div>
+              <div className="text-foreground font-semibold">Personal Training</div>
+              <div className="text-muted-foreground text-sm">with John Doe</div>
             </div>
-            <div className="p-4 bg-gray-700/30 rounded-lg">
-              <div className="text-orange-400 text-sm font-medium">11:00 AM</div>
-              <div className="text-white font-semibold">Nutrition Consultation</div>
-              <div className="text-gray-400 text-sm">with Sarah Smith</div>
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <div className="text-primary text-sm font-medium">11:00 AM</div>
+              <div className="text-foreground font-semibold">Nutrition Consultation</div>
+              <div className="text-muted-foreground text-sm">with Sarah Smith</div>
             </div>
-            <div className="p-4 bg-gray-700/30 rounded-lg">
-              <div className="text-orange-400 text-sm font-medium">2:00 PM</div>
-              <div className="text-white font-semibold">Group Session</div>
-              <div className="text-gray-400 text-sm">HIIT Class</div>
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <div className="text-primary text-sm font-medium">2:00 PM</div>
+              <div className="text-foreground font-semibold">Group Session</div>
+              <div className="text-muted-foreground text-sm">HIIT Class</div>
             </div>
-            <div className="p-4 bg-gray-700/30 rounded-lg">
-              <div className="text-orange-400 text-sm font-medium">4:00 PM</div>
-              <div className="text-white font-semibold">Personal Training</div>
-              <div className="text-gray-400 text-sm">with Mike Johnson</div>
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <div className="text-primary text-sm font-medium">4:00 PM</div>
+              <div className="text-foreground font-semibold">Personal Training</div>
+              <div className="text-muted-foreground text-sm">with Mike Johnson</div>
             </div>
           </div>
         </CardContent>

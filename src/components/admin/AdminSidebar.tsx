@@ -42,16 +42,6 @@ const adminMenuItems = [
     icon: CalendarCheck,
   },
   {
-    title: "Notifications",
-    url: "/admin/notifications",
-    icon: Bell,
-  },
-  {
-    title: "Audit Logs",
-    url: "/admin/audit-logs",
-    icon: Activity,
-  },
-  {
     title: "Calendar",
     url: "/admin/calendar",
     icon: Calendar,
@@ -70,6 +60,16 @@ const adminMenuItems = [
     title: "Documents",
     url: "/admin/documents",
     icon: FileText,
+  },
+  {
+    title: "Notifications",
+    url: "/admin/notifications",
+    icon: Bell,
+  },
+  {
+    title: "Audit Logs",
+    url: "/admin/audit-logs",
+    icon: Activity,
   },
   {
     title: "Settings",
@@ -102,54 +102,57 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-orange-900/20 bg-gradient-to-b from-gray-900 to-gray-800 backdrop-blur-md">
-      <SidebarHeader className="p-6">
+    <Sidebar className="border-r bg-background">
+      <SidebarHeader className="p-6 border-b">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-            <Shield className="w-6 h-6 text-white" />
+          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+            <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">DO THE WORK</h2>
-            <p className="text-xs text-orange-400">Admin Portal</p>
+            <h2 className="font-semibold text-foreground">DO THE WORK</h2>
+            <p className="text-xs text-muted-foreground">Admin Portal</p>
           </div>
         </div>
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="px-2 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-orange-400 text-xs uppercase tracking-wide mb-4">
+          <SidebarGroupLabel className="text-xs text-muted-foreground mb-2 px-2">
             Administration
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
-              {adminMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    onClick={() => navigate(item.url)}
-                    className={`w-full justify-start text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                      location.pathname === item.url
-                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white'
-                        : 'text-gray-300 hover:bg-orange-500/10 hover:text-orange-300'
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {item.title}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="space-y-1">
+              {adminMenuItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={() => navigate(item.url)}
+                      className={`w-full justify-start px-3 py-2 h-9 rounded-md transition-colors ${
+                        isActive
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 mr-3" />
+                      <span className="text-sm">{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-6">
+      <SidebarFooter className="p-4 border-t">
         <Button
           onClick={handleLogout}
-          variant="outline"
-          className="w-full border-orange-500/20 text-orange-300 hover:bg-orange-500/20 hover:border-orange-500/50 hover:text-white"
+          variant="ghost"
+          className="w-full justify-start h-9 text-muted-foreground hover:text-foreground"
         >
-          <LogOut className="w-4 h-4 mr-2" />
-          Logout
+          <LogOut className="w-4 h-4 mr-3" />
+          <span className="text-sm">Logout</span>
         </Button>
       </SidebarFooter>
     </Sidebar>
