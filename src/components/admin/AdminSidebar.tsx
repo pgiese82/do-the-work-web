@@ -27,7 +27,6 @@ import {
   Bell,
   Globe
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -71,12 +70,12 @@ const adminMenuItems = [
 
 const bottomMenuItems = [
   {
-    title: "CMS",
+    title: "Website Beheer",
     url: "/admin/cms",
     icon: Globe,
   },
   {
-    title: "Audit Logs",
+    title: "Activiteitenlog",
     url: "/admin/audit",
     icon: Activity,
   },
@@ -98,7 +97,7 @@ export function AdminSidebar() {
       await signOut();
       toast({
         title: "Succesvol uitgelogd",
-        description: "Je bent uitgelogd van het admin portaal.",
+        description: "Je bent uitgelogd van het beheerportaal.",
       });
       navigate('/admin/login');
     } catch (error: any) {
@@ -119,14 +118,14 @@ export function AdminSidebar() {
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">DO THE WORK</span>
-            <span className="truncate text-xs text-muted-foreground">Admin Portaal</span>
+            <span className="truncate text-xs text-muted-foreground">Beheerportaal</span>
           </div>
         </div>
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administratie</SidebarGroupLabel>
+          <SidebarGroupLabel>Beheer</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminMenuItems.map((item) => {
