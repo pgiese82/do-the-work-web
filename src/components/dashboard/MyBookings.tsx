@@ -111,14 +111,14 @@ export function MyBookings() {
 
   if (loading) {
     return (
-      <div className="p-8 space-y-6">
+      <div className="space-y-6 max-w-5xl mx-auto p-6">
         <div className="space-y-3">
-          <div className="h-8 bg-gray-100 rounded-lg w-64 animate-pulse"></div>
-          <div className="h-5 bg-gray-100 rounded w-96 animate-pulse"></div>
+          <div className="h-8 bg-muted/50 rounded-lg w-64 animate-pulse"></div>
+          <div className="h-5 bg-muted/50 rounded w-96 animate-pulse"></div>
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-40 bg-gray-100 rounded-xl animate-pulse"></div>
+            <div key={i} className="h-40 bg-muted/50 rounded-xl animate-pulse"></div>
           ))}
         </div>
       </div>
@@ -128,34 +128,34 @@ export function MyBookings() {
   const currentBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 
   return (
-    <div className="p-8 space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto p-6">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-        <p className="text-gray-600 text-lg">
+      <div className="space-y-3">
+        <h1 className="text-3xl font-semibold text-foreground">My Bookings</h1>
+        <p className="text-muted-foreground text-lg">
           Manage your training sessions and appointments
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-border">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('upcoming')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+            className={`py-4 px-2 border-b-2 font-medium text-sm transition-all duration-200 ${
               activeTab === 'upcoming'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/50'
             }`}
           >
             Upcoming ({upcomingBookings.length})
           </button>
           <button
             onClick={() => setActiveTab('past')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+            className={`py-4 px-2 border-b-2 font-medium text-sm transition-all duration-200 ${
               activeTab === 'past'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/50'
             }`}
           >
             Past Sessions ({pastBookings.length})
@@ -166,30 +166,30 @@ export function MyBookings() {
       {/* Content */}
       <div className="space-y-6">
         {bookings.length === 0 ? (
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-sm">
             <CardContent className="text-center py-16">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Calendar className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <Calendar className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">No bookings yet</h3>
-              <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+              <h3 className="text-xl font-semibold text-foreground mb-3">No bookings yet</h3>
+              <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
                 You haven't booked any sessions yet. Start your fitness journey today!
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2">
                 Book Your First Session
               </Button>
             </CardContent>
           </Card>
         ) : currentBookings.length === 0 ? (
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-sm">
             <CardContent className="text-center py-12">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-6 h-6 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 No {activeTab} sessions
               </h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 {activeTab === 'upcoming' 
                   ? "You don't have any upcoming sessions scheduled."
                   : "You haven't completed any sessions yet."
@@ -202,14 +202,14 @@ export function MyBookings() {
             {currentBookings.map((booking) => {
               const dateTime = formatDateTime(booking.date_time);
               return (
-                <Card key={booking.id} className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                <Card key={booking.id} className="border-0 shadow-sm hover:shadow-md transition-all duration-200">
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
                       <div className="space-y-2">
-                        <CardTitle className="text-xl font-semibold text-gray-900">
+                        <CardTitle className="text-xl font-semibold text-foreground">
                           {booking.services.name}
                         </CardTitle>
-                        <div className="flex items-center text-gray-600">
+                        <div className="flex items-center text-muted-foreground">
                           <Calendar className="w-4 h-4 mr-2" />
                           <span className="text-base">{dateTime.date} at {dateTime.time}</span>
                         </div>
@@ -225,23 +225,23 @@ export function MyBookings() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
                         <span>{booking.services.duration} minutes</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-900">€{booking.services.price}</span>
+                        <span className="font-semibold text-foreground">€{booking.services.price}</span>
                       </div>
                     </div>
                     
                     {booking.notes && (
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-muted/50 rounded-lg p-4">
                         <div className="flex items-start gap-2">
-                          <FileText className="w-4 h-4 text-gray-500 mt-0.5" />
+                          <FileText className="w-4 h-4 text-muted-foreground mt-0.5" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900 mb-1">Session Notes</p>
-                            <p className="text-sm text-gray-600">{booking.notes}</p>
+                            <p className="text-sm font-medium text-foreground mb-1">Session Notes</p>
+                            <p className="text-sm text-muted-foreground">{booking.notes}</p>
                           </div>
                         </div>
                       </div>
@@ -253,7 +253,7 @@ export function MyBookings() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            className="text-red-600 border-red-300 hover:bg-red-50"
+                            className="text-destructive border-destructive/30 hover:bg-destructive/10"
                           >
                             Cancel Booking
                           </Button>
@@ -262,7 +262,7 @@ export function MyBookings() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                            className="text-primary border-primary/30 hover:bg-primary/10"
                           >
                             Reschedule
                           </Button>
