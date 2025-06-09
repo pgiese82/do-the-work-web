@@ -19,8 +19,8 @@ import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminWaitingList from "./pages/AdminWaitingList";
 import AdminPricing from "./pages/AdminPricing";
 import AdminAvailability from "./pages/AdminAvailability";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { AdminProtectedRoute } from "./components/auth/AdminProtectedRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

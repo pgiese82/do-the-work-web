@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuHeader,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -60,7 +59,7 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent align="end" className="w-80 bg-gray-800 border-gray-700">
-        <DropdownMenuHeader className="p-4">
+        <div className="p-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-white">Notifications</h3>
             {unreadCount > 0 && (
@@ -75,7 +74,7 @@ export function NotificationBell() {
               </Button>
             )}
           </div>
-        </DropdownMenuHeader>
+        </div>
         
         <DropdownMenuSeparator className="bg-gray-700" />
         
