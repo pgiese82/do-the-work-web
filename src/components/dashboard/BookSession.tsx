@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Clock, Money, Users, Target } from 'lucide-react';
+import { Calendar, Clock, DollarSign, Users, Target } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type Service = Database['public']['Tables']['services']['Row'];
@@ -133,7 +133,7 @@ export function BookSession() {
                       <span>{service.duration} minutes</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Money className="w-4 h-4" />
+                      <DollarSign className="w-4 h-4" />
                       <span className="font-medium">€{service.price}</span>
                     </div>
                   </div>
