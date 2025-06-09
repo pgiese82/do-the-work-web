@@ -1,29 +1,30 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AdminLayout } from "@/components/admin/AdminLayout";
 import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
-import AdminClients from "./pages/AdminClients";
-import AdminDocuments from "./pages/AdminDocuments";
-import AdminNotifications from "./pages/AdminNotifications";
 import AdminCalendar from "./pages/AdminCalendar";
+import AdminClients from "./pages/AdminClients";
 import AdminPayments from "./pages/AdminPayments";
-import AdminAuditLogs from "./pages/AdminAuditLogs";
-import AdminWaitingList from "./pages/AdminWaitingList";
-import AdminPricing from "./pages/AdminPricing";
-import AdminAvailability from "./pages/AdminAvailability";
+import AdminDocuments from "./pages/AdminDocuments";
+import AdminCMS from "./pages/AdminCMS";
+import AdminNotifications from "./pages/AdminNotifications";
 import AdminSettings from "./pages/AdminSettings";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
-import NotFound from "./pages/NotFound";
+import AdminAuditLogs from "./pages/AdminAuditLogs";
+import AdminAvailability from "./pages/AdminAvailability";
+import AdminPricing from "./pages/AdminPricing";
+import AdminWaitingList from "./pages/AdminWaitingList";
+import { AdminProtectedRoute } from "./components/auth/AdminProtectedRoute";
+import { AdminMiddleware } from "./components/admin/AdminMiddleware";
+import AdminLayout from "./components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
 
@@ -35,144 +36,36 @@ function App() {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes - no sidebar */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard/*" element={<Dashboard />} />
+            
+            {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/*" element={
+              <AdminProtectedRoute>
+                <AdminMiddleware>
+                  <AdminLayout>
+                    <Routes>
+                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="bookings" element={<AdminBookings />} />
+                      <Route path="calendar" element={<AdminCalendar />} />
+                      <Route path="clients" element={<AdminClients />} />
+                      <Route path="payments" element={<AdminPayments />} />
+                      <Route path="documents" element={<AdminDocuments />} />
+                      <Route path="cms" element={<AdminCMS />} />
+                      <Route path="notifications" element={<AdminNotifications />} />
+                      <Route path="settings" element={<AdminSettings />} />
+                      <Route path="audit-logs" element={<AdminAuditLogs />} />
+                      <Route path="availability" element={<AdminAvailability />} />
+                      <Route path="pricing" element={<AdminPricing />} />
+                      <Route path="waiting-list" element={<AdminWaitingList />} />
+                    </Routes>
+                  </AdminLayout>
+                </AdminMiddleware>
+              </AdminProtectedRoute>
+            } />
             
-            {/* Client dashboard - with sidebar */}
-            <Route
-              path="/dashboard/*"
-              element={
-                <SidebarProvider>
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                </SidebarProvider>
-              }
-            />
-            
-            {/* Admin routes - all wrapped with AdminLayout */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminDashboard />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/bookings"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminBookings />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/clients"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminClients />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/documents"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminDocuments />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/notifications"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminNotifications />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/calendar"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminCalendar />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/payments"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminPayments />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/settings"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminSettings />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/audit-logs"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminAuditLogs />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/waiting-list"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminWaitingList />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/pricing"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminPricing />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/availability"
-              element={
-                <AdminProtectedRoute>
-                  <AdminLayout>
-                    <AdminAvailability />
-                  </AdminLayout>
-                </AdminProtectedRoute>
-              }
-            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

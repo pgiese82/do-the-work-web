@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -24,7 +23,8 @@ import {
   Shield,
   LogOut,
   Activity,
-  Bell
+  Bell,
+  Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -60,6 +60,11 @@ const adminMenuItems = [
     title: "Documents", 
     url: "/admin/documents",
     icon: FileText,
+  },
+  {
+    title: "CMS",
+    url: "/admin/cms",
+    icon: Globe,
   },
   {
     title: "Notifications",
