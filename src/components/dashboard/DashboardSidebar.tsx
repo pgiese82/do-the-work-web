@@ -20,7 +20,8 @@ import {
   FileText, 
   Settings, 
   LogOut,
-  Dumbbell
+  Dumbbell,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -47,6 +48,14 @@ const menuItems = [
     title: "Documents",
     url: "/dashboard/documents",
     icon: FileText,
+  },
+];
+
+const bottomMenuItems = [
+  {
+    title: "Back to Website",
+    url: "/",
+    icon: ArrowLeft,
   },
   {
     title: "Profile Settings",
@@ -102,6 +111,31 @@ export function DashboardSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {menuItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={() => navigate(item.url)}
+                      className={`w-full justify-start px-3 py-2 h-9 rounded-md transition-colors ${
+                        isActive
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 mr-3" />
+                      <span className="text-sm">{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {bottomMenuItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
