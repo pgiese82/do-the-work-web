@@ -81,8 +81,8 @@ export function DashboardOverview() {
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load dashboard data',
+        title: 'Fout',
+        description: 'Kon dashboard gegevens niet laden',
         variant: 'destructive',
       });
     } finally {
@@ -93,12 +93,12 @@ export function DashboardOverview() {
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     return {
-      date: date.toLocaleDateString('en-US', { 
+      date: date.toLocaleDateString('nl-NL', { 
         weekday: 'long', 
         month: 'long', 
         day: 'numeric' 
       }),
-      time: date.toLocaleTimeString('en-US', { 
+      time: date.toLocaleTimeString('nl-NL', { 
         hour: '2-digit', 
         minute: '2-digit' 
       }),
@@ -121,15 +121,22 @@ export function DashboardOverview() {
     );
   }
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Goedemorgen';
+    if (hour < 18) return 'Goedemiddag';
+    return 'Goedenavond';
+  };
+
   return (
     <div className="space-y-8 p-8 max-w-7xl mx-auto">
       {/* Welcome Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold text-foreground">
-          Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.user_metadata?.name || 'there'}
+          {getGreeting()}, {user?.user_metadata?.name || 'daar'}
         </h1>
         <p className="text-muted-foreground text-lg">
-          Here's what's happening with your training
+          Hier is wat er gebeurt met je training
         </p>
       </div>
 
@@ -139,7 +146,7 @@ export function DashboardOverview() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Total Sessions</p>
+                <p className="text-sm font-medium text-muted-foreground">Totaal Sessies</p>
                 <p className="text-2xl font-semibold">{stats.totalBookings}</p>
               </div>
               <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -153,7 +160,7 @@ export function DashboardOverview() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                <p className="text-sm font-medium text-muted-foreground">Voltooid</p>
                 <p className="text-2xl font-semibold">{stats.completedSessions}</p>
               </div>
               <div className="h-8 w-8 bg-green-500/10 rounded-lg flex items-center justify-center">
@@ -167,7 +174,7 @@ export function DashboardOverview() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Upcoming</p>
+                <p className="text-sm font-medium text-muted-foreground">Aankomend</p>
                 <p className="text-2xl font-semibold">{stats.upcomingBookings}</p>
               </div>
               <div className="h-8 w-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -181,7 +188,7 @@ export function DashboardOverview() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Documents</p>
+                <p className="text-sm font-medium text-muted-foreground">Documenten</p>
                 <p className="text-2xl font-semibold">{stats.totalDocuments}</p>
               </div>
               <div className="h-8 w-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
@@ -197,9 +204,9 @@ export function DashboardOverview() {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-semibold">Next Session</CardTitle>
+              <CardTitle className="text-xl font-semibold">Volgende Sessie</CardTitle>
               <CardDescription className="text-base">
-                Your upcoming training session
+                Je aankomende trainingsessie
               </CardDescription>
             </div>
             <Calendar className="h-5 w-5 text-muted-foreground" />
@@ -213,7 +220,7 @@ export function DashboardOverview() {
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg">{nextBooking.services.name}</h3>
                     <Badge variant="secondary" className="bg-green-500/10 text-green-700 border-green-200">
-                      Confirmed
+                      Bevestigd
                     </Badge>
                   </div>
                   <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -237,7 +244,7 @@ export function DashboardOverview() {
                   className="flex-1"
                   variant="outline"
                 >
-                  View All Bookings
+                  Alle Boekingen Bekijken
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
                 <Button 
@@ -245,7 +252,7 @@ export function DashboardOverview() {
                   className="flex-1"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Book New Session
+                  Nieuwe Sessie Boeken
                 </Button>
               </div>
             </div>
@@ -254,16 +261,16 @@ export function DashboardOverview() {
               <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar className="w-6 h-6 text-muted-foreground" />
               </div>
-              <h3 className="font-semibold mb-2">No upcoming sessions</h3>
+              <h3 className="font-semibold mb-2">Geen aankomende sessies</h3>
               <p className="text-muted-foreground mb-4 text-sm">
-                Ready to start your fitness journey?
+                Klaar om je fitnessreis te beginnen?
               </p>
               <Button 
                 onClick={() => navigate('/dashboard/book')}
                 className="w-full max-w-xs mx-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Book Your First Session
+                Boek Je Eerste Sessie
               </Button>
             </div>
           )}

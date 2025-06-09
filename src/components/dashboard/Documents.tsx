@@ -61,7 +61,7 @@ export function Documents() {
   ) || [];
 
   const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return 'Unknown';
+    if (!bytes) return 'Onbekend';
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
@@ -87,9 +87,9 @@ export function Documents() {
     <div className="p-8 space-y-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">Documents</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Documenten</h1>
         <p className="text-gray-600 text-lg">
-          Access your training documents, contracts, and receipts
+          Toegang tot je trainingsdocumenten, contracten en bonnen
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export function Documents() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
-          placeholder="Search documents..."
+          placeholder="Zoek documenten..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -114,10 +114,10 @@ export function Documents() {
               </div>
               <div>
                 <CardTitle className="text-xl font-semibold text-gray-900">
-                  My Documents
+                  Mijn Documenten
                 </CardTitle>
                 <CardDescription className="text-base text-gray-600">
-                  Documents uploaded specifically for you
+                  Documenten die speciaal voor jou zijn geüpload
                 </CardDescription>
               </div>
             </div>
@@ -128,11 +128,11 @@ export function Documents() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50">
-                      <TableHead className="text-gray-700 font-medium">Title</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Category</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Size</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Upload Date</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Actions</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Titel</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Categorie</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Grootte</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Upload Datum</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Acties</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -150,7 +150,7 @@ export function Documents() {
                           {formatFileSize(document.file_size)}
                         </TableCell>
                         <TableCell className="text-gray-600">
-                          {new Date(document.upload_date).toLocaleDateString()}
+                          {new Date(document.upload_date).toLocaleDateString('nl-NL')}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
@@ -180,9 +180,9 @@ export function Documents() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <FileText className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">No personal documents yet</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Nog geen persoonlijke documenten</h3>
                 <p className="text-gray-600 max-w-sm mx-auto">
-                  Your trainer will upload documents specifically for you here
+                  Je trainer zal hier documenten uploaden die speciaal voor jou zijn
                 </p>
               </div>
             )}
@@ -198,10 +198,10 @@ export function Documents() {
               </div>
               <div>
                 <CardTitle className="text-xl font-semibold text-gray-900">
-                  Available Templates
+                  Beschikbare Sjablonen
                 </CardTitle>
                 <CardDescription className="text-base text-gray-600">
-                  Training programs and forms assigned to you
+                  Trainingsprogramma's en formulieren die aan jou zijn toegewezen
                 </CardDescription>
               </div>
             </div>
@@ -213,10 +213,10 @@ export function Documents() {
                   <TableHeader>
                     <TableRow className="bg-gray-50">
                       <TableHead className="text-gray-700 font-medium">Document</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Category</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Description</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Delivery Date</TableHead>
-                      <TableHead className="text-gray-700 font-medium">Actions</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Categorie</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Beschrijving</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Leveringsdatum</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Acties</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -231,10 +231,10 @@ export function Documents() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-gray-600 max-w-xs truncate">
-                          {assignment.document_templates?.description || 'No description'}
+                          {assignment.document_templates?.description || 'Geen beschrijving'}
                         </TableCell>
                         <TableCell className="text-gray-600">
-                          {assignment.delivery_date ? new Date(assignment.delivery_date).toLocaleDateString() : 'N/A'}
+                          {assignment.delivery_date ? new Date(assignment.delivery_date).toLocaleDateString('nl-NL') : 'N.v.t.'}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
@@ -264,9 +264,9 @@ export function Documents() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <FileText className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">No templates assigned yet</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Nog geen sjablonen toegewezen</h3>
                 <p className="text-gray-600 max-w-sm mx-auto">
-                  Your trainer will assign training programs and forms as needed
+                  Je trainer zal trainingsprogramma's en formulieren toewijzen wanneer nodig
                 </p>
               </div>
             )}
