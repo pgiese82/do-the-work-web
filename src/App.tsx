@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
+import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
@@ -27,18 +28,15 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route 
-            path="/admin/dashboard" 
+            path="/admin/*" 
             element={
               <AdminProtectedRoute>
-                <AdminDashboard />
-              </AdminProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/bookings" 
-            element={
-              <AdminProtectedRoute>
-                <AdminBookings />
+                <AdminLayout>
+                  <Routes>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="bookings" element={<AdminBookings />} />
+                  </Routes>
+                </AdminLayout>
               </AdminProtectedRoute>
             } 
           />

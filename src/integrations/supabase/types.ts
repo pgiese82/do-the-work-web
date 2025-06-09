@@ -64,34 +64,43 @@ export type Database = {
       }
       bookings: {
         Row: {
+          attendance_status: string | null
           created_at: string
           date_time: string
           id: string
+          internal_notes: string | null
           notes: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
           service_id: string
+          session_notes: string | null
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string
           user_id: string
         }
         Insert: {
+          attendance_status?: string | null
           created_at?: string
           date_time: string
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           service_id: string
+          session_notes?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
           user_id: string
         }
         Update: {
+          attendance_status?: string | null
           created_at?: string
           date_time?: string
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           service_id?: string
+          session_notes?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
           user_id?: string
