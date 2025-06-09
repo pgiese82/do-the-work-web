@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,14 +46,14 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
       if (filters.statusFilter !== 'all') {
         const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled', 'no_show'];
         if (validStatuses.includes(filters.statusFilter)) {
-          query = query.eq('status', filters.statusFilter);
+          query = query.eq('status', filters.statusFilter as 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show');
         }
       }
 
       if (filters.paymentFilter !== 'all') {
         const validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
         if (validPaymentStatuses.includes(filters.paymentFilter)) {
-          query = query.eq('payment_status', filters.paymentFilter);
+          query = query.eq('payment_status', filters.paymentFilter as 'pending' | 'paid' | 'failed' | 'refunded');
         }
       }
 
