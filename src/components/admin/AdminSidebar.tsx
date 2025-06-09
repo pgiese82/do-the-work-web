@@ -1,18 +1,6 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  SidebarFooter,
-} from '@/components/ui/sidebar';
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -117,77 +105,89 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar variant="sidebar" className="border-r border-border">
-      <SidebarHeader className="border-b border-border">
-        <div className="flex items-center gap-2 px-4 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Shield className="h-4 w-4 text-primary-foreground" />
+    <div className="w-64 bg-background border-r border-border flex flex-col h-full">
+      {/* Header */}
+      <div className="p-6 border-b border-border">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+            <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">DO THE WORK</span>
-            <span className="truncate text-xs text-muted-foreground">Beheerportaal</span>
+          <div>
+            <h2 className="font-semibold text-foreground">DO THE WORK</h2>
+            <p className="text-xs text-muted-foreground">Beheerportaal</p>
           </div>
         </div>
-      </SidebarHeader>
+      </div>
       
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Hoofdmenu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
+      {/* Main Menu */}
+      <div className="flex-1 p-4">
+        <div className="space-y-6">
+          {/* Hoofdmenu */}
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Hoofdmenu
+            </h3>
+            <nav className="space-y-1">
               {mainMenuItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 
                 return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => handleNavigation(item.path)}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavigation(item.path)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.title}
+                  </button>
                 );
               })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            </nav>
+          </div>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Beheer</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
+          {/* Beheer */}
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Beheer
+            </h3>
+            <nav className="space-y-1">
               {secondaryMenuItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 
                 return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => handleNavigation(item.path)}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavigation(item.path)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.title}
+                  </button>
                 );
               })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+            </nav>
+          </div>
+        </div>
+      </div>
       
-      <SidebarFooter className="border-t border-border">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
-              <LogOut className="h-4 w-4" />
-              <span>Uitloggen</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+      {/* Footer */}
+      <div className="p-4 border-t border-border">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          Uitloggen
+        </button>
+      </div>
+    </div>
   );
 }
