@@ -29,68 +29,30 @@ import {
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
+import { getMainAdminRoutes, getSecondaryAdminRoutes } from '@/config/adminRoutes';
 
-const adminMenuItems = [
-  {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Boekingen",
-    url: "/admin/bookings", 
-    icon: CalendarCheck,
-  },
-  {
-    title: "Kalender",
-    url: "/admin/calendar",
-    icon: Calendar,
-  },
-  {
-    title: "Klanten",
-    url: "/admin/clients",
-    icon: Users,
-  },
-  {
-    title: "Betalingen",
-    url: "/admin/payments",
-    icon: CreditCard,
-  },
-  {
-    title: "Documenten", 
-    url: "/admin/documents",
-    icon: FileText,
-  },
-  {
-    title: "Meldingen",
-    url: "/admin/notifications",
-    icon: Bell,
-  },
-];
-
-const bottomMenuItems = [
-  {
-    title: "Website Beheer",
-    url: "/admin/cms",
-    icon: Globe,
-  },
-  {
-    title: "Activiteitenlog",
-    url: "/admin/audit",
-    icon: Activity,
-  },
-  {
-    title: "Instellingen",
-    url: "/admin/settings",
-    icon: Settings,
-  },
-];
+const iconMap = {
+  LayoutDashboard,
+  Calendar,
+  CalendarCheck,
+  Users,
+  CreditCard,
+  FileText,
+  Settings,
+  Activity,
+  Bell,
+  Globe,
+  Shield
+};
 
 export function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAdminAuth();
   const { toast } = useToast();
+
+  const mainRoutes = getMainAdminRoutes();
+  const secondaryRoutes = getSecondaryAdminRoutes();
 
   const handleLogout = async () => {
     try {
@@ -109,6 +71,11 @@ export function AdminSidebar() {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    console.log('Admin sidebar navigating to:', path);
+    navigate(path);
+  };
+
   return (
     <Sidebar variant="sidebar" className="border-r border-border">
       <SidebarHeader className="border-b border-border">
@@ -125,20 +92,22 @@ export function AdminSidebar() {
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Beheer</SidebarGroupLabel>
+          <SidebarGroupLabel>Hoofdmenu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminMenuItems.map((item) => {
-                const isActive = location.pathname === item.url;
+              {mainRoutes.map((route) => {
+                const isActive = location.pathname === route.path;
+                const IconComponent = iconMap[route.icon as keyof typeof iconMap] || LayoutDashboard;
+                
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={route.path}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      tooltip={item.title}
-                      onClick={() => navigate(item.url)}
+                      tooltip={route.title}
+                      onClick={() => handleNavigation(route.path)}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <IconComponent className="h-4 w-4" />
+                      <span>{route.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -147,20 +116,23 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-auto">
+        <SidebarGroup>
+          <SidebarGroupLabel>Beheer</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {bottomMenuItems.map((item) => {
-                const isActive = location.pathname === item.url;
+              {secondaryRoutes.map((route) => {
+                const isActive = location.pathname === route.path;
+                const IconComponent = iconMap[route.icon as keyof typeof iconMap] || Settings;
+                
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={route.path}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      tooltip={item.title}
-                      onClick={() => navigate(item.url)}
+                      tooltip={route.title}
+                      onClick={() => handleNavigation(route.path)}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <IconComponent className="h-4 w-4" />
+                      <span>{route.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

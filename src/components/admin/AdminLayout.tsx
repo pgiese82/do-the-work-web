@@ -12,6 +12,8 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const isMobile = useIsMobile();
 
+  console.log('AdminLayout rendering, isMobile:', isMobile);
+
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background">

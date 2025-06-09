@@ -21,69 +21,21 @@ import {
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
+import { adminRoutes, getAdminRouteByPath } from '@/config/adminRoutes';
 
-const navigationItems = [
-  {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: LayoutDashboard,
-    color: "bg-blue-500"
-  },
-  {
-    title: "Boekingen",
-    url: "/admin/bookings",
-    icon: CalendarCheck,
-    color: "bg-green-500"
-  },
-  {
-    title: "Kalender",
-    url: "/admin/calendar",
-    icon: Calendar,
-    color: "bg-purple-500"
-  },
-  {
-    title: "Klanten",
-    url: "/admin/clients",
-    icon: Users,
-    color: "bg-orange-500"
-  },
-  {
-    title: "Betalingen",
-    url: "/admin/payments",
-    icon: CreditCard,
-    color: "bg-emerald-500"
-  },
-  {
-    title: "Documenten",
-    url: "/admin/documents",
-    icon: FileText,
-    color: "bg-red-500"
-  },
-  {
-    title: "Meldingen",
-    url: "/admin/notifications",
-    icon: Bell,
-    color: "bg-yellow-500"
-  },
-  {
-    title: "Website Beheer",
-    url: "/admin/cms",
-    icon: Globe,
-    color: "bg-indigo-500"
-  },
-  {
-    title: "Activiteitenlog",
-    url: "/admin/audit",
-    icon: Activity,
-    color: "bg-gray-500"
-  },
-  {
-    title: "Instellingen",
-    url: "/admin/settings",
-    icon: Settings,
-    color: "bg-slate-500"
-  },
-];
+const iconMap = {
+  LayoutDashboard,
+  Calendar,
+  CalendarCheck,
+  Users,
+  CreditCard,
+  FileText,
+  Settings,
+  Bell,
+  Activity,
+  Globe,
+  Shield
+};
 
 export function AdminMobileNavigation() {
   const navigate = useNavigate();
@@ -92,7 +44,7 @@ export function AdminMobileNavigation() {
   const { signOut } = useAdminAuth();
   const { toast } = useToast();
 
-  const currentItem = navigationItems.find(item => item.url === location.pathname);
+  const currentRoute = getAdminRouteByPath(location.pathname);
 
   const handleLogout = async () => {
     try {
@@ -109,6 +61,12 @@ export function AdminMobileNavigation() {
         description: error.message,
       });
     }
+  };
+
+  const handleNavigation = (path: string) => {
+    console.log('Mobile admin navigation to:', path);
+    navigate(path);
+    setIsOpen(false);
   };
 
   return (
@@ -137,54 +95,23 @@ export function AdminMobileNavigation() {
                     </div>
                   </div>
 
-                  <div className="flex-1 p-6">
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      {navigationItems.slice(0, 8).map((item) => {
-                        const isActive = location.pathname === item.url;
-                        return (
-                          <Button
-                            key={item.title}
-                            variant="ghost"
-                            className={`h-20 flex-col gap-2 rounded-xl border-2 transition-all ${
-                              isActive 
-                                ? 'border-primary bg-primary/10 text-primary' 
-                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                            }`}
-                            onClick={() => {
-                              navigate(item.url);
-                              setIsOpen(false);
-                            }}
-                          >
-                            <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}>
-                              <item.icon className="h-4 w-4 text-white" />
-                            </div>
-                            <span className="text-xs font-medium text-center leading-tight">{item.title}</span>
-                          </Button>
-                        );
-                      })}
-                    </div>
-
-                    <div className="space-y-2 border-t pt-4">
-                      {navigationItems.slice(8).map((item) => {
-                        const isActive = location.pathname === item.url;
-                        return (
-                          <Button
-                            key={item.title}
-                            variant={isActive ? "default" : "ghost"}
-                            className="w-full justify-start h-12"
-                            onClick={() => {
-                              navigate(item.url);
-                              setIsOpen(false);
-                            }}
-                          >
-                            <div className={`w-6 h-6 rounded-md ${item.color} flex items-center justify-center mr-3`}>
-                              <item.icon className="h-3 w-3 text-white" />
-                            </div>
-                            {item.title}
-                          </Button>
-                        );
-                      })}
-                    </div>
+                  <div className="flex-1 p-6 space-y-4">
+                    {adminRoutes.filter(route => route.showInNav).map((route) => {
+                      const isActive = location.pathname === route.path;
+                      const IconComponent = iconMap[route.icon as keyof typeof iconMap] || LayoutDashboard;
+                      
+                      return (
+                        <Button
+                          key={route.path}
+                          variant={isActive ? "default" : "ghost"}
+                          className="w-full justify-start h-12"
+                          onClick={() => handleNavigation(route.path)}
+                        >
+                          <IconComponent className="h-4 w-4 mr-3" />
+                          {route.title}
+                        </Button>
+                      );
+                    })}
 
                     <div className="border-t pt-4 mt-6">
                       <Button
@@ -212,10 +139,9 @@ export function AdminMobileNavigation() {
             </div>
           </div>
 
-          {currentItem && (
+          {currentRoute && (
             <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
-              <currentItem.icon className="h-3 w-3 mr-1" />
-              {currentItem.title}
+              <span className="text-sm">{currentRoute.title}</span>
             </Badge>
           )}
         </div>
@@ -225,12 +151,12 @@ export function AdminMobileNavigation() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
         <div className="grid grid-cols-4 h-16">
           {[
-            { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
-            { title: "Boekingen", url: "/admin/bookings", icon: CalendarCheck },
-            { title: "Klanten", url: "/admin/clients", icon: Users },
-            { title: "Meer", url: "#", icon: Menu, isMenu: true }
+            { title: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+            { title: "Boekingen", path: "/admin/bookings", icon: CalendarCheck },
+            { title: "Klanten", path: "/admin/clients", icon: Users },
+            { title: "Meer", path: "#", icon: Menu, isMenu: true }
           ].map((item) => {
-            const isActive = location.pathname === item.url;
+            const isActive = location.pathname === item.path;
             return (
               <Button
                 key={item.title}
@@ -239,7 +165,7 @@ export function AdminMobileNavigation() {
                   if (item.isMenu) {
                     setIsOpen(true);
                   } else {
-                    navigate(item.url);
+                    handleNavigation(item.path);
                   }
                 }}
                 className={`flex flex-col items-center justify-center h-full rounded-none border-0 ${
