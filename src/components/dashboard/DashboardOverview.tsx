@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, CreditCard, FileText, Plus } from 'lucide-react';
+import { Calendar, Clock, CreditCard, FileText, Plus, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Booking {
@@ -105,12 +105,12 @@ export function DashboardOverview() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8 p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-white/10 rounded-md w-48 mb-4"></div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="h-12 bg-white/10 rounded-lg w-64 mb-6"></div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-white/10 rounded-lg"></div>
+              <div key={i} className="h-32 bg-white/10 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -119,97 +119,130 @@ export function DashboardOverview() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-black text-white mb-2">
+    <div className="space-y-8 p-6">
+      {/* Welcome Header */}
+      <div className="text-center md:text-left">
+        <h1 className="text-4xl font-black text-white mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
           Welcome back, {user?.user_metadata?.name || 'Athlete'}!
         </h1>
-        <p className="text-gray-300">
+        <p className="text-xl text-gray-300 font-medium">
           Ready to crush your fitness goals today?
         </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-            <Calendar className="h-4 w-4 text-orange-400" />
+        <Card className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 backdrop-blur-sm border-orange-500/30 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-orange-100">Total Bookings</CardTitle>
+            <div className="p-2 bg-orange-500/20 rounded-lg">
+              <Calendar className="h-5 w-5 text-orange-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalBookings}</div>
+            <div className="text-3xl font-black text-white">{stats.totalBookings}</div>
+            <p className="text-xs text-orange-200 mt-1">All time sessions</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed Sessions</CardTitle>
-            <Clock className="h-4 w-4 text-green-400" />
+        <Card className="bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur-sm border-green-500/30 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-green-100">Completed Sessions</CardTitle>
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <Clock className="h-5 w-5 text-green-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.completedSessions}</div>
+            <div className="text-3xl font-black text-white">{stats.completedSessions}</div>
+            <p className="text-xs text-green-200 mt-1">Sessions finished</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-400" />
+        <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 backdrop-blur-sm border-blue-500/30 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-blue-100">Upcoming Sessions</CardTitle>
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <Calendar className="h-5 w-5 text-blue-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.upcomingBookings}</div>
+            <div className="text-3xl font-black text-white">{stats.upcomingBookings}</div>
+            <p className="text-xs text-blue-200 mt-1">Sessions scheduled</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Documents</CardTitle>
-            <FileText className="h-4 w-4 text-purple-400" />
+        <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 backdrop-blur-sm border-purple-500/30 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-purple-100">Documents</CardTitle>
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <FileText className="h-5 w-5 text-purple-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalDocuments}</div>
+            <div className="text-3xl font-black text-white">{stats.totalDocuments}</div>
+            <p className="text-xs text-purple-200 mt-1">Files available</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Next Booking Card */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-orange-400" />
-              Next Session
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Your upcoming training session
-            </CardDescription>
+      {/* Main Content Grid */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Next Booking Card - Takes 2 columns */}
+        <Card className="lg:col-span-2 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md border-white/20 text-white">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500/20 rounded-lg">
+                <Calendar className="h-6 w-6 text-orange-400" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold">Next Session</CardTitle>
+                <CardDescription className="text-gray-300 text-base">
+                  Your upcoming training session
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {nextBooking ? (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg">{nextBooking.services.name}</h3>
-                  <div className="text-sm text-gray-300 space-y-1">
-                    <p>{formatDateTime(nextBooking.date_time).date}</p>
-                    <p>{formatDateTime(nextBooking.date_time).time}</p>
-                    <p>{nextBooking.services.duration} minutes</p>
+              <div className="space-y-6">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10">
+                  <h3 className="font-bold text-2xl text-white mb-4">{nextBooking.services.name}</h3>
+                  <div className="grid md:grid-cols-3 gap-4 text-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-orange-400" />
+                      <span className="font-medium">{formatDateTime(nextBooking.date_time).date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-blue-400" />
+                      <span className="font-medium">{formatDateTime(nextBooking.date_time).time}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm bg-white/10 px-3 py-1 rounded-full">
+                        {nextBooking.services.duration} minutes
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <Button 
                   onClick={() => navigate('/dashboard/bookings')}
-                  className="w-full bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#d67b1e] text-white"
+                  className="w-full bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#d67b1e] text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg"
                 >
                   View All Bookings
+                  <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             ) : (
-              <div className="text-center py-6">
-                <p className="text-gray-300 mb-4">No upcoming sessions scheduled</p>
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No upcoming sessions</h3>
+                <p className="text-gray-300 mb-6">Ready to start your fitness journey?</p>
                 <Button 
                   onClick={() => navigate('/dashboard/book')}
-                  className="bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#d67b1e] text-white"
+                  className="bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#d67b1e] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-lg"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-5 h-5 mr-2" />
                   Book Your First Session
                 </Button>
               </div>
@@ -218,10 +251,15 @@ export function DashboardOverview() {
         </Card>
 
         {/* Quick Actions Card */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white">
+        <Card className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md border-white/20 text-white">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardTitle className="text-xl font-bold flex items-center gap-2">
+              <div className="p-1 bg-blue-500/20 rounded-lg">
+                <Plus className="w-5 h-5 text-blue-400" />
+              </div>
+              Quick Actions
+            </CardTitle>
+            <CardDescription className="text-gray-300 text-base">
               Common tasks and shortcuts
             </CardDescription>
           </CardHeader>
@@ -230,26 +268,35 @@ export function DashboardOverview() {
               <Button 
                 onClick={() => navigate('/dashboard/book')}
                 variant="outline"
-                className="w-full justify-start bg-white/5 border-white/20 text-white hover:bg-white/10"
+                className="w-full justify-between bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 py-3 rounded-xl font-medium"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Book New Session
+                <div className="flex items-center">
+                  <Plus className="w-4 h-4 mr-3" />
+                  Book New Session
+                </div>
+                <ChevronRight className="w-4 h-4" />
               </Button>
               <Button 
                 onClick={() => navigate('/dashboard/bookings')}
                 variant="outline"
-                className="w-full justify-start bg-white/5 border-white/20 text-white hover:bg-white/10"
+                className="w-full justify-between bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 py-3 rounded-xl font-medium"
               >
-                <Calendar className="w-4 h-4 mr-2" />
-                View My Bookings
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-3" />
+                  View My Bookings
+                </div>
+                <ChevronRight className="w-4 h-4" />
               </Button>
               <Button 
                 onClick={() => navigate('/dashboard/documents')}
                 variant="outline"
-                className="w-full justify-start bg-white/5 border-white/20 text-white hover:bg-white/10"
+                className="w-full justify-between bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 py-3 rounded-xl font-medium"
               >
-                <FileText className="w-4 h-4 mr-2" />
-                Access Documents
+                <div className="flex items-center">
+                  <FileText className="w-4 h-4 mr-3" />
+                  Access Documents
+                </div>
+                <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           </CardContent>
