@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,14 +25,12 @@ interface BookingData {
   service: Service;
   date: Date;
   time: string;
-  notes?: string;
 }
 
 const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
   const [service, setService] = useState<Service | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
-  const [notes, setNotes] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,8 +90,7 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
     const data: BookingData = {
       service,
       date: selectedDate,
-      time: selectedTime,
-      notes
+      time: selectedTime
     };
 
     setBookingData(data);
@@ -110,7 +105,6 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
     // Reset form
     setSelectedDate(undefined);
     setSelectedTime('');
-    setNotes('');
     setBookingData(null);
     setShowConfirmation(false);
     onOpenChange(false);
@@ -142,29 +136,16 @@ const BookingForm = ({ open, onOpenChange, serviceId }: BookingFormProps) => {
             </div>
           )}
 
-          <div className="space-y-6">
-            <CustomCalendar
-              selectedDate={selectedDate}
-              onDateSelect={setSelectedDate}
-              selectedTime={selectedTime}
-              onTimeSelect={setSelectedTime}
-              serviceDuration={service?.duration || 60}
-              onConfirm={handleProceedToConfirmation}
-              loading={loading}
-              serviceId={serviceId || undefined}
-            />
-
-            <div>
-              <Label htmlFor="notes">Opmerkingen (optioneel)</Label>
-              <Textarea
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Bijzondere wensen of opmerkingen..."
-                className="resize-none mt-2"
-              />
-            </div>
-          </div>
+          <CustomCalendar
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+            selectedTime={selectedTime}
+            onTimeSelect={setSelectedTime}
+            serviceDuration={service?.duration || 60}
+            onConfirm={handleProceedToConfirmation}
+            loading={loading}
+            serviceId={serviceId || undefined}
+          />
         </DialogContent>
       </Dialog>
 
