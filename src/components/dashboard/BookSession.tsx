@@ -126,13 +126,10 @@ export function BookSession() {
                   </div>
                   
                   {/* Fixed height for info section */}
-                  <div className="h-6 mb-6 flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="h-6 mb-6 flex items-center text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span>{service.duration} minutes</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">€{service.price}</span>
                     </div>
                   </div>
                   
