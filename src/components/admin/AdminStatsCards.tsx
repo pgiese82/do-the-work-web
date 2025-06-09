@@ -17,13 +17,15 @@ const statsData = [
     change: "+12%",
     changeType: "positive" as const,
     icon: Users,
+    description: "from last month"
   },
   {
-    title: "Active Bookings",
+    title: "Active Bookings", 
     value: "89",
     change: "+5%",
     changeType: "positive" as const,
     icon: CalendarCheck,
+    description: "this week"
   },
   {
     title: "Monthly Revenue",
@@ -31,6 +33,7 @@ const statsData = [
     change: "+23%",
     changeType: "positive" as const,
     icon: DollarSign,
+    description: "vs last month"
   },
   {
     title: "Growth Rate",
@@ -38,6 +41,7 @@ const statsData = [
     change: "+2.1%",
     changeType: "positive" as const,
     icon: TrendingUp,
+    description: "quarterly"
   },
   {
     title: "Pending Sessions",
@@ -45,6 +49,7 @@ const statsData = [
     change: "-3%",
     changeType: "negative" as const,
     icon: Clock,
+    description: "awaiting confirmation"
   },
   {
     title: "Documents",
@@ -52,14 +57,15 @@ const statsData = [
     change: "+8%",
     changeType: "positive" as const,
     icon: FileText,
+    description: "total uploaded"
   },
 ];
 
 export function AdminStatsCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {statsData.map((stat) => (
-        <Card key={stat.title} className="border-0 shadow-sm bg-card">
+        <Card key={stat.title} className="relative overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {stat.title}
@@ -67,13 +73,12 @@ export function AdminStatsCards() {
             <stat.icon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-            <p className={`text-xs ${
-              stat.changeType === 'positive' 
-                ? 'text-green-600' 
-                : 'text-red-600'
-            }`}>
-              {stat.change} from last month
+            <div className="text-2xl font-bold">{stat.value}</div>
+            <p className="text-xs text-muted-foreground">
+              <span className={stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}>
+                {stat.change}
+              </span>{' '}
+              {stat.description}
             </p>
           </CardContent>
         </Card>

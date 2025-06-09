@@ -38,7 +38,7 @@ const adminMenuItems = [
   },
   {
     title: "Bookings",
-    url: "/admin/bookings",
+    url: "/admin/bookings", 
     icon: CalendarCheck,
   },
   {
@@ -57,7 +57,7 @@ const adminMenuItems = [
     icon: CreditCard,
   },
   {
-    title: "Documents",
+    title: "Documents", 
     url: "/admin/documents",
     icon: FileText,
   },
@@ -102,15 +102,15 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-            <Shield className="w-4 h-4 text-primary-foreground" />
+    <Sidebar className="border-r border-border">
+      <SidebarHeader className="border-b border-border">
+        <div className="flex items-center gap-2 px-4 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <Shield className="h-4 w-4 text-primary-foreground" />
           </div>
-          <div>
-            <h2 className="font-semibold text-foreground">DO THE WORK</h2>
-            <p className="text-xs text-muted-foreground">Admin Portal</p>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">DO THE WORK</span>
+            <span className="truncate text-xs text-muted-foreground">Admin Portal</span>
           </div>
         </div>
       </SidebarHeader>
@@ -125,11 +125,21 @@ export function AdminSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      onClick={() => navigate(item.url)}
+                      asChild
                       isActive={isActive}
+                      tooltip={item.title}
                     >
-                      <item.icon />
-                      <span>{item.title}</span>
+                      <a 
+                        href={item.url}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.url);
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -139,15 +149,18 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4">
-        <Button
-          onClick={handleLogout}
-          variant="ghost"
-          className="w-full justify-start"
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          <span>Logout</span>
-        </Button>
+      <SidebarFooter className="border-t border-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

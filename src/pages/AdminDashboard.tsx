@@ -2,60 +2,71 @@
 import React from 'react';
 import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, 
-  Users, 
-  TrendingUp, 
   Clock,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  TrendingUp,
+  Users,
+  ArrowUpRight
 } from 'lucide-react';
 
 const AdminDashboard = () => {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-semibold text-foreground mb-2">Dashboard Overview</h2>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to the admin dashboard. Monitor your business performance and manage operations.
+          Overview of your business performance and key metrics.
         </p>
       </div>
 
       {/* Stats Cards */}
       <AdminStatsCards />
 
-      {/* Dashboard Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-7">
         {/* Recent Activity */}
-        <Card className="border-0 shadow-sm">
+        <Card className="lg:col-span-4">
           <CardHeader>
-            <CardTitle className="text-foreground flex items-center gap-2">
-              <Clock className="w-5 h-5 text-muted-foreground" />
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
               Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <div className="flex-1">
-                <p className="text-foreground text-sm">New booking confirmed</p>
-                <p className="text-muted-foreground text-xs">John Doe - Personal Training</p>
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium">New booking confirmed</p>
+                <p className="text-xs text-muted-foreground">John Doe - Personal Training</p>
               </div>
               <span className="text-xs text-muted-foreground">2 min ago</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <Users className="w-4 h-4 text-blue-600" />
-              <div className="flex-1">
-                <p className="text-foreground text-sm">New client registered</p>
-                <p className="text-muted-foreground text-xs">Sarah Smith joined</p>
+            
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                <Users className="h-4 w-4 text-blue-600" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium">New client registered</p>
+                <p className="text-xs text-muted-foreground">Sarah Smith joined</p>
               </div>
               <span className="text-xs text-muted-foreground">15 min ago</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <AlertCircle className="w-4 h-4 text-yellow-600" />
-              <div className="flex-1">
-                <p className="text-foreground text-sm">Payment pending review</p>
-                <p className="text-muted-foreground text-xs">Mike Johnson - $150</p>
+            
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100">
+                <AlertCircle className="h-4 w-4 text-yellow-600" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium">Payment pending review</p>
+                <p className="text-xs text-muted-foreground">Mike Johnson - $150</p>
               </div>
               <span className="text-xs text-muted-foreground">1 hour ago</span>
             </div>
@@ -63,41 +74,41 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Performance Summary */}
-        <Card className="border-0 shadow-sm">
+        <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle className="text-foreground flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-muted-foreground" />
-              Performance Summary
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Performance
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Today's Sessions</span>
-                <span className="text-foreground font-semibold">12/15</span>
+                <span className="font-medium">12/15</span>
               </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '80%' }}></div>
+              <div className="h-2 rounded-full bg-muted">
+                <div className="h-2 w-4/5 rounded-full bg-primary"></div>
               </div>
             </div>
             
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Monthly Goal</span>
-                <span className="text-foreground font-semibold">$35K/$50K</span>
+                <span className="font-medium">$35K/$50K</span>
               </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '70%' }}></div>
+              <div className="h-2 rounded-full bg-muted">
+                <div className="h-2 w-3/4 rounded-full bg-green-500"></div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Client Retention</span>
-                <span className="text-foreground font-semibold">94%</span>
+                <span className="font-medium">94%</span>
               </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '94%' }}></div>
+              <div className="h-2 rounded-full bg-muted">
+                <div className="h-2 w-[94%] rounded-full bg-blue-500"></div>
               </div>
             </div>
           </CardContent>
@@ -105,34 +116,49 @@ const AdminDashboard = () => {
       </div>
 
       {/* Today's Schedule */}
-      <Card className="border-0 shadow-sm">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-foreground flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-muted-foreground" />
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
             Today's Schedule
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-muted/30 rounded-lg">
-              <div className="text-primary text-sm font-medium">9:00 AM</div>
-              <div className="text-foreground font-semibold">Personal Training</div>
-              <div className="text-muted-foreground text-sm">with John Doe</div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <Badge variant="outline" className="text-xs">9:00 AM</Badge>
+                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <h4 className="font-medium mt-2">Personal Training</h4>
+              <p className="text-sm text-muted-foreground">with John Doe</p>
             </div>
-            <div className="p-4 bg-muted/30 rounded-lg">
-              <div className="text-primary text-sm font-medium">11:00 AM</div>
-              <div className="text-foreground font-semibold">Nutrition Consultation</div>
-              <div className="text-muted-foreground text-sm">with Sarah Smith</div>
+            
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <Badge variant="outline" className="text-xs">11:00 AM</Badge>
+                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <h4 className="font-medium mt-2">Nutrition Consultation</h4>
+              <p className="text-sm text-muted-foreground">with Sarah Smith</p>
             </div>
-            <div className="p-4 bg-muted/30 rounded-lg">
-              <div className="text-primary text-sm font-medium">2:00 PM</div>
-              <div className="text-foreground font-semibold">Group Session</div>
-              <div className="text-muted-foreground text-sm">HIIT Class</div>
+            
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <Badge variant="outline" className="text-xs">2:00 PM</Badge>
+                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <h4 className="font-medium mt-2">Group Session</h4>
+              <p className="text-sm text-muted-foreground">HIIT Class</p>
             </div>
-            <div className="p-4 bg-muted/30 rounded-lg">
-              <div className="text-primary text-sm font-medium">4:00 PM</div>
-              <div className="text-foreground font-semibold">Personal Training</div>
-              <div className="text-muted-foreground text-sm">with Mike Johnson</div>
+            
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <Badge variant="outline" className="text-xs">4:00 PM</Badge>
+                <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <h4 className="font-medium mt-2">Personal Training</h4>
+              <p className="text-sm text-muted-foreground">with Mike Johnson</p>
             </div>
           </div>
         </CardContent>
