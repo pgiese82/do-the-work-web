@@ -16,6 +16,7 @@ import AdminClients from "./pages/AdminClients";
 import AdminDocuments from "./pages/AdminDocuments";
 import AdminNotifications from "./pages/AdminNotifications";
 import AdminCalendar from "./pages/AdminCalendar";
+import AdminPayments from "./pages/AdminPayments";
 import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminWaitingList from "./pages/AdminWaitingList";
 import AdminPricing from "./pages/AdminPricing";
@@ -108,6 +109,16 @@ function App() {
                 <AdminProtectedRoute>
                   <AdminLayout>
                     <AdminCalendar />
+                  </AdminLayout>
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/payments"
+              element={
+                <AdminProtectedRoute>
+                  <AdminLayout>
+                    <AdminPayments />
                   </AdminLayout>
                 </AdminProtectedRoute>
               }
