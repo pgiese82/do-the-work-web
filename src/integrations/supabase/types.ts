@@ -45,6 +45,44 @@ export type Database = {
         }
         Relationships: []
       }
+      availability_rules: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          rule_type: string
+          rule_value: Json
+          service_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          rule_type: string
+          rule_value: Json
+          service_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          rule_type?: string
+          rule_value?: Json
+          service_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_rules_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_modifications: {
         Row: {
           admin_notes: string | null
@@ -243,6 +281,59 @@ export type Database = {
           },
         ]
       }
+      service_pricing: {
+        Row: {
+          created_at: string
+          days_of_week: number[] | null
+          end_date: string | null
+          end_time: string | null
+          id: string
+          is_active: boolean
+          price: number
+          pricing_type: string
+          service_id: string
+          start_date: string | null
+          start_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          days_of_week?: number[] | null
+          end_date?: string | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          price: number
+          pricing_type: string
+          service_id: string
+          start_date?: string | null
+          start_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          days_of_week?: number[] | null
+          end_date?: string | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          price?: number
+          pricing_type?: string
+          service_id?: string
+          start_date?: string | null
+          start_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_pricing_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           created_at: string
@@ -309,6 +400,60 @@ export type Database = {
         }
         Relationships: []
       }
+      waiting_list: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          preferred_date: string
+          preferred_time_end: string | null
+          preferred_time_start: string | null
+          service_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          preferred_date: string
+          preferred_time_end?: string | null
+          preferred_time_start?: string | null
+          service_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          preferred_date?: string
+          preferred_time_end?: string | null
+          preferred_time_start?: string | null
+          service_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiting_list_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waiting_list_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -326,12 +471,24 @@ export type Database = {
         Args: { booking_id: string }
         Returns: boolean
       }
+      get_effective_price: {
+        Args: { service_id_param: string; booking_datetime: string }
+        Returns: number
+      }
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
       is_admin: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      is_booking_allowed: {
+        Args: {
+          service_id_param: string
+          booking_datetime: string
+          user_id_param?: string
+        }
         Returns: boolean
       }
     }
