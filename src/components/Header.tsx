@@ -3,9 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Dumbbell } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -13,6 +15,11 @@ const Header = () => {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
     }
+  };
+
+  const handleLoginClick = () => {
+    navigate('/auth');
+    setIsMenuOpen(false);
   };
 
   return (
@@ -64,7 +71,7 @@ const Header = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
-              onClick={() => window.location.href = '/auth'}
+              onClick={handleLoginClick}
               variant="outline"
               className="border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
             >
@@ -119,7 +126,7 @@ const Header = () => {
               </button>
               <div className="px-3 py-2 space-y-2">
                 <Button
-                  onClick={() => window.location.href = '/auth'}
+                  onClick={handleLoginClick}
                   variant="outline"
                   className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
                 >
