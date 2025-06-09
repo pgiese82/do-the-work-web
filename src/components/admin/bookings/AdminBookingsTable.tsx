@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,8 +38,8 @@ import {
 interface Booking {
   id: string;
   date_time: string;
-  status: string;
-  payment_status: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+  payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
   notes: string | null;
   user: {
     name: string;
@@ -77,8 +76,8 @@ const statusColors = {
 
 export function AdminBookingsTable() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [paymentFilter, setPaymentFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [selectedBookings, setSelectedBookings] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
@@ -95,11 +94,11 @@ export function AdminBookingsTable() {
         .order('date_time', { ascending: false });
 
       if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
+        query = query.eq('status', statusFilter as 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show');
       }
 
       if (paymentFilter !== 'all') {
-        query = query.eq('payment_status', paymentFilter);
+        query = query.eq('payment_status', paymentFilter as 'pending' | 'paid' | 'failed' | 'refunded');
       }
 
       if (dateRange.from) {
@@ -258,7 +257,7 @@ export function AdminBookingsTable() {
                 </TableRow>
               ) : (
                 bookings.map((booking) => {
-                  const StatusIcon = statusIcons[booking.status as keyof typeof statusIcons] || Clock;
+                  const StatusIcon = statusIcons[booking.status] || Clock;
                   
                   return (
                     <TableRow key={booking.id} className="border-orange-900/20 hover:bg-gray-700/20">
@@ -286,13 +285,13 @@ export function AdminBookingsTable() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className={`flex items-center gap-2 ${statusColors[booking.status as keyof typeof statusColors]}`}>
+                        <div className={`flex items-center gap-2 ${statusColors[booking.status]}`}>
                           <StatusIcon className="w-4 h-4" />
                           <span className="capitalize">{booking.status}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className={`flex items-center gap-2 ${paymentStatusColors[booking.payment_status as keyof typeof paymentStatusColors]}`}>
+                        <div className={`flex items-center gap-2 ${paymentStatusColors[booking.payment_status]}`}>
                           <CreditCard className="w-4 h-4" />
                           <span className="capitalize">{booking.payment_status}</span>
                         </div>

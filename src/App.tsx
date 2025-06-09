@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
-import { AdminProtectedRoute } from "./components/auth/AdminProtectedRoute";
+import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
 
