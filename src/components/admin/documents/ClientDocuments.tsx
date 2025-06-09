@@ -17,9 +17,11 @@ interface ClientDocumentsProps {
   onUpdate: () => void;
 }
 
+type DocumentCategory = 'contract' | 'invoice' | 'receipt' | 'program' | 'medical' | 'other' | 'all';
+
 export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState<DocumentCategory>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
   
   const { downloadDocument, shareDocument, downloading } = useDocumentDownload();
@@ -92,7 +94,7 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-gray-700 border-gray-600 text-white flex-1"
             />
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select value={categoryFilter} onValueChange={(value: DocumentCategory) => setCategoryFilter(value)}>
               <SelectTrigger className="bg-gray-700 border-gray-600 w-48">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue />

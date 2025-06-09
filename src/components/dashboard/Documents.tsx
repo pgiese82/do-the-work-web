@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,9 +12,11 @@ import { FileText, Download, Eye, Search, Filter } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useDocumentDownload } from '@/hooks/useDocumentDownload';
 
+type DocumentCategory = 'contract' | 'invoice' | 'receipt' | 'program' | 'medical' | 'other' | 'all';
+
 export function Documents() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState<DocumentCategory>('all');
   const isMobile = useIsMobile();
   const { downloadDocument, downloading } = useDocumentDownload();
 
@@ -170,7 +173,7 @@ export function Documents() {
             className={`pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 ${isMobile ? 'h-12' : ''}`}
           />
         </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <Select value={categoryFilter} onValueChange={(value: DocumentCategory) => setCategoryFilter(value)}>
           <SelectTrigger className="w-48 bg-white border-gray-200">
             <Filter className="w-4 h-4 mr-2" />
             <SelectValue />

@@ -11,6 +11,8 @@ interface UploadDocumentParams {
   userId: string;
 }
 
+type DocumentCategory = 'contract' | 'invoice' | 'receipt' | 'program' | 'medical' | 'other';
+
 export function useDocumentUpload() {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
@@ -73,7 +75,7 @@ export function useDocumentUpload() {
         .from('documents')
         .insert({
           title,
-          category,
+          category: category as DocumentCategory,
           user_id: userId,
           storage_path: storagePath,
           file_size: file.size,
