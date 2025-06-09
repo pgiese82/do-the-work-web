@@ -9,12 +9,24 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, Mail, Phone, Shield, Settings } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useUserProfile } from '@/hooks/useDashboardData';
+import { LoadingSpinner } from './LoadingSpinner';
+import { ErrorMessage } from './ErrorMessage';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function ProfileSettings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+  
+  const { 
+    data: userProfile, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useUserProfile();
+  
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -22,63 +34,73 @@ export function ProfileSettings() {
   });
 
   useEffect(() => {
-    if (user) {
-      fetchProfile();
+    if (userProfile) {
+      setProfile({
+        name: userProfile.name || '',
+        email: userProfile.email || '',
+        phone: userProfile.phone || '',
+      });
     }
-  }, [user]);
+  }, [userProfile]);
 
-  const fetchProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('name, email, phone')
-        .eq('id', user?.id)
-        .single();
-
-      if (error) throw error;
-      
-      if (data) {
-        setProfile({
-          name: data.name || '',
-          email: data.email || '',
-          phone: data.phone || '',
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
+  const updateProfileMutation = useMutation({
+    mutationFn: async (profileData: { name: string; phone: string }) => {
       const { error } = await supabase
         .from('users')
         .update({
-          name: profile.name,
-          phone: profile.phone,
+          name: profileData.name,
+          phone: profileData.phone,
         })
         .eq('id', user?.id);
 
       if (error) throw error;
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
       toast({
         title: 'Succesvol',
         description: 'Profiel succesvol bijgewerkt',
       });
-    } catch (error) {
+    },
+    onError: (error: any) => {
       console.error('Error updating profile:', error);
       toast({
         title: 'Fout',
         description: 'Kon profiel niet bijwerken',
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfileMutation.mutate({
+      name: profile.name,
+      phone: profile.phone,
+    });
   };
+
+  if (error) {
+    return (
+      <div className={`space-y-6 max-w-4xl mx-auto ${isMobile ? 'p-4' : 'p-8'}`}>
+        <ErrorMessage 
+          title="Kon profiel niet laden"
+          message="Er is een probleem opgetreden bij het laden van je profielgegevens."
+          onRetry={refetch}
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className={`space-y-6 max-w-4xl mx-auto ${isMobile ? 'p-4' : 'p-8'}`}>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`space-y-6 max-w-4xl mx-auto ${isMobile ? 'p-4' : 'p-8'}`}>
@@ -160,11 +182,18 @@ export function ProfileSettings() {
             <div className="pt-4">
               <Button 
                 type="submit" 
-                disabled={loading}
+                disabled={updateProfileMutation.isPending}
                 className={`w-full ${isMobile ? 'h-12' : 'h-11'} bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200`}
                 size="lg"
               >
-                {loading ? 'Profiel Bijwerken...' : 'Profiel Bijwerken'}
+                {updateProfileMutation.isPending ? (
+                  <>
+                    <LoadingSpinner size="sm" className="mr-2" />
+                    Profiel Bijwerken...
+                  </>
+                ) : (
+                  'Profiel Bijwerken'
+                )}
               </Button>
             </div>
           </form>

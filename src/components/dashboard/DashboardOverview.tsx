@@ -1,96 +1,40 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, FileText, Plus, ArrowRight, TrendingUp } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Calendar, Clock, FileText, Plus, ArrowRight, TrendingUp, Euro } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-interface Booking {
-  id: string;
-  date_time: string;
-  status: string;
-  services: {
-    name: string;
-    duration: number;
-    price: number;
-  };
-}
+import { useDashboardStats, useNextBooking, useUserProfile } from '@/hooks/useDashboardData';
+import { LoadingSpinner } from './LoadingSpinner';
+import { ErrorMessage } from './ErrorMessage';
 
 export function DashboardOverview() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [nextBooking, setNextBooking] = useState<Booking | null>(null);
-  const [stats, setStats] = useState({
-    totalBookings: 0,
-    completedSessions: 0,
-    upcomingBookings: 0,
-    totalDocuments: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user]);
-
-  const fetchDashboardData = async () => {
-    try {
-      // Fetch next upcoming booking
-      const { data: upcomingBooking } = await supabase
-        .from('bookings')
-        .select(`
-          id,
-          date_time,
-          status,
-          services (
-            name,
-            duration,
-            price
-          )
-        `)
-        .eq('user_id', user?.id)
-        .gte('date_time', new Date().toISOString())
-        .eq('status', 'confirmed')
-        .order('date_time', { ascending: true })
-        .limit(1)
-        .single();
-
-      setNextBooking(upcomingBooking);
-
-      // Fetch stats
-      const [bookingsCount, completedCount, upcomingCount, documentsCount] = await Promise.all([
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user?.id),
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user?.id).eq('status', 'completed'),
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user?.id).gte('date_time', new Date().toISOString()),
-        supabase.from('documents').select('id', { count: 'exact' }).eq('user_id', user?.id),
-      ]);
-
-      setStats({
-        totalBookings: bookingsCount.count || 0,
-        completedSessions: completedCount.count || 0,
-        upcomingBookings: upcomingCount.count || 0,
-        totalDocuments: documentsCount.count || 0,
-      });
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      toast({
-        title: 'Fout',
-        description: 'Kon dashboard gegevens niet laden',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+  const { 
+    data: stats, 
+    isLoading: statsLoading, 
+    error: statsError, 
+    refetch: refetchStats 
+  } = useDashboardStats();
+  
+  const { 
+    data: nextBooking, 
+    isLoading: nextBookingLoading, 
+    error: nextBookingError, 
+    refetch: refetchNextBooking 
+  } = useNextBooking();
+  
+  const { 
+    data: userProfile, 
+    isLoading: profileLoading, 
+    error: profileError 
+  } = useUserProfile();
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -107,7 +51,38 @@ export function DashboardOverview() {
     };
   };
 
-  if (loading) {
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Goedemorgen';
+    if (hour < 18) return 'Goedemiddag';
+    return 'Goedenavond';
+  };
+
+  const getSubscriptionBadgeColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-500/10 text-green-700 border-green-200';
+      case 'trial': return 'bg-blue-500/10 text-blue-700 border-blue-200';
+      case 'inactive': return 'bg-red-500/10 text-red-700 border-red-200';
+      default: return 'bg-gray-500/10 text-gray-700 border-gray-200';
+    }
+  };
+
+  if (statsError || nextBookingError || profileError) {
+    return (
+      <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-8'} max-w-7xl mx-auto`}>
+        <ErrorMessage 
+          title="Kon dashboard niet laden"
+          message="Er is een probleem opgetreden bij het laden van je dashboard gegevens."
+          onRetry={() => {
+            refetchStats();
+            refetchNextBooking();
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (statsLoading || nextBookingLoading || profileLoading) {
     return (
       <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-8'} max-w-7xl mx-auto`}>
         <div className="animate-pulse space-y-6">
@@ -123,20 +98,22 @@ export function DashboardOverview() {
     );
   }
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Goedemorgen';
-    if (hour < 18) return 'Goedemiddag';
-    return 'Goedenavond';
-  };
-
   return (
     <div className={`space-y-6 ${isMobile ? 'p-4' : 'p-8'} max-w-7xl mx-auto`}>
       {/* Welcome Header */}
       <div className="space-y-2">
-        <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-semibold text-foreground`}>
-          {getGreeting()}, {user?.user_metadata?.name || 'daar'}
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-semibold text-foreground`}>
+            {getGreeting()}, {userProfile?.name || 'daar'}
+          </h1>
+          {userProfile?.subscription_status && (
+            <Badge variant="secondary" className={getSubscriptionBadgeColor(userProfile.subscription_status)}>
+              {userProfile.subscription_status === 'active' ? 'Actief' : 
+               userProfile.subscription_status === 'trial' ? 'Proefperiode' : 
+               userProfile.subscription_status === 'inactive' ? 'Inactief' : userProfile.subscription_status}
+            </Badge>
+          )}
+        </div>
         <p className="text-muted-foreground text-base">
           Hier is wat er gebeurt met je training
         </p>
@@ -149,7 +126,9 @@ export function DashboardOverview() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground">Totaal Sessies</p>
-                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.totalBookings}</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>
+                  {statsLoading ? <LoadingSpinner size="sm" /> : stats?.totalBookings || 0}
+                </p>
               </div>
               <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -163,7 +142,9 @@ export function DashboardOverview() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground">Voltooid</p>
-                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.completedSessions}</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>
+                  {statsLoading ? <LoadingSpinner size="sm" /> : stats?.completedSessions || 0}
+                </p>
               </div>
               <div className="h-8 w-8 bg-green-500/10 rounded-lg flex items-center justify-center">
                 <Clock className="h-4 w-4 text-green-600" />
@@ -177,7 +158,9 @@ export function DashboardOverview() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground">Aankomend</p>
-                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.upcomingBookings}</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>
+                  {statsLoading ? <LoadingSpinner size="sm" /> : stats?.upcomingBookings || 0}
+                </p>
               </div>
               <div className="h-8 w-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
                 <Calendar className="h-4 w-4 text-blue-600" />
@@ -190,11 +173,13 @@ export function DashboardOverview() {
           <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground">Documenten</p>
-                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>{stats.totalDocuments}</p>
+                <p className="text-xs font-medium text-muted-foreground">Totaal Uitgegeven</p>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>
+                  {profileLoading ? <LoadingSpinner size="sm" /> : `€${userProfile?.total_spent || 0}`}
+                </p>
               </div>
               <div className="h-8 w-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                <FileText className="h-4 w-4 text-purple-600" />
+                <Euro className="h-4 w-4 text-purple-600" />
               </div>
             </div>
           </CardContent>
@@ -215,7 +200,11 @@ export function DashboardOverview() {
           </div>
         </CardHeader>
         <CardContent>
-          {nextBooking ? (
+          {nextBookingLoading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : nextBooking ? (
             <div className="space-y-4">
               <div className="p-4 rounded-lg border bg-muted/30">
                 <div className="space-y-3">
