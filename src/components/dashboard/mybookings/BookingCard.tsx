@@ -6,7 +6,9 @@ import { Calendar, Clock, Euro, FileText } from 'lucide-react';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { PaymentStatusBadge } from './PaymentStatusBadge';
 import { BookingModificationModal } from '../../booking/BookingModificationModal';
+import { RescheduleBookingModal } from '../../booking/RescheduleBookingModal';
 import { useQueryClient } from '@tanstack/react-query';
+import { differenceInHours } from 'date-fns';
 
 interface Booking {
   id: string;
@@ -49,6 +51,8 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
   };
 
   const dateTime = formatDateTime(booking.date_time);
+  const hoursUntilBooking = differenceInHours(new Date(booking.date_time), new Date());
+  const canModify = hoursUntilBooking >= 24;
 
   const handleModificationSuccess = () => {
     // Invalidate and refetch booking data
@@ -110,7 +114,7 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
                   Boeking Annuleren
                 </Button>
               )}
-              {booking.status === 'confirmed' && new Date(booking.date_time) > new Date() && (
+              {booking.status === 'confirmed' && new Date(booking.date_time) > new Date() && canModify && (
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -125,11 +129,10 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
         </CardContent>
       </Card>
 
-      <BookingModificationModal
+      <RescheduleBookingModal
         open={rescheduleModalOpen}
         onOpenChange={setRescheduleModalOpen}
         booking={booking}
-        type="reschedule"
         onSuccess={handleModificationSuccess}
       />
 

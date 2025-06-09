@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit, X, Download } from 'lucide-react';
 import { BookingModificationModal } from './BookingModificationModal';
+import { RescheduleBookingModal } from './RescheduleBookingModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { differenceInHours } from 'date-fns';
@@ -104,7 +105,7 @@ export function BookingActions({ booking, onUpdate }: BookingActionsProps) {
                 className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
               >
                 <Edit className="w-4 h-4 mr-1" />
-                Reschedule
+                Verzetten
               </Button>
             )}
             
@@ -116,7 +117,7 @@ export function BookingActions({ booking, onUpdate }: BookingActionsProps) {
                 className="border-red-500/50 text-red-400 hover:bg-red-500/10"
               >
                 <X className="w-4 h-4 mr-1" />
-                Cancel
+                Annuleren
               </Button>
             )}
           </>
@@ -135,11 +136,10 @@ export function BookingActions({ booking, onUpdate }: BookingActionsProps) {
         )}
       </div>
 
-      <BookingModificationModal
+      <RescheduleBookingModal
         open={rescheduleModalOpen}
         onOpenChange={setRescheduleModalOpen}
         booking={booking}
-        type="reschedule"
         onSuccess={onUpdate}
       />
 
