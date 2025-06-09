@@ -4,13 +4,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Calendar, Clock, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInHours } from 'date-fns';
 import { nl } from 'date-fns/locale';
+import CustomCalendar from './CustomCalendar';
 
 interface BookingModificationModalProps {
   open: boolean;
@@ -23,6 +23,7 @@ interface BookingModificationModalProps {
       price: number;
       duration: number;
     };
+    service_id: string;
   } | null;
   type: 'reschedule' | 'cancel';
   onSuccess: () => void;
@@ -36,7 +37,8 @@ export function BookingModificationModal({
   onSuccess
 }: BookingModificationModalProps) {
   const [reason, setReason] = useState('');
-  const [newDateTime, setNewDateTime] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -53,7 +55,7 @@ export function BookingModificationModal({
   }
 
   const handleSubmit = async () => {
-    console.log('Starting modification submission:', { type, bookingId: booking.id, reason, newDateTime });
+    console.log('Starting modification submission:', { type, bookingId: booking.id, reason, selectedDate, selectedTime });
     
     if (!reason.trim()) {
       toast({
@@ -64,13 +66,15 @@ export function BookingModificationModal({
       return;
     }
 
-    if (type === 'reschedule' && !newDateTime) {
-      toast({
-        title: 'Fout',
-        description: 'Selecteer een nieuwe datum en tijd.',
-        variant: 'destructive',
-      });
-      return;
+    if (type === 'reschedule') {
+      if (!selectedDate || !selectedTime) {
+        toast({
+          title: 'Fout',
+          description: 'Selecteer een nieuwe datum en tijd.',
+          variant: 'destructive',
+        });
+        return;
+      }
     }
 
     if (type === 'cancel' && !canCancel) {
@@ -100,12 +104,20 @@ export function BookingModificationModal({
 
       console.log('Step 2: Creating booking modification record');
 
+      // Create the full date-time for reschedule
+      let requestedDateTime = null;
+      if (type === 'reschedule' && selectedDate && selectedTime) {
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        requestedDateTime = new Date(selectedDate);
+        requestedDateTime.setHours(hours, minutes, 0, 0);
+      }
+
       const modificationData = {
         booking_id: booking.id,
         modification_type: type,
         reason,
         refund_amount: type === 'cancel' ? refundAmount : 0,
-        ...(type === 'reschedule' && { requested_date_time: newDateTime })
+        ...(type === 'reschedule' && requestedDateTime && { requested_date_time: requestedDateTime.toISOString() })
       };
 
       console.log('Modification data:', modificationData);
@@ -127,7 +139,7 @@ export function BookingModificationModal({
           bookingId: booking.id,
           modificationType: type,
           reason,
-          newDateTime: type === 'reschedule' ? newDateTime : null,
+          newDateTime: requestedDateTime?.toISOString() || null,
           refundAmount: type === 'cancel' ? refundAmount : 0
         }
       });
@@ -147,7 +159,8 @@ export function BookingModificationModal({
       onSuccess();
       onOpenChange(false);
       setReason('');
-      setNewDateTime('');
+      setSelectedDate(undefined);
+      setSelectedTime('');
     } catch (error: any) {
       console.error('Error submitting modification:', error);
       toast({
@@ -162,7 +175,7 @@ export function BookingModificationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {type === 'reschedule' ? <Calendar className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
@@ -211,15 +224,16 @@ export function BookingModificationModal({
           )}
 
           {type === 'reschedule' && (
-            <div>
-              <Label htmlFor="newDateTime">Nieuwe Datum & Tijd</Label>
-              <Input
-                id="newDateTime"
-                type="datetime-local"
-                value={newDateTime}
-                onChange={(e) => setNewDateTime(e.target.value)}
-                min={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
-                className="mt-2"
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Selecteer nieuwe datum en tijd</h3>
+              <CustomCalendar
+                selectedDate={selectedDate}
+                onDateSelect={setSelectedDate}
+                selectedTime={selectedTime}
+                onTimeSelect={setSelectedTime}
+                serviceDuration={booking.services.duration}
+                onConfirm={() => {}} // We handle confirmation in handleSubmit
+                serviceId={booking.service_id}
               />
             </div>
           )}
@@ -246,7 +260,7 @@ export function BookingModificationModal({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={loading || (type === 'cancel' && !canCancel)}
+              disabled={loading || (type === 'cancel' && !canCancel) || (type === 'reschedule' && (!selectedDate || !selectedTime))}
               className="flex-1"
             >
               {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzet' : 'Annulerings'}verzoek Verzenden`}
