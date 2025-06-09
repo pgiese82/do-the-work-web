@@ -1,17 +1,26 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import ContactForm from '@/components/ContactForm';
-
 const FinalCTASection = () => {
-  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation<HTMLDivElement>();
-  const { ref: contactRef, isVisible: contactVisible } = useScrollAnimation<HTMLDivElement>({ delay: 300 });
-  const { ref: formRef, isVisible: formVisible } = useScrollAnimation<HTMLDivElement>({ delay: 600 });
-
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-16 md:py-20 lg:py-24 xl:py-32" id="contact">
+  const {
+    ref: contentRef,
+    isVisible: contentVisible
+  } = useScrollAnimation<HTMLDivElement>();
+  const {
+    ref: contactRef,
+    isVisible: contactVisible
+  } = useScrollAnimation<HTMLDivElement>({
+    delay: 300
+  });
+  const {
+    ref: formRef,
+    isVisible: formVisible
+  } = useScrollAnimation<HTMLDivElement>({
+    delay: 600
+  });
+  return <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-orange-900 to-slate-900 text-white py-16 md:py-20 lg:py-24 xl:py-32" id="contact">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3')] bg-cover bg-center opacity-10"></div>
       <div className="relative container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
         <div ref={contentRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${contentVisible ? 'visible' : ''}`}>
@@ -37,23 +46,8 @@ const FinalCTASection = () => {
           <ContactForm />
         </div>
         
-        <div ref={contactRef} className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-5xl mx-auto scroll-fade-in scroll-stagger-2 ${contactVisible ? 'visible' : ''}`}>
-          <div className="flex items-center justify-center min-h-[44px] md:min-h-[52px] lg:min-h-[60px]">
-            <Phone className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 mr-3 md:mr-4 text-orange-400 flex-shrink-0" />
-            <span className="text-base md:text-lg lg:text-xl xl:text-2xl">+31 6 12345678</span>
-          </div>
-          <div className="flex items-center justify-center min-h-[44px] md:min-h-[52px] lg:min-h-[60px]">
-            <Mail className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 mr-3 md:mr-4 text-orange-400 flex-shrink-0" />
-            <span className="text-base md:text-lg lg:text-xl xl:text-2xl">info@dothework.nl</span>
-          </div>
-          <div className="flex items-center justify-center min-h-[44px] md:min-h-[52px] lg:min-h-[60px]">
-            <MapPin className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 mr-3 md:mr-4 text-orange-400 flex-shrink-0" />
-            <span className="text-base md:text-lg lg:text-xl xl:text-2xl">Amsterdam, Nederland</span>
-          </div>
-        </div>
+        
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default FinalCTASection;
