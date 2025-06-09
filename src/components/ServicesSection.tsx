@@ -7,6 +7,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
 import AuthModal from '@/components/auth/AuthModal';
 import BookingForm from '@/components/booking/BookingForm';
+
 const ServicesSection = () => {
   const {
     ref: titleRef,
@@ -18,6 +19,7 @@ const ServicesSection = () => {
   const {
     user
   } = useAuth();
+
   const services = [{
     id: '1-op-1-coaching',
     icon: Users,
@@ -51,6 +53,7 @@ const ServicesSection = () => {
     price: '€127',
     period: '/maand'
   }];
+
   const handleBookService = (serviceId: string) => {
     if (!user) {
       setAuthModalOpen(true);
@@ -59,6 +62,7 @@ const ServicesSection = () => {
     setSelectedServiceId(serviceId);
     setBookingFormOpen(true);
   };
+
   return <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-slate-50" id="services">
       <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
         <div ref={titleRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
@@ -138,4 +142,5 @@ const ServicesSection = () => {
       <BookingForm open={bookingFormOpen} onOpenChange={setBookingFormOpen} serviceId={selectedServiceId} />
     </section>;
 };
+
 export default ServicesSection;
