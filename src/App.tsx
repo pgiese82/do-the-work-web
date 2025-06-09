@@ -22,7 +22,7 @@ import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminAvailability from "./pages/AdminAvailability";
 import AdminPricing from "./pages/AdminPricing";
 import AdminWaitingList from "./pages/AdminWaitingList";
-import { AdminProtectedRoute } from "./components/auth/AdminProtectedRoute";
+import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import { AdminMiddleware } from "./components/admin/AdminMiddleware";
 import AdminLayout from "./components/admin/AdminLayout";
 

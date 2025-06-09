@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Globe, Smartphone, Tablet, Monitor } from 'lucide-react';
+import { Eye, Globe, Smartphone, Tablet, Monitor, MessageSquare } from 'lucide-react';
 
 export function ContentPreview() {
   const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
