@@ -7,34 +7,22 @@ export const useAdminAPI = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const callAdminAPI = async (endpoint: string, method: string = 'GET', body?: any) => {
-    setLoading(true);
+  const getUsers = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      if (!session?.access_token) {
-        throw new Error('No valid session');
-      }
-
-      const response = await supabase.functions.invoke('admin-api', {
-        body: body ? JSON.stringify(body) : undefined,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (response.error) {
-        throw response.error;
-      }
-
-      return response.data;
+      if (error) throw error;
+      return { data };
     } catch (error: any) {
-      console.error('❌ Admin API error:', error);
+      console.error('Error fetching users:', error);
       toast({
         variant: "destructive",
-        title: "API Error",
-        description: error.message || 'Failed to call admin API',
+        title: "Error fetching users",
+        description: error.message,
       });
       throw error;
     } finally {
@@ -42,12 +30,94 @@ export const useAdminAPI = () => {
     }
   };
 
-  const getUsers = () => callAdminAPI('/users');
-  const getBookings = () => callAdminAPI('/bookings');
-  const getStats = () => callAdminAPI('/stats');
+  const getBookings = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          users:user_id (
+            name,
+            email
+          ),
+          services:service_id (
+            name,
+            duration,
+            id
+          )
+        `)
+        .order('date_time', { ascending: false });
+      
+      if (error) throw error;
+      return { data };
+    } catch (error: any) {
+      console.error('Error fetching bookings:', error);
+      toast({
+        variant: "destructive",
+        title: "Error fetching bookings",
+        description: error.message,
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStats = async () => {
+    try {
+      setLoading(true);
+      // Get basic stats directly from database
+      const [usersResult, bookingsResult] = await Promise.all([
+        supabase.from('users').select('client_status, total_spent, last_session_date, created_at').eq('role', 'client'),
+        supabase.from('bookings').select('status, payment_status, date_time')
+      ]);
+
+      if (usersResult.error) throw usersResult.error;
+      if (bookingsResult.error) throw bookingsResult.error;
+
+      const data = {
+        users: usersResult.data || [],
+        bookings: bookingsResult.data || []
+      };
+
+      return { data };
+    } catch (error: any) {
+      console.error('Error fetching stats:', error);
+      toast({
+        variant: "destructive",
+        title: "Error fetching stats",
+        description: error.message,
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   
-  const updateBooking = (bookingId: string, updates: any) => 
-    callAdminAPI('/bookings', 'PATCH', { bookingId, ...updates });
+  const updateBooking = async (bookingId: string, updates: any) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('bookings')
+        .update(updates)
+        .eq('id', bookingId)
+        .select();
+      
+      if (error) throw error;
+      return { data };
+    } catch (error: any) {
+      console.error('Error updating booking:', error);
+      toast({
+        variant: "destructive",
+        title: "Error updating booking",
+        description: error.message,
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
     loading,
@@ -55,6 +125,5 @@ export const useAdminAPI = () => {
     getBookings,
     getStats,
     updateBooking,
-    callAdminAPI,
   };
 };

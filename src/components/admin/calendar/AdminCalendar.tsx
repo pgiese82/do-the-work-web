@@ -11,7 +11,7 @@ import { CalendarMonthView } from './CalendarMonthView';
 import { AvailabilityManager } from './AvailabilityManager';
 import { HolidayManager } from './HolidayManager';
 import { BookingDragModal } from './BookingDragModal';
-import { useAdminAPI } from '@/hooks/useAdminAPI';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format, addDays, addWeeks, addMonths, startOfDay, endOfDay } from 'date-fns';
 
@@ -40,7 +40,6 @@ export function AdminCalendar() {
   const [showAvailability, setShowAvailability] = useState(false);
   const [showHolidays, setShowHolidays] = useState(false);
   
-  const { getBookings, updateBooking } = useAdminAPI();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,9 +49,33 @@ export function AdminCalendar() {
   const loadBookings = async () => {
     try {
       setLoading(true);
-      const response = await getBookings();
-      setBookings(response.data || []);
+      console.log('Loading bookings...');
+      
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          users:user_id (
+            name,
+            email
+          ),
+          services:service_id (
+            name,
+            duration,
+            id
+          )
+        `)
+        .order('date_time', { ascending: false });
+
+      if (error) {
+        console.error('Error loading bookings:', error);
+        throw error;
+      }
+
+      console.log('Loaded bookings:', data);
+      setBookings(data || []);
     } catch (error: any) {
+      console.error('Failed to load bookings:', error);
       toast({
         variant: "destructive",
         title: "Error loading bookings",
@@ -81,9 +104,17 @@ export function AdminCalendar() {
 
   const handleBookingDrop = async (bookingId: string, newDateTime: Date) => {
     try {
-      await updateBooking(bookingId, {
-        date_time: newDateTime.toISOString()
-      });
+      console.log('Updating booking:', bookingId, 'to:', newDateTime);
+      
+      const { error } = await supabase
+        .from('bookings')
+        .update({ date_time: newDateTime.toISOString() })
+        .eq('id', bookingId);
+
+      if (error) {
+        console.error('Error updating booking:', error);
+        throw error;
+      }
       
       toast({
         title: "Booking rescheduled",
@@ -92,6 +123,7 @@ export function AdminCalendar() {
       
       await loadBookings();
     } catch (error: any) {
+      console.error('Failed to reschedule booking:', error);
       toast({
         variant: "destructive",
         title: "Error rescheduling booking",
@@ -264,8 +296,8 @@ export function AdminCalendar() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
-            {Array.from(new Set(bookings.map(b => b.services.id))).map(serviceId => {
-              const service = bookings.find(b => b.services.id === serviceId)?.services;
+            {Array.from(new Set(bookings.map(b => b.services?.id).filter(Boolean))).map(serviceId => {
+              const service = bookings.find(b => b.services?.id === serviceId)?.services;
               return service ? (
                 <Badge
                   key={serviceId}
