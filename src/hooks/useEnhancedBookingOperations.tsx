@@ -1,12 +1,11 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from './useAuditLog';
 
 interface BulkUpdateData {
-  status?: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
-  payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
+  status?: string;
+  payment_status?: string;
   internal_notes?: string;
 }
 
@@ -18,10 +17,17 @@ export const useEnhancedBookingOperations = () => {
   const performBulkUpdate = async (bookingIds: string[], updateData: BulkUpdateData) => {
     setLoading(true);
     try {
+      // Convert to proper format for database function
+      const dbUpdateData = {
+        status: updateData.status,
+        payment_status: updateData.payment_status,
+        internal_notes: updateData.internal_notes
+      };
+
       // Use the database function for atomic bulk operations
       const { data, error } = await supabase.rpc('bulk_update_bookings', {
         booking_ids: bookingIds,
-        update_data: updateData
+        update_data: dbUpdateData as any
       });
 
       if (error) throw error;

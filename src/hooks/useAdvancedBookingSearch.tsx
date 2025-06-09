@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,13 +41,13 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
           )
         `);
 
-      // Apply filters
+      // Apply filters with proper type casting
       if (filters.statusFilter !== 'all') {
-        query = query.eq('status', filters.statusFilter);
+        query = query.eq('status', filters.statusFilter as any);
       }
 
       if (filters.paymentFilter !== 'all') {
-        query = query.eq('payment_status', filters.paymentFilter);
+        query = query.eq('payment_status', filters.paymentFilter as any);
       }
 
       if (filters.serviceFilter !== 'all') {
@@ -69,7 +68,6 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
 
       // Apply text search using database full-text search
       if (filters.searchTerm) {
-        // Use the GIN index we created for full-text search
         query = query.or(`
           id.ilike.%${filters.searchTerm}%,
           user.name.ilike.%${filters.searchTerm}%,
