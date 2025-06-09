@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -86,10 +86,10 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      prospect: 'bg-blue-500/20 text-blue-300 border-blue-500/20',
-      active: 'bg-green-500/20 text-green-300 border-green-500/20',
-      inactive: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/20',
-      churned: 'bg-red-500/20 text-red-300 border-red-500/20'
+      prospect: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
+      active: 'bg-green-500/20 text-green-400 border-green-500/20',
+      inactive: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
+      churned: 'bg-red-500/20 text-red-400 border-red-500/20'
     };
 
     return (
@@ -106,28 +106,22 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
 
   return (
     <>
-      <Card className="bg-gray-800/50 border-orange-900/20">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-orange-400" />
-            Client Profiles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+      <Card>
+        <CardContent className="space-y-6 p-6">
           {/* Search and Filters */}
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-700/50 border-orange-900/20 text-white placeholder:text-gray-400"
+                className="pl-10"
               />
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48 bg-gray-700/50 border-orange-900/20 text-white">
+              <SelectTrigger className="w-48">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -141,42 +135,42 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border border-orange-900/20 overflow-hidden">
+          <div className="rounded-lg border overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="border-orange-900/20 hover:bg-gray-700/30">
-                  <TableHead className="text-gray-300">Client</TableHead>
-                  <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Last Session</TableHead>
-                  <TableHead className="text-gray-300">Total Spent</TableHead>
-                  <TableHead className="text-gray-300">Member Since</TableHead>
-                  <TableHead className="text-gray-300">Actions</TableHead>
+                <TableRow>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Last Session</TableHead>
+                  <TableHead>Total Spent</TableHead>
+                  <TableHead>Member Since</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       Loading clients...
                     </TableCell>
                   </TableRow>
                 ) : clients.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                       No clients found
                     </TableCell>
                   </TableRow>
                 ) : (
                   clients.map((client) => (
-                    <TableRow key={client.id} className="border-orange-900/20 hover:bg-gray-700/20">
+                    <TableRow key={client.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-gray-400" />
+                          <User className="w-4 h-4 text-muted-foreground" />
                           <div>
-                            <div className="text-white font-medium">{client.name}</div>
-                            <div className="text-gray-400 text-xs">{client.email}</div>
+                            <div className="font-medium">{client.name}</div>
+                            <div className="text-muted-foreground text-xs">{client.email}</div>
                             {client.phone && (
-                              <div className="text-gray-400 text-xs">{client.phone}</div>
+                              <div className="text-muted-foreground text-xs">{client.phone}</div>
                             )}
                           </div>
                         </div>
@@ -185,8 +179,8 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
                         {getStatusBadge(client.client_status)}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-gray-300">
-                          <Calendar className="w-4 h-4 text-gray-400" />
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
                           {client.last_session_date 
                             ? format(new Date(client.last_session_date), 'MMM dd, yyyy')
                             : 'Never'
@@ -194,12 +188,12 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-gray-300">
-                          <DollarSign className="w-4 h-4 text-gray-400" />
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
                           €{client.total_spent?.toFixed(2) || '0.00'}
                         </div>
                       </TableCell>
-                      <TableCell className="text-gray-300">
+                      <TableCell>
                         {format(new Date(client.created_at), 'MMM dd, yyyy')}
                       </TableCell>
                       <TableCell>
@@ -207,7 +201,6 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
                           size="sm"
                           variant="outline"
                           onClick={() => handleEditClient(client.id)}
-                          className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
