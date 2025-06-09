@@ -1,6 +1,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Menu, X, Dumbbell, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +33,11 @@ const Header = () => {
     } else {
       navigate('/auth');
     }
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
     setIsMenuOpen(false);
   };
 
@@ -76,20 +89,45 @@ const Header = () => {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              onClick={handleAccountClick}
-              variant="outline"
-              className="border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
-            >
-              {user ? (
-                <>
-                  <User className="w-4 h-4 mr-2" />
-                  Account
-                </>
-              ) : (
-                'Login'
-              )}
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-black/95 border-white/10 text-white">
+                  <DropdownMenuLabel className="text-gray-300">
+                    {user.email}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/dashboard')}
+                    className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                  >
+                    Client Portal
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                  >
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                onClick={handleAccountClick}
+                variant="outline"
+                className="border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
+              >
+                Login
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -138,20 +176,36 @@ const Header = () => {
                 Contact
               </button>
               <div className="px-3 py-2 space-y-2">
-                <Button
-                  onClick={handleAccountClick}
-                  variant="outline"
-                  className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
-                >
-                  {user ? (
-                    <>
+                {user ? (
+                  <div className="space-y-2">
+                    <div className="text-gray-300 text-sm px-3 py-2">
+                      {user.email}
+                    </div>
+                    <Button
+                      onClick={() => navigate('/dashboard')}
+                      variant="outline"
+                      className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
+                    >
                       <User className="w-4 h-4 mr-2" />
-                      Account
-                    </>
-                  ) : (
-                    'Login'
-                  )}
-                </Button>
+                      Client Portal
+                    </Button>
+                    <Button
+                      onClick={handleLogout}
+                      variant="outline"
+                      className="w-full border-gray-500 text-gray-300 hover:bg-gray-500 hover:text-white"
+                    >
+                      Log out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleAccountClick}
+                    variant="outline"
+                    className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
+                  >
+                    Login
+                  </Button>
+                )}
               </div>
             </div>
           </div>
