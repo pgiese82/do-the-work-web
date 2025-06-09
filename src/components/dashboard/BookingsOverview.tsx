@@ -8,6 +8,9 @@ import { BookingFilters } from './booking/BookingFilters';
 import { BookingViewToggle } from './booking/BookingViewToggle';
 import { BookingListView } from './booking/BookingListView';
 import { BookingCalendarView } from './booking/BookingCalendarView';
+import { BookingsHeader } from './bookings/BookingsHeader';
+import { BookingsLoadingState } from './bookings/BookingsLoadingState';
+import { BookingsEmptyState } from './bookings/BookingsEmptyState';
 
 interface Booking {
   id: string;
@@ -114,53 +117,48 @@ export function BookingsOverview() {
   const pastBookings = filteredBookings.filter(booking => !isUpcoming(booking.date_time));
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 bg-white/10 rounded-md w-48 animate-pulse"></div>
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-white/10 rounded-lg animate-pulse"></div>
-          ))}
-        </div>
-      </div>
-    );
+    return <BookingsLoadingState />;
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-black text-white mb-2">Bookings Overview</h1>
-          <p className="text-gray-300">
-            Manage all your training sessions and bookings
-          </p>
-        </div>
-        <BookingViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-      </div>
+    <div className="space-y-8 max-w-6xl mx-auto">
+      <BookingsHeader totalBookings={bookings.length} />
 
-      <BookingFilters
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        paymentFilter={paymentFilter}
-        setPaymentFilter={setPaymentFilter}
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-      />
-
-      {viewMode === 'list' ? (
-        <BookingListView
-          upcomingBookings={upcomingBookings}
-          pastBookings={pastBookings}
-          onUpdate={fetchBookings}
-        />
+      {bookings.length === 0 ? (
+        <BookingsEmptyState />
       ) : (
-        <BookingCalendarView
-          filteredBookings={filteredBookings}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+        <>
+          <div className="space-y-6">
+            <BookingFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              paymentFilter={paymentFilter}
+              setPaymentFilter={setPaymentFilter}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+            />
+
+            <div className="flex justify-end">
+              <BookingViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+            </div>
+          </div>
+
+          {viewMode === 'list' ? (
+            <BookingListView
+              upcomingBookings={upcomingBookings}
+              pastBookings={pastBookings}
+              onUpdate={fetchBookings}
+            />
+          ) : (
+            <BookingCalendarView
+              filteredBookings={filteredBookings}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+          )}
+        </>
       )}
     </div>
   );
