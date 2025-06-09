@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Dumbbell, Shield } from 'lucide-react';
+import { Menu, X, Dumbbell } from 'lucide-react';
 import { useState } from 'react';
 
 const Header = () => {
@@ -76,15 +76,6 @@ const Header = () => {
             >
               Book Nu
             </Button>
-            <Button
-              onClick={() => window.location.href = '/admin/login'}
-              variant="outline"
-              size="sm"
-              className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300"
-            >
-              <Shield className="w-4 h-4 mr-1" />
-              Admin
-            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -145,15 +136,6 @@ const Header = () => {
                   className="w-full bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#e8851a] text-white"
                 >
                   Book Nu
-                </Button>
-                <Button
-                  onClick={() => window.location.href = '/admin/login'}
-                  variant="outline"
-                  size="sm"
-                  className="w-full border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300"
-                >
-                  <Shield className="w-4 h-4 mr-1" />
-                  Admin Portal
                 </Button>
               </div>
             </div>
