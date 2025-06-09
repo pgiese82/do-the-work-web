@@ -1,18 +1,18 @@
 
 import React from 'react';
-import { AdminBookingsTable } from '@/components/admin/bookings/AdminBookingsTable';
+import { EnhancedBookingsTable } from '@/components/admin/bookings/EnhancedBookingsTable';
 
 const AdminBookings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Boekingen Beheer</h1>
         <p className="text-muted-foreground">
-          Manage all client bookings, payments, and scheduling.
+          Beheer alle klantboekingen met uitgebreide zoek-, filter- en bulkoperaties.
         </p>
       </div>
       
-      <AdminBookingsTable />
+      <EnhancedBookingsTable />
     </div>
   );
 };

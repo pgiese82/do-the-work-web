@@ -10,12 +10,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface ModificationEmailRequest {
+interface BookingModificationRequest {
   bookingId: string;
-  modificationType: 'reschedule' | 'cancel';
-  reason: string;
+  modificationType: 'status_change' | 'reschedule' | 'cancellation';
+  newStatus?: string;
   newDateTime?: string;
-  refundAmount?: number;
+  reason?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,109 +24,92 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { bookingId, modificationType, reason, newDateTime, refundAmount }: ModificationEmailRequest = await req.json();
+    const { bookingId, modificationType, newStatus, newDateTime, reason }: BookingModificationRequest = await req.json();
 
-    // Get booking details and user information
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Get booking and user details from Supabase
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    const bookingResponse = await fetch(`${supabaseUrl}/rest/v1/bookings?id=eq.${bookingId}&select=*,user:users(name,email),service:services(name,price,duration)`, {
+      headers: {
+        'Authorization': `Bearer ${supabaseKey}`,
+        'apikey': supabaseKey,
+        'Content-Type': 'application/json'
+      }
+    });
 
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .select(`
-        *,
-        services (name, duration, price),
-        users (name, email)
-      `)
-      .eq('id', bookingId)
-      .single();
+    const bookings = await bookingResponse.json();
+    const booking = bookings[0];
 
-    if (bookingError || !booking) {
+    if (!booking) {
       throw new Error('Booking not found');
     }
 
-    const bookingDate = new Date(booking.date_time).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    let subject = '';
+    let htmlContent = '';
+
+    switch (modificationType) {
+      case 'status_change':
+        subject = `Booking Status Update - ${booking.service.name}`;
+        htmlContent = `
+          <h2>Booking Status Update</h2>
+          <p>Dear ${booking.user.name},</p>
+          <p>Your booking status has been updated:</p>
+          <ul>
+            <li><strong>Service:</strong> ${booking.service.name}</li>
+            <li><strong>Date & Time:</strong> ${new Date(booking.date_time).toLocaleString('nl-NL')}</li>
+            <li><strong>New Status:</strong> ${newStatus}</li>
+            ${reason ? `<li><strong>Reason:</strong> ${reason}</li>` : ''}
+          </ul>
+          <p>If you have any questions, please contact us.</p>
+          <p>Best regards,<br>DO THE WORK Team</p>
+        `;
+        break;
+
+      case 'reschedule':
+        subject = `Booking Rescheduled - ${booking.service.name}`;
+        htmlContent = `
+          <h2>Booking Rescheduled</h2>
+          <p>Dear ${booking.user.name},</p>
+          <p>Your booking has been rescheduled:</p>
+          <ul>
+            <li><strong>Service:</strong> ${booking.service.name}</li>
+            <li><strong>Original Date:</strong> ${new Date(booking.date_time).toLocaleString('nl-NL')}</li>
+            <li><strong>New Date:</strong> ${newDateTime ? new Date(newDateTime).toLocaleString('nl-NL') : 'TBD'}</li>
+            ${reason ? `<li><strong>Reason:</strong> ${reason}</li>` : ''}
+          </ul>
+          <p>Please save the new date and time in your calendar.</p>
+          <p>Best regards,<br>DO THE WORK Team</p>
+        `;
+        break;
+
+      case 'cancellation':
+        subject = `Booking Cancelled - ${booking.service.name}`;
+        htmlContent = `
+          <h2>Booking Cancelled</h2>
+          <p>Dear ${booking.user.name},</p>
+          <p>Your booking has been cancelled:</p>
+          <ul>
+            <li><strong>Service:</strong> ${booking.service.name}</li>
+            <li><strong>Date & Time:</strong> ${new Date(booking.date_time).toLocaleString('nl-NL')}</li>
+            ${reason ? `<li><strong>Reason:</strong> ${reason}</li>` : ''}
+          </ul>
+          <p>If you would like to reschedule, please contact us or book a new appointment.</p>
+          <p>Best regards,<br>DO THE WORK Team</p>
+        `;
+        break;
+    }
+
+    const emailResponse = await resend.emails.send({
+      from: "DO THE WORK <bookings@dothework.nl>",
+      to: [booking.user.email],
+      subject: subject,
+      html: htmlContent,
     });
 
-    const newDate = newDateTime ? new Date(newDateTime).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }) : '';
+    console.log("Booking modification email sent successfully:", emailResponse);
 
-    // Email to client
-    const clientSubject = modificationType === 'reschedule' ? 
-      'Reschedule Request Submitted' : 'Cancellation Request Submitted';
-    
-    const clientHtml = `
-      <h1>${clientSubject}</h1>
-      <p>Dear ${booking.users.name},</p>
-      <p>We have received your ${modificationType} request for the following booking:</p>
-      
-      <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-        <strong>Service:</strong> ${booking.services.name}<br>
-        <strong>Original Date:</strong> ${bookingDate}<br>
-        ${modificationType === 'reschedule' ? `<strong>Requested New Date:</strong> ${newDate}<br>` : ''}
-        <strong>Reason:</strong> ${reason}<br>
-        ${modificationType === 'cancel' && refundAmount ? `<strong>Refund Amount:</strong> €${refundAmount}<br>` : ''}
-      </div>
-      
-      <p>Your request is currently pending approval. We will notify you once it has been reviewed.</p>
-      
-      <p>If you have any questions, please don't hesitate to contact us.</p>
-      
-      <p>Best regards,<br>Your Fitness Team</p>
-    `;
-
-    // Email to trainer/admin
-    const adminSubject = `${modificationType === 'reschedule' ? 'Reschedule' : 'Cancellation'} Request - ${booking.services.name}`;
-    
-    const adminHtml = `
-      <h1>New ${modificationType === 'reschedule' ? 'Reschedule' : 'Cancellation'} Request</h1>
-      <p>A client has requested to ${modificationType} their booking:</p>
-      
-      <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-        <strong>Client:</strong> ${booking.users.name} (${booking.users.email})<br>
-        <strong>Service:</strong> ${booking.services.name}<br>
-        <strong>Original Date:</strong> ${bookingDate}<br>
-        ${modificationType === 'reschedule' ? `<strong>Requested New Date:</strong> ${newDate}<br>` : ''}
-        <strong>Reason:</strong> ${reason}<br>
-        ${modificationType === 'cancel' && refundAmount ? `<strong>Refund Amount:</strong> €${refundAmount}<br>` : ''}
-      </div>
-      
-      <p>Please review this request in your admin dashboard.</p>
-      
-      <p><strong>Action Required:</strong> Approve or reject this ${modificationType} request.</p>
-    `;
-
-    // Send email to client
-    await resend.emails.send({
-      from: "Fitness Studio <noreply@yourdomain.com>",
-      to: [booking.users.email],
-      subject: clientSubject,
-      html: clientHtml,
-    });
-
-    // Send email to trainer/admin
-    await resend.emails.send({
-      from: "Fitness Studio <noreply@yourdomain.com>",
-      to: ["trainer@yourdomain.com"], // Replace with actual trainer email
-      subject: adminSubject,
-      html: adminHtml,
-    });
-
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify(emailResponse), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -134,7 +117,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error sending modification email:", error);
+    console.error("Error in send-booking-modification-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {

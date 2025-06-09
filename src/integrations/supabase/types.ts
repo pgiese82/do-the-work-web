@@ -939,6 +939,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bulk_update_bookings: {
+        Args: { booking_ids: string[]; update_data: Json }
+        Returns: boolean
+      }
       calculate_refund_amount: {
         Args: { booking_date_time: string; original_amount: number }
         Returns: number
