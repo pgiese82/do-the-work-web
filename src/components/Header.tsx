@@ -18,6 +18,7 @@ const Header = () => {
   };
 
   const handleLoginClick = () => {
+    console.log('Login button clicked');
     navigate('/auth');
     setIsMenuOpen(false);
   };
