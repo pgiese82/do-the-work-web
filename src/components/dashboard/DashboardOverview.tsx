@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 export function DashboardOverview() {
   const navigate = useNavigate();
 
+  console.log('DashboardOverview component rendering');
+
   const quickActions = [
     {
       title: 'Sessie Boeken',
