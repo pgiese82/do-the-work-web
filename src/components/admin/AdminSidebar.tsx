@@ -22,7 +22,8 @@ import {
   FileText, 
   Settings,
   Shield,
-  LogOut
+  LogOut,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -38,6 +39,11 @@ const adminMenuItems = [
     title: "Bookings",
     url: "/admin/bookings",
     icon: CalendarCheck,
+  },
+  {
+    title: "Audit Logs",
+    url: "/admin/audit-logs",
+    icon: Activity,
   },
   {
     title: "Calendar",

@@ -13,6 +13,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
+import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,16 @@ const App = () => (
               <AdminProtectedRoute>
                 <AdminLayout>
                   <AdminBookings />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/audit-logs" 
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminAuditLogs />
                 </AdminLayout>
               </AdminProtectedRoute>
             } 
