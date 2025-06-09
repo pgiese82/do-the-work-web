@@ -57,8 +57,8 @@ export function MyBookings() {
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load bookings',
+        title: 'Fout',
+        description: 'Kon boekingen niet laden',
         variant: 'destructive',
       });
     } finally {
@@ -87,9 +87,9 @@ export function MyBookings() {
               <Calendar className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-semibold text-foreground">My Bookings</h1>
+              <h1 className="text-3xl font-semibold text-foreground">Mijn Boekingen</h1>
               <p className="text-muted-foreground text-base">
-                Track and manage your training sessions
+                Volg en beheer je training sessies
               </p>
             </div>
           </div>
@@ -98,7 +98,7 @@ export function MyBookings() {
         {bookings.length > 0 && (
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
-            Book Session
+            Boek Sessie
           </Button>
         )}
       </div>
@@ -110,14 +110,14 @@ export function MyBookings() {
             <Calendar className="w-8 h-8 text-primary" />
           </div>
           <h2 className="text-2xl font-semibold text-foreground mb-3">
-            Ready to start your fitness journey?
+            Klaar om je fitness reis te beginnen?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
-            You haven't booked any sessions yet. Book your first training session and begin reaching your fitness goals.
+            Je hebt nog geen sessies geboekt. Boek je eerste training sessie en begin met het bereiken van je fitness doelen.
           </p>
           <Button size="lg" className="gap-2">
             <Plus className="w-5 h-5" />
-            Book Your First Session
+            Boek Je Eerste Sessie
           </Button>
         </div>
       ) : (

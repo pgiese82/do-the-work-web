@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import BookingForm from '@/components/booking/BookingForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Clock, DollarSign, Users, Target } from 'lucide-react';
+import { Calendar, Clock, Users, Target } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type Service = Database['public']['Tables']['services']['Row'];
@@ -35,7 +36,7 @@ export function BookSession() {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error loading services",
+        title: "Fout bij laden services",
         description: error.message,
       });
     } finally {
@@ -66,9 +67,9 @@ export function BookSession() {
 
   const getServiceIcon = (serviceName: string) => {
     const name = serviceName.toLowerCase();
-    if (name.includes('personal') || name.includes('one-on-one')) return Target;
-    if (name.includes('group') || name.includes('small')) return Users;
-    if (name.includes('nutrition') || name.includes('meal')) return Target;
+    if (name.includes('personal') || name.includes('one-on-one') || name.includes('persoonlijk') || name.includes('individueel')) return Target;
+    if (name.includes('group') || name.includes('small') || name.includes('groep') || name.includes('klein')) return Users;
+    if (name.includes('nutrition') || name.includes('meal') || name.includes('voeding') || name.includes('maaltijd')) return Target;
     return Calendar;
   };
 
@@ -76,9 +77,9 @@ export function BookSession() {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Section */}
       <div className="space-y-3">
-        <h1 className="text-3xl font-semibold text-foreground">Book a Session</h1>
+        <h1 className="text-3xl font-semibold text-foreground">Boek een Sessie</h1>
         <p className="text-muted-foreground text-lg">
-          Schedule your next training session with DO THE WORK
+          Plan je volgende training sessie met DO THE WORK
         </p>
       </div>
 
@@ -89,9 +90,9 @@ export function BookSession() {
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="font-semibold text-lg mb-2">No Services Available</h3>
+            <h3 className="font-semibold text-lg mb-2">Geen Services Beschikbaar</h3>
             <p className="text-muted-foreground">
-              No training sessions are currently available for booking.
+              Er zijn momenteel geen training sessies beschikbaar voor boeking.
             </p>
           </CardContent>
         </Card>
@@ -121,7 +122,7 @@ export function BookSession() {
                   {/* Fixed height for description */}
                   <div className="h-16 mb-4">
                     <CardDescription className="text-muted-foreground line-clamp-3 leading-relaxed">
-                      {service.description || "Professional training session tailored to your needs"}
+                      {service.description || "Professionele training sessie op maat voor jouw behoeften"}
                     </CardDescription>
                   </div>
                   
@@ -129,7 +130,7 @@ export function BookSession() {
                   <div className="h-6 mb-6 flex items-center text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      <span>{service.duration} minutes</span>
+                      <span>{service.duration} minuten</span>
                     </div>
                   </div>
                   
@@ -140,7 +141,7 @@ export function BookSession() {
                       className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 hover:scale-105"
                       size="lg"
                     >
-                      Book Now
+                      Boek Nu
                     </Button>
                   </div>
                 </CardContent>
