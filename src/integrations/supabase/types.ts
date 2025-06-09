@@ -346,10 +346,15 @@ export type Database = {
         Row: {
           category: Database["public"]["Enums"]["document_category"]
           created_at: string
-          file_path: string
+          file_hash: string | null
+          file_path: string | null
           file_size: number | null
           id: string
+          is_shared: boolean | null
           mime_type: string | null
+          shared_token: string | null
+          shared_until: string | null
+          storage_path: string | null
           title: string
           upload_date: string
           user_id: string
@@ -357,10 +362,15 @@ export type Database = {
         Insert: {
           category: Database["public"]["Enums"]["document_category"]
           created_at?: string
-          file_path: string
+          file_hash?: string | null
+          file_path?: string | null
           file_size?: number | null
           id?: string
+          is_shared?: boolean | null
           mime_type?: string | null
+          shared_token?: string | null
+          shared_until?: string | null
+          storage_path?: string | null
           title: string
           upload_date?: string
           user_id: string
@@ -368,10 +378,15 @@ export type Database = {
         Update: {
           category?: Database["public"]["Enums"]["document_category"]
           created_at?: string
-          file_path?: string
+          file_hash?: string | null
+          file_path?: string | null
           file_size?: number | null
           id?: string
+          is_shared?: boolean | null
           mime_type?: string | null
+          shared_token?: string | null
+          shared_until?: string | null
+          storage_path?: string | null
           title?: string
           upload_date?: string
           user_id?: string
@@ -936,6 +951,10 @@ export type Database = {
         Args: { booking_id: string }
         Returns: boolean
       }
+      create_document_share_token: {
+        Args: { document_id: string; expires_in_hours?: number }
+        Returns: string
+      }
       create_notification: {
         Args: {
           p_type: Database["public"]["Enums"]["notification_type"]
@@ -949,9 +968,25 @@ export type Database = {
         }
         Returns: string
       }
+      get_document_download_url: {
+        Args: { document_id: string }
+        Returns: string
+      }
       get_effective_price: {
         Args: { service_id_param: string; booking_datetime: string }
         Returns: number
+      }
+      get_shared_document: {
+        Args: { share_token: string }
+        Returns: {
+          id: string
+          title: string
+          category: string
+          file_size: number
+          mime_type: string
+          storage_path: string
+          created_at: string
+        }[]
       }
       get_user_role: {
         Args: { user_id: string }

@@ -4,27 +4,36 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { FileText, Download, Eye, Search } from 'lucide-react';
+import { FileText, Download, Eye, Search, Filter } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useDocumentDownload } from '@/hooks/useDocumentDownload';
 
 export function Documents() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const isMobile = useIsMobile();
+  const { downloadDocument, downloading } = useDocumentDownload();
 
   const { data: documents, isLoading } = useQuery({
-    queryKey: ['user-documents'],
+    queryKey: ['user-documents', categoryFilter],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('documents')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
+      if (categoryFilter !== 'all') {
+        query = query.eq('category', categoryFilter);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
@@ -52,13 +61,11 @@ export function Documents() {
   });
 
   const filteredDocuments = documents?.filter(doc =>
-    doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.category.toLowerCase().includes(searchTerm.toLowerCase())
+    doc.title.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const filteredAssignments = assignments?.filter((assignment: any) =>
-    assignment.document_templates?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    assignment.document_templates?.category?.toLowerCase().includes(searchTerm.toLowerCase())
+    assignment.document_templates?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const formatFileSize = (bytes: number | null) => {
@@ -66,6 +73,10 @@ export function Documents() {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  const handleDownload = (document: any) => {
+    downloadDocument(document.id, document.title);
   };
 
   if (isLoading) {
@@ -116,14 +127,20 @@ export function Documents() {
           <p className="text-xs text-gray-500">
             {isTemplate 
               ? (document.delivery_date ? new Date(document.delivery_date).toLocaleDateString('nl-NL') : 'N.v.t.')
-              : new Date(document.upload_date).toLocaleDateString('nl-NL')
+              : new Date(document.created_at).toLocaleDateString('nl-NL')
             }
           </p>
           <div className="flex gap-2">
             <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
               <Eye className="w-4 h-4" />
             </Button>
-            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="h-8 w-8 p-0"
+              onClick={() => !isTemplate && handleDownload(document)}
+              disabled={downloading === document.id}
+            >
               <Download className="w-4 h-4" />
             </Button>
           </div>
@@ -142,15 +159,32 @@ export function Documents() {
         </p>
       </div>
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <Input
-          placeholder="Zoek documenten..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={`pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 ${isMobile ? 'h-12' : ''}`}
-        />
+      {/* Search and Filter */}
+      <div className="flex gap-4 max-w-md">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Zoek documenten..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={`pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500 ${isMobile ? 'h-12' : ''}`}
+          />
+        </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-48 bg-white border-gray-200">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Alle categorieën</SelectItem>
+            <SelectItem value="contract">Contract</SelectItem>
+            <SelectItem value="invoice">Factuur</SelectItem>
+            <SelectItem value="receipt">Bon</SelectItem>
+            <SelectItem value="program">Programma</SelectItem>
+            <SelectItem value="medical">Medisch</SelectItem>
+            <SelectItem value="other">Overig</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-6">
@@ -206,7 +240,7 @@ export function Documents() {
                             {formatFileSize(document.file_size)}
                           </TableCell>
                           <TableCell className="text-gray-600">
-                            {new Date(document.upload_date).toLocaleDateString('nl-NL')}
+                            {new Date(document.created_at).toLocaleDateString('nl-NL')}
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
@@ -220,6 +254,8 @@ export function Documents() {
                               <Button 
                                 size="sm" 
                                 variant="ghost" 
+                                onClick={() => handleDownload(document)}
+                                disabled={downloading === document.id}
                                 className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                               >
                                 <Download className="w-4 h-4" />
@@ -237,9 +273,17 @@ export function Documents() {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <FileText className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Nog geen persoonlijke documenten</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {searchTerm || categoryFilter !== 'all' 
+                    ? 'Geen documenten gevonden'
+                    : 'Nog geen persoonlijke documenten'
+                  }
+                </h3>
                 <p className="text-gray-600 max-w-sm mx-auto">
-                  Je trainer zal hier documenten uploaden die speciaal voor jou zijn
+                  {searchTerm || categoryFilter !== 'all'
+                    ? 'Probeer andere zoektermen of filters'
+                    : 'Je trainer zal hier documenten uploaden die speciaal voor jou zijn'
+                  }
                 </p>
               </div>
             )}

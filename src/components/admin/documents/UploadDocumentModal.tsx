@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { Upload } from 'lucide-react';
+import { Upload, AlertCircle } from 'lucide-react';
+import { useDocumentUpload } from '@/hooks/useDocumentUpload';
+import { validateFile } from '@/utils/documentValidation';
 
 interface UploadDocumentModalProps {
   open: boolean;
@@ -23,7 +24,9 @@ export function UploadDocumentModal({ open, onOpenChange, onSuccess }: UploadDoc
     userId: ''
   });
   const [file, setFile] = useState<File | null>(null);
-  const { toast } = useToast();
+  const [fileError, setFileError] = useState<string | null>(null);
+  
+  const { uploadDocument, uploading } = useDocumentUpload();
 
   const { data: clients } = useQuery({
     queryKey: ['clients-for-documents'],
@@ -39,69 +42,39 @@ export function UploadDocumentModal({ open, onOpenChange, onSuccess }: UploadDoc
     },
   });
 
-  const uploadDocumentMutation = useMutation({
-    mutationFn: async (data: typeof formData & { filePath: string; fileSize: number; mimeType: string }) => {
-      const { error } = await supabase
-        .from('documents')
-        .insert({
-          title: data.title,
-          category: data.category as any,
-          user_id: data.userId,
-          file_path: data.filePath,
-          file_size: data.fileSize,
-          mime_type: data.mimeType
-        });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
+    setFileError(null);
 
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Document uploaded",
-        description: "Document has been uploaded successfully.",
-      });
-      onSuccess();
-      resetForm();
-    },
-  });
-
-  const uploadFile = async (file: File): Promise<string> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `clients/${formData.userId}/${Date.now()}.${fileExt}`;
-    
-    const { error } = await supabase.storage
-      .from('documents')
-      .upload(fileName, file);
-
-    if (error) throw error;
-    return fileName;
+    if (selectedFile) {
+      const validation = validateFile(selectedFile);
+      if (!validation.isValid) {
+        setFileError(validation.error || 'Ongeldig bestand');
+        setFile(null);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!file) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a file to upload.",
-      });
+      setFileError('Selecteer een bestand om te uploaden.');
       return;
     }
 
-    try {
-      const filePath = await uploadFile(file);
-      await uploadDocumentMutation.mutateAsync({
-        ...formData,
-        filePath,
-        fileSize: file.size,
-        mimeType: file.type
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to upload document.",
-      });
+    const result = await uploadDocument({
+      file,
+      title: formData.title,
+      category: formData.category,
+      userId: formData.userId
+    });
+
+    if (result) {
+      onSuccess();
+      resetForm();
+      onOpenChange(false);
     }
   };
 
@@ -112,25 +85,26 @@ export function UploadDocumentModal({ open, onOpenChange, onSuccess }: UploadDoc
       userId: ''
     });
     setFile(null);
+    setFileError(null);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-gray-800 border-gray-700 text-white max-w-md">
         <DialogHeader>
-          <DialogTitle>Upload Client Document</DialogTitle>
+          <DialogTitle>Document Uploaden</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="client">Client</Label>
+            <Label htmlFor="client">Klant</Label>
             <Select 
               value={formData.userId} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, userId: value }))}
               required
             >
               <SelectTrigger className="bg-gray-700 border-gray-600">
-                <SelectValue placeholder="Select client" />
+                <SelectValue placeholder="Selecteer klant" />
               </SelectTrigger>
               <SelectContent className="bg-gray-700 border-gray-600">
                 {clients?.map((client) => (
@@ -143,7 +117,7 @@ export function UploadDocumentModal({ open, onOpenChange, onSuccess }: UploadDoc
           </div>
 
           <div>
-            <Label htmlFor="title">Document Title</Label>
+            <Label htmlFor="title">Document Titel</Label>
             <Input
               id="title"
               value={formData.title}
@@ -154,46 +128,56 @@ export function UploadDocumentModal({ open, onOpenChange, onSuccess }: UploadDoc
           </div>
 
           <div>
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Categorie</Label>
             <Select 
               value={formData.category} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
               required
             >
               <SelectTrigger className="bg-gray-700 border-gray-600">
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="Selecteer categorie" />
               </SelectTrigger>
               <SelectContent className="bg-gray-700 border-gray-600">
                 <SelectItem value="contract">Contract</SelectItem>
-                <SelectItem value="invoice">Invoice</SelectItem>
-                <SelectItem value="receipt">Receipt</SelectItem>
-                <SelectItem value="program">Program</SelectItem>
-                <SelectItem value="medical">Medical</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="invoice">Factuur</SelectItem>
+                <SelectItem value="receipt">Bon</SelectItem>
+                <SelectItem value="program">Programma</SelectItem>
+                <SelectItem value="medical">Medisch</SelectItem>
+                <SelectItem value="other">Overig</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="file">File</Label>
+            <Label htmlFor="file">Bestand</Label>
             <div className="mt-1">
               <Input
                 id="file"
                 type="file"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                onChange={handleFileChange}
                 className="bg-gray-700 border-gray-600"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
                 required
               />
+              {fileError && (
+                <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  {fileError}
+                </div>
+              )}
+              <p className="text-xs text-gray-400 mt-1">
+                Toegestane bestandstypen: PDF, Word, afbeeldingen, tekst. Max 10MB.
+              </p>
             </div>
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={uploadDocumentMutation.isPending}>
+            <Button type="submit" disabled={uploading || !!fileError}>
               <Upload className="w-4 h-4 mr-2" />
-              {uploadDocumentMutation.isPending ? 'Uploading...' : 'Upload Document'}
+              {uploading ? 'Uploaden...' : 'Document Uploaden'}
             </Button>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              Annuleren
             </Button>
           </div>
         </form>
