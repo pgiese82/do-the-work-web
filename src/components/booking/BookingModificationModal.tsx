@@ -45,7 +45,7 @@ export function BookingModificationModal({
   if (!booking) return null;
 
   const hoursUntilBooking = differenceInHours(new Date(booking.date_time), new Date());
-  const canCancel = hoursUntilBooking >= 24;
+  const canModify = hoursUntilBooking >= 24;
   
   function calculateRefund(hours: number, originalAmount: number): number {
     if (hours >= 48) return originalAmount;
@@ -74,10 +74,10 @@ export function BookingModificationModal({
       return;
     }
 
-    if (type === 'cancel' && !canCancel) {
+    if (!canModify) {
       toast({
         title: 'Fout',
-        description: 'Annuleringen moeten minimaal 24 uur van tevoren worden gemaakt.',
+        description: 'Wijzigingen moeten minimaal 24 uur van tevoren worden gemaakt.',
         variant: 'destructive',
       });
       return;
@@ -86,7 +86,7 @@ export function BookingModificationModal({
     setLoading(true);
 
     try {
-      // Update booking status to pending
+      // Update booking status
       const { error: bookingError } = await supabase
         .from('bookings')
         .update({ status: 'pending' })
@@ -114,17 +114,6 @@ export function BookingModificationModal({
 
       if (modificationError) throw modificationError;
 
-      // Send notification email
-      await supabase.functions.invoke('send-booking-modification-email', {
-        body: {
-          bookingId: booking.id,
-          modificationType: type,
-          reason,
-          newDateTime: requestedDateTime?.toISOString() || null,
-          refundAmount: type === 'cancel' ? refundAmount : 0
-        }
-      });
-
       toast({
         title: 'Verzoek Verzonden',
         description: `Je ${type === 'reschedule' ? 'verzet' : 'annulerings'}verzoek is verzonden.`,
@@ -147,15 +136,8 @@ export function BookingModificationModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(open) => {
-      onOpenChange(open);
-      if (!open) {
-        setReason('');
-        setSelectedDate(undefined);
-        setSelectedTime('');
-      }
-    }}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {type === 'reschedule' ? <Calendar className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
@@ -164,30 +146,32 @@ export function BookingModificationModal({
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Current Booking Info */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold">{booking.services.name}</h3>
             <p className="text-sm text-gray-600">
-              Huidige datum: {format(new Date(booking.date_time), 'EEEE d MMMM yyyy HH:mm', { locale: nl })}
+              {format(new Date(booking.date_time), 'EEEE d MMMM yyyy HH:mm', { locale: nl })}
             </p>
             <p className="text-sm text-gray-600">
-              Duur: {booking.services.duration} minuten • Prijs: €{booking.services.price}
+              {booking.services.duration} minuten • €{booking.services.price}
             </p>
           </div>
 
+          {/* Refund Info for Cancellation */}
           {type === 'cancel' && (
-            <Alert className={canCancel ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
+            <Alert className={canModify ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                {canCancel ? (
+                {canModify ? (
                   <>
-                    <strong>Restitutie Bedrag: €{refundAmount}</strong>
+                    <strong>Restitutie: €{refundAmount}</strong>
                     <br />
                     {hoursUntilBooking >= 48 && 'Volledige restitutie (48+ uur van tevoren)'}
                     {hoursUntilBooking >= 24 && hoursUntilBooking < 48 && '50% restitutie (24-48 uur van tevoren)'}
                   </>
                 ) : (
                   <>
-                    <strong>Geen restitutie beschikbaar</strong>
+                    <strong>Geen restitutie mogelijk</strong>
                     <br />
                     Annuleringen moeten minimaal 24 uur van tevoren worden gemaakt.
                   </>
@@ -196,6 +180,7 @@ export function BookingModificationModal({
             </Alert>
           )}
 
+          {/* New Date/Time Selection for Reschedule */}
           {type === 'reschedule' && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Selecteer nieuwe datum en tijd</h3>
@@ -211,19 +196,23 @@ export function BookingModificationModal({
             </div>
           )}
 
+          {/* Reason */}
           <div>
-            <Label htmlFor="reason">Reden voor {type === 'reschedule' ? 'verzetten' : 'annuleren'}</Label>
+            <Label htmlFor="reason">
+              Reden voor {type === 'reschedule' ? 'verzetten' : 'annuleren'}
+            </Label>
             <Textarea
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder={`Leg uit waarom je deze boeking wilt ${type === 'reschedule' ? 'verzetten' : 'annuleren'}...`}
-              className="resize-none mt-2"
+              placeholder={`Waarom wil je deze boeking ${type === 'reschedule' ? 'verzetten' : 'annuleren'}?`}
+              className="mt-2"
               rows={3}
             />
           </div>
 
-          <div className="flex gap-3">
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
@@ -234,11 +223,11 @@ export function BookingModificationModal({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={loading || (type === 'cancel' && !canCancel)}
+              disabled={loading || !canModify}
               className="flex-1"
               variant={type === 'cancel' ? 'destructive' : 'default'}
             >
-              {loading ? 'Verzenden...' : `${type === 'reschedule' ? 'Verzetten' : 'Annuleren'}`}
+              {loading ? 'Bezig...' : `Verzoek ${type === 'reschedule' ? 'Verzetten' : 'Annuleren'}`}
             </Button>
           </div>
         </div>
