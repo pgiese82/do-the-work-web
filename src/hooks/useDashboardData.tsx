@@ -3,221 +3,94 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-interface DashboardStats {
-  totalBookings: number;
-  completedSessions: number;
-  upcomingBookings: number;
-  totalDocuments: number;
-  lastSessionDate: string | null;
-  totalSpent: number;
-}
-
-interface NextBooking {
-  id: string;
-  date_time: string;
-  status: string;
-  services: {
-    name: string;
-    duration: number;
-    price: number;
-  };
-}
-
-interface UserProfile {
-  name: string;
-  email: string;
-  phone: string;
-  subscription_status: string;
-  client_status: string;
-  total_spent: number;
-  last_session_date: string | null;
-}
-
 export const useDashboardStats = () => {
   const { user } = useAuth();
 
   return useQuery({
     queryKey: ['dashboard-stats', user?.id],
-    queryFn: async (): Promise<DashboardStats> => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const today = new Date().toISOString().split('T')[0];
-      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
 
       console.log('🔍 Fetching dashboard stats for user:', user.id);
-      console.log('📅 Today:', today);
 
-      const [bookingsCount, completedCount, upcomingCount, documentsCount] = await Promise.all([
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id),
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id).eq('status', 'completed'),
-        supabase.from('bookings').select('id', { count: 'exact' }).eq('user_id', user.id).gte('date_time', new Date().toISOString()),
-        supabase.from('documents').select('id', { count: 'exact' }).eq('user_id', user.id),
+      const today = new Date().toISOString().split('T')[0];
+      const thisMonth = new Date().toISOString().slice(0, 7);
+
+      const [bookingsResult, documentsResult, paymentsResult] = await Promise.all([
+        // Get user's bookings
+        supabase
+          .from('bookings')
+          .select(`
+            *,
+            services:service_id (
+              name,
+              price,
+              duration
+            )
+          `)
+          .eq('user_id', user.id)
+          .order('date_time', { ascending: false }),
+
+        // Get user's documents count
+        supabase
+          .from('documents')
+          .select('id', { count: 'exact' })
+          .eq('user_id', user.id),
+
+        // Get user's payments
+        supabase
+          .from('payments')
+          .select('*')
+          .in('booking_id', 
+            supabase
+              .from('bookings')
+              .select('id')
+              .eq('user_id', user.id)
+          )
       ]);
 
-      console.log('📊 Raw counts:', {
-        total: bookingsCount.count,
-        completed: completedCount.count,
-        upcoming: upcomingCount.count,
-        documents: documentsCount.count
-      });
+      if (bookingsResult.error) throw bookingsResult.error;
+      if (documentsResult.error) throw documentsResult.error;
+      if (paymentsResult.error) throw paymentsResult.error;
 
-      // Get user profile for last session and total spent
-      const { data: userProfile } = await supabase
-        .from('users')
-        .select('last_session_date, total_spent')
-        .eq('id', user.id)
-        .single();
+      const bookings = bookingsResult.data || [];
+      const payments = paymentsResult.data || [];
+
+      // Calculate statistics
+      const totalBookings = bookings.length;
+      const completedBookings = bookings.filter(b => b.status === 'completed').length;
+      const upcomingBookings = bookings.filter(b => 
+        new Date(b.date_time) > new Date() && b.status !== 'cancelled'
+      ).length;
+      
+      const nextBooking = bookings
+        .filter(b => new Date(b.date_time) > new Date() && b.status !== 'cancelled')
+        .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime())[0];
+
+      const recentBookings = bookings
+        .slice(0, 5);
+
+      const totalSpent = payments
+        .filter(p => p.status === 'paid')
+        .reduce((sum, p) => sum + Number(p.amount), 0);
+
+      const documentsCount = documentsResult.count || 0;
 
       const stats = {
-        totalBookings: bookingsCount.count || 0,
-        completedSessions: completedCount.count || 0,
-        upcomingBookings: upcomingCount.count || 0,
-        totalDocuments: documentsCount.count || 0,
-        lastSessionDate: userProfile?.last_session_date || null,
-        totalSpent: userProfile?.total_spent || 0,
+        totalBookings,
+        completedBookings,
+        upcomingBookings,
+        totalSpent,
+        documentsCount,
+        nextBooking,
+        recentBookings,
       };
 
-      console.log('📈 Final dashboard stats:', stats);
-
+      console.log('📊 Dashboard stats calculated:', stats);
       return stats;
     },
-    enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 30 * 1000, // 30 seconds
-  });
-};
-
-export const useNextBooking = () => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: ['next-booking', user?.id],
-    queryFn: async (): Promise<NextBooking | null> => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      console.log('🔍 Fetching next booking for user:', user.id);
-
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          id,
-          date_time,
-          status,
-          services (
-            name,
-            duration,
-            price
-          )
-        `)
-        .eq('user_id', user.id)
-        .gte('date_time', new Date().toISOString())
-        .in('status', ['confirmed', 'pending'])
-        .order('date_time', { ascending: true })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        console.error('❌ Error fetching next booking:', error);
-        throw error;
-      }
-
-      console.log('📅 Next booking found:', data);
-      return data;
-    },
-    enabled: !!user?.id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    enabled: !!user,
+    staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 60 * 1000, // 1 minute
-  });
-};
-
-export const useUserProfile = () => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: ['user-profile', user?.id],
-    queryFn: async (): Promise<UserProfile> => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('users')
-        .select('name, email, phone, subscription_status, client_status, total_spent, last_session_date')
-        .eq('id', user.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user?.id,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-export const useRecentBookings = (limit: number = 5) => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: ['recent-bookings', user?.id, limit],
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          id,
-          date_time,
-          status,
-          payment_status,
-          service_id,
-          notes,
-          services (
-            name,
-            duration,
-            price
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('date_time', { ascending: false })
-        .limit(limit);
-
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
-
-export const usePaymentHistory = () => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: ['payment-history', user?.id],
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('payments')
-        .select(`
-          id,
-          amount,
-          status,
-          payment_method,
-          created_at,
-          bookings (
-            date_time,
-            services (
-              name
-            )
-          )
-        `)
-        .eq('bookings.user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!user?.id,
-    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 };
