@@ -1,16 +1,24 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, Apple, Heart } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useAuth } from '@/hooks/useAuth';
+import AuthModal from '@/components/auth/AuthModal';
+import BookingForm from '@/components/booking/BookingForm';
 
 const ServicesSection = () => {
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLDivElement>();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [bookingFormOpen, setBookingFormOpen] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const services = [
     {
+      id: '1-op-1-coaching',
       icon: Users,
       title: '1-op-1 coaching',
       description: 'Samen maken we een plan dat bij jou past. Persoonlijke begeleiding die werkt met jouw agenda.',
@@ -24,6 +32,7 @@ const ServicesSection = () => {
       period: '/maand'
     },
     {
+      id: 'online-trainings-schemas',
       icon: Calendar,
       title: 'Online trainings-schema\'s',
       description: 'Klaar-voor-gebruik schema\'s die je thuis of in de sportschool kunt doen. Perfect als je zelf aan de slag wilt.',
@@ -37,6 +46,7 @@ const ServicesSection = () => {
       period: '/maand'
     },
     {
+      id: 'persoonlijke-voedings-schemas',
       icon: Apple,
       title: 'Persoonlijke voedings-schema\'s',
       description: 'Geen dieet, maar een manier van eten die bij jouw leven past. Lekker eten én afvallen kan gewoon.',
@@ -50,6 +60,7 @@ const ServicesSection = () => {
       period: '/maand'
     },
     {
+      id: 'boksen-voor-parkinson',
       icon: Heart,
       title: 'Boksen voor Parkinson',
       description: 'Speciale bokstraining voor mensen met Parkinson. Helpt bij balans, coördinatie en zelfvertrouwen.',
@@ -64,20 +75,39 @@ const ServicesSection = () => {
     }
   ];
 
+  const handleBookService = (serviceId: string) => {
+    if (!user) {
+      setAuthModalOpen(true);
+      return;
+    }
+    
+    setSelectedServiceId(serviceId);
+    setBookingFormOpen(true);
+  };
+
   return (
     <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-slate-50" id="services">
       <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
         <div ref={titleRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
           <Badge className="mb-4 md:mb-6 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit mx-auto text-sm md:text-base">
-            Services
+            Services & Boeken
           </Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-4 md:mb-6 lg:mb-8 text-slate-900 px-4">
             Kies je
             <span className="block text-orange-600">transformatie</span>
           </h2>
           <p className="text-lg md:text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto px-4">
-            Verschillende wegen naar hetzelfde doel: een fittere, sterkere, zelfverzekerder jij.
+            Verschillende wegen naar hetzelfde doel: een fittere, sterkere, zelfverzekerder jij. Boek direct online.
           </p>
+          
+          {!user && (
+            <Button 
+              onClick={() => setAuthModalOpen(true)}
+              className="bg-orange-600 hover:bg-orange-700 text-white min-h-[44px] md:min-h-[52px] lg:min-h-[60px] px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 text-base md:text-lg mt-6"
+            >
+              Inloggen om te boeken
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-7xl mx-auto">
@@ -120,20 +150,18 @@ const ServicesSection = () => {
                     </div>
                   </div>
                   
-                  {/* Price and buttons - Fixed at bottom */}
+                  {/* Price and button - Fixed at bottom */}
                   <div className="bg-slate-50 p-6 md:p-8 lg:p-10 border-t mt-auto">
                     <div className="text-center mb-6 md:mb-8">
                       <div className="text-3xl md:text-4xl lg:text-5xl font-black text-orange-600 mb-1 md:mb-2">{service.price}</div>
                       <div className="text-slate-500 text-sm md:text-base">{service.period}</div>
                     </div>
-                    <div className="flex flex-col gap-3 md:gap-4">
-                      <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold min-h-[44px] md:min-h-[52px] lg:min-h-[60px] text-base md:text-lg transition-all duration-300 hover:scale-105">
-                        Boek Nu
-                      </Button>
-                      <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 min-h-[44px] md:min-h-[52px] lg:min-h-[60px] text-base md:text-lg">
-                        Meer Info
-                      </Button>
-                    </div>
+                    <Button 
+                      onClick={() => handleBookService(service.id)}
+                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold min-h-[44px] md:min-h-[52px] lg:min-h-[60px] text-base md:text-lg transition-all duration-300 hover:scale-105"
+                    >
+                      Boek Nu
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -141,6 +169,17 @@ const ServicesSection = () => {
           })}
         </div>
       </div>
+
+      <AuthModal 
+        open={authModalOpen} 
+        onOpenChange={setAuthModalOpen} 
+      />
+      
+      <BookingForm
+        open={bookingFormOpen}
+        onOpenChange={setBookingFormOpen}
+        serviceId={selectedServiceId}
+      />
     </section>
   );
 };

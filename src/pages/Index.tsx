@@ -2,7 +2,6 @@
 import React from 'react';
 import Header from '@/components/Header';
 import DownloadModal from '@/components/DownloadModal';
-import BookingSection from '@/components/BookingSection';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import StatsSection from '@/components/StatsSection';
 import HeroSection from '@/components/HeroSection';
@@ -23,7 +22,6 @@ const Index = () => {
       <StatsSection />
       <AboutSection />
       <ServicesSection />
-      <BookingSection />
       <TestimonialsSection />
       <FinalCTASection />
       <Footer />
