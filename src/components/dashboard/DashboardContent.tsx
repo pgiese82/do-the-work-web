@@ -79,22 +79,24 @@ export function DashboardContent() {
     console.log('Current pathname:', location.pathname);
     
     try {
-      switch (location.pathname) {
-        case '/dashboard':
-          return <DashboardOverview />;
-        case '/dashboard/services':
-          return <ServiceSelectionPage />;
-        case '/dashboard/book':
-          return <BookSession />;
-        case '/dashboard/bookings':
-          return <BookingsOverview />;
-        case '/dashboard/documents':
-          return <Documents />;
-        case '/dashboard/profile':
-          return <ProfileSettings />;
-        default:
-          console.log('No matching route, showing dashboard');
-          return <DashboardOverview />;
+      const path = location.pathname.toLowerCase();
+      
+      if (path === '/dashboard' || path === '/dashboard/') {
+        return <DashboardOverview />;
+      } else if (path === '/dashboard/services') {
+        return <ServiceSelectionPage />;
+      } else if (path === '/dashboard/book') {
+        return <BookSession />;
+      } else if (path === '/dashboard/bookings') {
+        return <BookingsOverview />;
+      } else if (path === '/dashboard/documents') {
+        return <Documents />;
+      } else if (path === '/dashboard/profile') {
+        return <ProfileSettings />;
+      } else {
+        console.log('Unknown route, redirecting to dashboard');
+        navigate('/dashboard');
+        return <DashboardOverview />;
       }
     } catch (error) {
       console.error('Error rendering content:', error);

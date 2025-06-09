@@ -1,9 +1,40 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock, CheckCircle } from 'lucide-react';
+import BookingForm from '@/components/booking/BookingForm';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export function BookSession() {
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+
+  const { data: services, isLoading } = useQuery({
+    queryKey: ['services'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('active', true)
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const handleBookService = (serviceId: string) => {
+    setSelectedServiceId(serviceId);
+    setShowBookingForm(true);
+  };
+
+  const handleCloseBooking = () => {
+    setShowBookingForm(false);
+    setSelectedServiceId(null);
+  };
+
   return (
     <div className="space-y-6 p-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3">
@@ -16,19 +47,71 @@ export function BookSession() {
         </div>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Boek een Sessie</CardTitle>
-          <CardDescription>
-            Kies een beschikbare tijd voor je volgende training
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            De boekingsfunctionaliteit wordt geladen...
-          </p>
-        </CardContent>
-      </Card>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {services?.map((service) => (
+            <Card key={service.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  {service.name}
+                  <span className="text-lg font-bold text-primary">€{service.price}</span>
+                </CardTitle>
+                <CardDescription className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  {service.duration} minuten
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {service.description && (
+                  <p className="text-sm text-muted-foreground">{service.description}</p>
+                )}
+                
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <CheckCircle className="w-4 h-4" />
+                  Direct beschikbaar
+                </div>
+                
+                <Button 
+                  onClick={() => handleBookService(service.id)}
+                  className="w-full bg-primary hover:bg-primary/90"
+                >
+                  Boek Nu
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {!isLoading && services?.length === 0 && (
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <p className="text-muted-foreground">
+              Er zijn momenteel geen services beschikbaar voor boeking.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      <BookingForm
+        open={showBookingForm}
+        onOpenChange={handleCloseBooking}
+        serviceId={selectedServiceId}
+      />
     </div>
   );
 }
