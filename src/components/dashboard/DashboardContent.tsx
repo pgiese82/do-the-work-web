@@ -78,22 +78,35 @@ export function DashboardContent() {
   const renderContent = () => {
     console.log('Current pathname:', location.pathname);
     
-    switch (location.pathname) {
-      case '/dashboard':
-        return <DashboardOverview />;
-      case '/dashboard/services':
-        return <ServiceSelectionPage />;
-      case '/dashboard/book':
-        return <BookSession />;
-      case '/dashboard/bookings':
-        return <BookingsOverview />;
-      case '/dashboard/documents':
-        return <Documents />;
-      case '/dashboard/profile':
-        return <ProfileSettings />;
-      default:
-        console.log('No matching route, showing dashboard');
-        return <DashboardOverview />;
+    try {
+      switch (location.pathname) {
+        case '/dashboard':
+          return <DashboardOverview />;
+        case '/dashboard/services':
+          return <ServiceSelectionPage />;
+        case '/dashboard/book':
+          return <BookSession />;
+        case '/dashboard/bookings':
+          return <BookingsOverview />;
+        case '/dashboard/documents':
+          return <Documents />;
+        case '/dashboard/profile':
+          return <ProfileSettings />;
+        default:
+          console.log('No matching route, showing dashboard');
+          return <DashboardOverview />;
+      }
+    } catch (error) {
+      console.error('Error rendering content:', error);
+      return (
+        <div className="p-8 text-center">
+          <h2 className="text-xl font-semibold mb-2">Er is een fout opgetreden</h2>
+          <p className="text-muted-foreground mb-4">Probeer de pagina te vernieuwen of ga terug naar het dashboard.</p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Terug naar Dashboard
+          </Button>
+        </div>
+      );
     }
   };
 
