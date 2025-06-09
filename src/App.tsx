@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
@@ -50,105 +51,105 @@ function App() {
               }
             />
             
-            {/* Admin routes - with sidebar */}
+            {/* Admin routes - all wrapped with AdminLayout */}
             <Route
               path="/admin/dashboard"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminDashboard />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/bookings"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminBookings />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/clients"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminClients />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/documents"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminDocuments />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/notifications"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminNotifications />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/calendar"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminCalendar />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/audit-logs"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminAuditLogs />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/waiting-list"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminWaitingList />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/pricing"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminPricing />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route
               path="/admin/availability"
               element={
-                <SidebarProvider>
-                  <AdminProtectedRoute>
+                <AdminProtectedRoute>
+                  <AdminLayout>
                     <AdminAvailability />
-                  </AdminProtectedRoute>
-                </SidebarProvider>
+                  </AdminLayout>
+                </AdminProtectedRoute>
               }
             />
             <Route path="*" element={<NotFound />} />
