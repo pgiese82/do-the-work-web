@@ -4,14 +4,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
+import AdminBookings from "./pages/AdminBookings";
+import { AdminProtectedRoute } from "./components/auth/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -25,65 +26,30 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={
-            <AdminProtectedRoute>
-              <AdminDashboard />
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/bookings" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Admin Bookings</h1>
-                <p>Bookings management will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/calendar" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Admin Calendar</h1>
-                <p>Calendar management will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/clients" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Client Management</h1>
-                <p>Client management will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/payments" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Payment Management</h1>
-                <p>Payment management will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/documents" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Document Management</h1>
-                <p>Document management will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/admin/dashboard/settings" element={
-            <AdminProtectedRoute>
-              <div className="min-h-screen bg-gray-900 text-white p-8">
-                <h1 className="text-2xl font-bold">Admin Settings</h1>
-                <p>Admin settings will be implemented here.</p>
-              </div>
-            </AdminProtectedRoute>
-          } />
-          <Route path="/dashboard/*" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/bookings" 
+            element={
+              <AdminProtectedRoute>
+                <AdminBookings />
+              </AdminProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/*" 
+            element={
+              <SidebarProvider>
+                <Dashboard />
+              </SidebarProvider>
+            } 
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
