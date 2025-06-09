@@ -68,7 +68,7 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar className="border-r bg-background md:flex hidden">
+    <Sidebar className="border-r bg-background flex">
       <SidebarHeader className="p-4 border-b">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
