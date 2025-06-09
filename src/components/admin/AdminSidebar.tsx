@@ -36,32 +36,32 @@ const adminMenuItems = [
   },
   {
     title: "Bookings",
-    url: "/admin/dashboard/bookings",
+    url: "/admin/bookings",
     icon: CalendarCheck,
   },
   {
     title: "Calendar",
-    url: "/admin/dashboard/calendar",
+    url: "/admin/calendar",
     icon: Calendar,
   },
   {
     title: "Clients",
-    url: "/admin/dashboard/clients",
+    url: "/admin/clients",
     icon: Users,
   },
   {
     title: "Payments",
-    url: "/admin/dashboard/payments",
+    url: "/admin/payments",
     icon: CreditCard,
   },
   {
     title: "Documents",
-    url: "/admin/dashboard/documents",
+    url: "/admin/documents",
     icon: FileText,
   },
   {
     title: "Settings",
-    url: "/admin/dashboard/settings",
+    url: "/admin/settings",
     icon: Settings,
   },
 ];

@@ -28,14 +28,21 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route 
-            path="/admin/*" 
+            path="/admin/dashboard" 
             element={
               <AdminProtectedRoute>
                 <AdminLayout>
-                  <Routes>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="bookings" element={<AdminBookings />} />
-                  </Routes>
+                  <AdminDashboard />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/bookings" 
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminBookings />
                 </AdminLayout>
               </AdminProtectedRoute>
             } 
