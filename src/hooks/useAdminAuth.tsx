@@ -76,6 +76,22 @@ export const useAdminAuth = () => {
           console.error('❌ Database error:', error.message);
           if (error.code === 'PGRST116') {
             console.log('🚫 User not found in users table');
+            // If user doesn't exist, create them as a regular client
+            console.log('📝 Creating user in database...');
+            const { error: insertError } = await supabase
+              .from('users')
+              .insert({
+                id: session.user.id,
+                email: session.user.email || '',
+                name: session.user.email || 'Admin User',
+                role: 'client' // Default role, can be changed manually to 'admin'
+              });
+            
+            if (insertError) {
+              console.error('❌ Error creating user:', insertError);
+            } else {
+              console.log('✅ User created successfully');
+            }
           }
         }
 

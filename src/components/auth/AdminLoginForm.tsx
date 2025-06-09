@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Shield } from 'lucide-react';
+import { Eye, EyeOff, Shield, Info } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +44,9 @@ const AdminLoginForm = () => {
         description: "Welcome to the admin dashboard!",
       });
       navigate('/admin/dashboard');
+    } else if (!loading && user && !isAdmin) {
+      console.log('⚠️ User authenticated but not admin');
+      setError('Access denied. This account does not have admin privileges. Please contact the administrator to upgrade your account.');
     }
   }, [user, isAdmin, loading, navigate, toast]);
 
@@ -58,7 +61,7 @@ const AdminLoginForm = () => {
       if (error) {
         console.error('❌ Login error:', error);
         if (error.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password');
+          setError('Invalid email or password. Please check your credentials and try again.');
         } else if (error.message.includes('permissions')) {
           setError('Access denied. Admin privileges required.');
         } else {
@@ -87,6 +90,13 @@ const AdminLoginForm = () => {
         <h2 className="text-2xl font-bold text-white mb-2">Admin Access</h2>
         <p className="text-gray-300">Enter your admin credentials to continue</p>
       </div>
+
+      <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-300">
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          <strong>First time?</strong> Register with any email and password, then contact the administrator to upgrade your account to admin privileges.
+        </AlertDescription>
+      </Alert>
 
       {error && (
         <Alert className="bg-red-500/10 border-red-500/20 text-red-300">
@@ -146,7 +156,7 @@ const AdminLoginForm = () => {
         {loading ? 'Signing in...' : 'Sign In as Admin'}
       </Button>
 
-      <div className="text-center">
+      <div className="text-center space-y-2">
         <button
           type="button"
           onClick={() => navigate('/auth')}
@@ -155,6 +165,9 @@ const AdminLoginForm = () => {
         >
           Back to Client Login
         </button>
+        <p className="text-gray-400 text-xs">
+          Need admin access? Contact the administrator to upgrade your account.
+        </p>
       </div>
     </form>
   );
