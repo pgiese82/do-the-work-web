@@ -1,16 +1,17 @@
 
 import React from 'react';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { DashboardOverview } from './DashboardOverview';
-import { BookSession } from './BookSession';
-import { BookingsOverview } from './BookingsOverview';
-import { Documents } from './Documents';
-import { ProfileSettings } from './ProfileSettings';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+// Lazy load components to catch import errors
+const DashboardOverview = React.lazy(() => import('./DashboardOverview').then(module => ({ default: module.DashboardOverview })));
+const BookSession = React.lazy(() => import('./BookSession').then(module => ({ default: module.BookSession })));
+const BookingsOverview = React.lazy(() => import('./BookingsOverview').then(module => ({ default: module.BookingsOverview })));
+const Documents = React.lazy(() => import('./Documents').then(module => ({ default: module.Documents })));
+const ProfileSettings = React.lazy(() => import('./ProfileSettings').then(module => ({ default: module.ProfileSettings })));
 
 export function DashboardContent() {
   const location = useLocation();
-  const navigate = useNavigate();
 
   console.log('DashboardContent rendering, current path:', location.pathname);
 
@@ -22,22 +23,46 @@ export function DashboardContent() {
       switch (currentPath) {
         case '/dashboard':
           console.log('Loading DashboardOverview');
-          return <DashboardOverview />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <DashboardOverview />
+            </React.Suspense>
+          );
         case '/dashboard/book':
           console.log('Loading BookSession');
-          return <BookSession />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <BookSession />
+            </React.Suspense>
+          );
         case '/dashboard/bookings':
           console.log('Loading BookingsOverview');
-          return <BookingsOverview />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <BookingsOverview />
+            </React.Suspense>
+          );
         case '/dashboard/documents':
           console.log('Loading Documents');
-          return <Documents />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <Documents />
+            </React.Suspense>
+          );
         case '/dashboard/profile':
           console.log('Loading ProfileSettings');
-          return <ProfileSettings />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <ProfileSettings />
+            </React.Suspense>
+          );
         default:
           console.log('Unknown route, showing dashboard overview');
-          return <DashboardOverview />;
+          return (
+            <React.Suspense fallback={<div className="p-6">Loading...</div>}>
+              <DashboardOverview />
+            </React.Suspense>
+          );
       }
     } catch (error) {
       console.error('Error rendering dashboard content:', error);
@@ -47,6 +72,9 @@ export function DashboardContent() {
           <p className="text-muted-foreground">
             There was an error loading the dashboard content. Please try refreshing the page.
           </p>
+          <pre className="mt-4 p-4 bg-red-50 text-red-800 text-sm rounded">
+            {error instanceof Error ? error.message : String(error)}
+          </pre>
         </div>
       );
     }
