@@ -35,17 +35,17 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Book Session",
+    title: "Sessie Boeken",
     url: "/dashboard/book",
     icon: Calendar,
   },
   {
-    title: "My Bookings",
+    title: "Mijn Boekingen",
     url: "/dashboard/bookings",
     icon: CalendarCheck,
   },
   {
-    title: "Documents",
+    title: "Documenten",
     url: "/dashboard/documents",
     icon: FileText,
   },
@@ -53,12 +53,12 @@ const menuItems = [
 
 const bottomMenuItems = [
   {
-    title: "Back to Website",
+    title: "Terug naar Website",
     url: "/",
     icon: ArrowLeft,
   },
   {
-    title: "Profile Settings",
+    title: "Profiel Instellingen",
     url: "/dashboard/profile",
     icon: Settings,
   },
@@ -75,15 +75,15 @@ export function DashboardSidebar() {
       if (error) throw error;
       
       toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account.",
+        title: "Succesvol uitgelogd",
+        description: "Je bent uitgelogd van je account.",
       });
       
       navigate('/auth');
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error logging out",
+        title: "Fout bij uitloggen",
         description: error.message,
       });
     }
@@ -98,7 +98,7 @@ export function DashboardSidebar() {
           </div>
           <div>
             <h2 className="font-semibold text-foreground">DO THE WORK</h2>
-            <p className="text-xs text-muted-foreground">Client Portal</p>
+            <p className="text-xs text-muted-foreground">Klantenportaal</p>
           </div>
         </div>
       </SidebarHeader>
@@ -106,7 +106,7 @@ export function DashboardSidebar() {
       <SidebarContent className="px-2 py-4">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs text-muted-foreground mb-2 px-2">
-            Navigation
+            Navigatie
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
@@ -165,7 +165,7 @@ export function DashboardSidebar() {
           className="w-full justify-start h-9 text-muted-foreground hover:text-foreground"
         >
           <LogOut className="w-4 h-4 mr-3" />
-          <span className="text-sm">Logout</span>
+          <span className="text-sm">Uitloggen</span>
         </Button>
       </SidebarFooter>
     </Sidebar>

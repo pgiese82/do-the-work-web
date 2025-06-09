@@ -40,7 +40,7 @@ export function DashboardContent() {
         <SidebarTrigger className="text-white hover:bg-white/10" />
         <div className="ml-auto">
           <div className="text-sm text-gray-300">
-            {new Date().toLocaleDateString('en-US', { 
+            {new Date().toLocaleDateString('nl-NL', { 
               weekday: 'long', 
               year: 'numeric', 
               month: 'long', 

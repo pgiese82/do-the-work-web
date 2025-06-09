@@ -52,14 +52,14 @@ export function BookingTabs({ upcomingBookings, pastBookings }: BookingTabsProps
           className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
         >
           <Calendar className="w-4 h-4 mr-2" />
-          Upcoming ({upcomingBookings.length})
+          Aankomend ({upcomingBookings.length})
         </TabsTrigger>
         <TabsTrigger 
           value="past"
           className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
         >
           <TrendingUp className="w-4 h-4 mr-2" />
-          Past Sessions ({pastBookings.length})
+          Vorige Sessies ({pastBookings.length})
         </TabsTrigger>
       </TabsList>
 
@@ -67,8 +67,8 @@ export function BookingTabs({ upcomingBookings, pastBookings }: BookingTabsProps
         {upcomingBookings.length === 0 ? (
           <EmptyState 
             icon={Calendar}
-            title="No upcoming sessions"
-            description="You don't have any upcoming training sessions scheduled. Book your next session to continue your fitness journey!"
+            title="Geen aankomende sessies"
+            description="Je hebt geen aankomende training sessies ingepland. Boek je volgende sessie om door te gaan met je fitness reis!"
           />
         ) : (
           <div className="grid gap-4">
@@ -83,8 +83,8 @@ export function BookingTabs({ upcomingBookings, pastBookings }: BookingTabsProps
         {pastBookings.length === 0 ? (
           <EmptyState 
             icon={TrendingUp}
-            title="No past sessions"
-            description="You haven't completed any training sessions yet. Your session history will appear here after your first workout."
+            title="Geen vorige sessies"
+            description="Je hebt nog geen training sessies voltooid. Je sessie geschiedenis verschijnt hier na je eerste workout."
           />
         ) : (
           <div className="grid gap-4">

@@ -28,13 +28,13 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     return {
-      date: date.toLocaleDateString('en-US', { 
+      date: date.toLocaleDateString('nl-NL', { 
         weekday: 'long', 
         month: 'long', 
         day: 'numeric',
         year: 'numeric'
       }),
-      time: date.toLocaleTimeString('en-US', { 
+      time: date.toLocaleTimeString('nl-NL', { 
         hour: '2-digit', 
         minute: '2-digit' 
       }),
@@ -53,7 +53,7 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
             </h3>
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="w-4 h-4 mr-2" />
-              <span>{dateTime.date} at {dateTime.time}</span>
+              <span>{dateTime.date} om {dateTime.time}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -70,10 +70,6 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
               <Clock className="w-4 h-4" />
               <span>{booking.services.duration} min</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Euro className="w-4 h-4" />
-              <span className="font-medium text-foreground">{booking.services.price}</span>
-            </div>
           </div>
         </div>
         
@@ -82,7 +78,7 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
             <div className="flex items-start gap-2">
               <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground mb-1">Session Notes</p>
+                <p className="text-sm font-medium text-foreground mb-1">Sessie Notities</p>
                 <p className="text-sm text-muted-foreground leading-relaxed">{booking.notes}</p>
               </div>
             </div>
@@ -97,7 +93,7 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
                 size="sm"
                 className="text-destructive border-destructive/20 hover:bg-destructive/5 hover:border-destructive/30"
               >
-                Cancel Booking
+                Boeking Annuleren
               </Button>
             )}
             {booking.status === 'confirmed' && new Date(booking.date_time) > new Date() && (
@@ -106,7 +102,7 @@ export function BookingCard({ booking, isUpcoming }: BookingCardProps) {
                 size="sm"
                 className="text-primary border-primary/20 hover:bg-primary/5 hover:border-primary/30"
               >
-                Reschedule
+                Verzetten
               </Button>
             )}
           </div>

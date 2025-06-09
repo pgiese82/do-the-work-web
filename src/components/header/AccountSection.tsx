@@ -51,13 +51,13 @@ export const AccountSection = ({ user, onLogout }: AccountSectionProps) => {
               onClick={() => navigate('/dashboard')}
               className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
             >
-              Client Portal
+              Klantenportaal
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={onLogout}
               className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
             >
-              Log out
+              Uitloggen
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

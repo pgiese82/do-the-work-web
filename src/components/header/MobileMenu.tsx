@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
@@ -63,14 +64,14 @@ export const MobileMenu = ({ isOpen, user, scrollToSection, onLogout }: MobileMe
                 className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
               >
                 <User className="w-4 h-4 mr-2" />
-                Client Portal
+                Klantenportaal
               </Button>
               <Button
                 onClick={onLogout}
                 variant="ghost"
                 className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
               >
-                Log out
+                Uitloggen
               </Button>
             </div>
           ) : (

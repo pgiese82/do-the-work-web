@@ -16,9 +16,9 @@ export function BookingsHeader({ totalBookings }: BookingsHeaderProps) {
             <Calendar className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-semibold text-foreground">Bookings Overview</h1>
+            <h1 className="text-3xl font-semibold text-foreground">Boekingen Overzicht</h1>
             <p className="text-muted-foreground text-base">
-              Manage all your training sessions ({totalBookings} total)
+              Beheer al je training sessies ({totalBookings} totaal)
             </p>
           </div>
         </div>
@@ -26,7 +26,7 @@ export function BookingsHeader({ totalBookings }: BookingsHeaderProps) {
       
       <Button className="gap-2">
         <Plus className="w-4 h-4" />
-        New Booking
+        Nieuwe Boeking
       </Button>
     </div>
   );

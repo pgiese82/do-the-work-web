@@ -12,14 +12,14 @@ export function BookingsEmptyState() {
           <Calendar className="w-8 h-8 text-primary" />
         </div>
         <h2 className="text-2xl font-semibold text-foreground mb-3">
-          No bookings found
+          Geen boekingen gevonden
         </h2>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
-          You haven't made any bookings yet. Create your first booking to get started with your fitness journey.
+          Je hebt nog geen boekingen gemaakt. Maak je eerste boeking om te beginnen met je fitness reis.
         </p>
         <Button size="lg" className="gap-2">
           <Plus className="w-5 h-5" />
-          Create First Booking
+          Eerste Boeking Maken
         </Button>
       </CardContent>
     </Card>
