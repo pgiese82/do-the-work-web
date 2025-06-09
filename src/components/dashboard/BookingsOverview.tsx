@@ -1,16 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { isWithinInterval } from 'date-fns';
-import { BookingFilters } from './booking/BookingFilters';
-import { BookingViewToggle } from './booking/BookingViewToggle';
-import { BookingListView } from './booking/BookingListView';
-import { BookingCalendarView } from './booking/BookingCalendarView';
-import { BookingsHeader } from './bookings/BookingsHeader';
-import { BookingsLoadingState } from './bookings/BookingsLoadingState';
-import { BookingsEmptyState } from './bookings/BookingsEmptyState';
+import { BookingTabs } from './mybookings/BookingTabs';
+import { LoadingState } from './mybookings/LoadingState';
+import { Calendar, Plus } from 'lucide-react';
 
 interface Booking {
   id: string;
@@ -29,24 +25,13 @@ export function BookingsOverview() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [paymentFilter, setPaymentFilter] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
-  const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   useEffect(() => {
     if (user) {
       fetchBookings();
     }
   }, [user]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [bookings, statusFilter, paymentFilter, dateRange, searchTerm]);
 
   const fetchBookings = async () => {
     try {
@@ -81,84 +66,62 @@ export function BookingsOverview() {
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...bookings];
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(booking => booking.status === statusFilter);
-    }
-
-    if (paymentFilter !== 'all') {
-      filtered = filtered.filter(booking => booking.payment_status === paymentFilter);
-    }
-
-    if (dateRange.from && dateRange.to) {
-      filtered = filtered.filter(booking => {
-        const bookingDate = new Date(booking.date_time);
-        return isWithinInterval(bookingDate, { start: dateRange.from!, end: dateRange.to! });
-      });
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(booking =>
-        booking.services.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.notes?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredBookings(filtered);
-  };
-
   const isUpcoming = (dateTime: string) => {
     return new Date(dateTime) > new Date();
   };
 
-  const upcomingBookings = filteredBookings.filter(booking => isUpcoming(booking.date_time));
-  const pastBookings = filteredBookings.filter(booking => !isUpcoming(booking.date_time));
+  const upcomingBookings = bookings.filter(booking => isUpcoming(booking.date_time));
+  const pastBookings = bookings.filter(booking => !isUpcoming(booking.date_time));
 
   if (loading) {
-    return <BookingsLoadingState />;
+    return <LoadingState />;
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
-      <BookingsHeader totalBookings={bookings.length} />
-
-      {bookings.length === 0 ? (
-        <BookingsEmptyState />
-      ) : (
-        <>
-          <div className="space-y-6">
-            <BookingFilters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              paymentFilter={paymentFilter}
-              setPaymentFilter={setPaymentFilter}
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-            />
-
-            <div className="flex justify-end">
-              <BookingViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+    <div className="space-y-8 max-w-4xl mx-auto p-6">
+      {/* Header Section */}
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-semibold text-foreground">My Bookings</h1>
+              <p className="text-muted-foreground text-base">
+                Track and manage your training sessions
+              </p>
             </div>
           </div>
+        </div>
+        
+        {bookings.length > 0 && (
+          <Button className="gap-2">
+            <Plus className="w-4 h-4" />
+            Book Session
+          </Button>
+        )}
+      </div>
 
-          {viewMode === 'list' ? (
-            <BookingListView
-              upcomingBookings={upcomingBookings}
-              pastBookings={pastBookings}
-              onUpdate={fetchBookings}
-            />
-          ) : (
-            <BookingCalendarView
-              filteredBookings={filteredBookings}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
-          )}
-        </>
+      {/* Main Content */}
+      {bookings.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Calendar className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
+            Ready to start your fitness journey?
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
+            You haven't booked any sessions yet. Book your first training session and begin reaching your fitness goals.
+          </p>
+          <Button size="lg" className="gap-2">
+            <Plus className="w-5 h-5" />
+            Book Your First Session
+          </Button>
+        </div>
+      ) : (
+        <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
       )}
     </div>
   );
