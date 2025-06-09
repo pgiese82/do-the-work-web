@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Users, 
   CalendarCheck, 
-  DollarSign, 
+  Euro, 
   TrendingUp,
   Clock,
   CheckCircle
@@ -53,7 +52,7 @@ export function AdminStatsCards() {
       value: `€${stats?.todayRevenue?.toFixed(2) || "0.00"}`,
       change: stats?.completedSessionsToday ? `${stats.completedSessionsToday} sessies` : "Geen sessies",
       changeType: "positive" as const,
-      icon: DollarSign,
+      icon: Euro,
       description: "verdiend vandaag"
     },
     {
