@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -62,11 +63,6 @@ const adminMenuItems = [
     icon: FileText,
   },
   {
-    title: "CMS",
-    url: "/admin/cms",
-    icon: Globe,
-  },
-  {
     title: "Notifications",
     url: "/admin/notifications",
     icon: Bell,
@@ -74,6 +70,11 @@ const adminMenuItems = [
 ];
 
 const bottomMenuItems = [
+  {
+    title: "CMS",
+    url: "/admin/cms",
+    icon: Globe,
+  },
   {
     title: "Audit Logs",
     url: "/admin/audit-logs",
