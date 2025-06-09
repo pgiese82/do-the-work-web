@@ -32,9 +32,11 @@ const App = () => (
             path="/admin/dashboard" 
             element={
               <AdminProtectedRoute>
-                <AdminLayout>
-                  <AdminDashboard />
-                </AdminLayout>
+                <SidebarProvider>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </SidebarProvider>
               </AdminProtectedRoute>
             } 
           />
@@ -42,9 +44,11 @@ const App = () => (
             path="/admin/bookings" 
             element={
               <AdminProtectedRoute>
-                <AdminLayout>
-                  <AdminBookings />
-                </AdminLayout>
+                <SidebarProvider>
+                  <AdminLayout>
+                    <AdminBookings />
+                  </AdminLayout>
+                </SidebarProvider>
               </AdminProtectedRoute>
             } 
           />
@@ -52,9 +56,11 @@ const App = () => (
             path="/admin/audit-logs" 
             element={
               <AdminProtectedRoute>
-                <AdminLayout>
-                  <AdminAuditLogs />
-                </AdminLayout>
+                <SidebarProvider>
+                  <AdminLayout>
+                    <AdminAuditLogs />
+                  </AdminLayout>
+                </SidebarProvider>
               </AdminProtectedRoute>
             } 
           />
