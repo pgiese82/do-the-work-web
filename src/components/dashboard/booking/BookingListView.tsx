@@ -10,6 +10,7 @@ interface Booking {
   date_time: string;
   status: string;
   payment_status: string;
+  service_id: string;
   notes?: string;
   services: {
     name: string;
