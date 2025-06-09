@@ -16,15 +16,15 @@ export function DashboardCharts() {
       {/* Booking Trends Chart */}
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Booking Trends (Last 7 Days)
+          <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+            <TrendingUp className="h-4 w-4 md:h-5 md:w-5" />
+            Boekingstrends (Laatste 7 Dagen)
           </CardTitle>
         </CardHeader>
         <CardContent>
           {trendsLoading ? (
-            <div className="h-[300px] flex items-center justify-center">
-              <div className="animate-pulse text-muted-foreground">Loading chart data...</div>
+            <div className="h-[200px] md:h-[300px] flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground text-sm">Grafiek laden...</div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
@@ -36,14 +36,15 @@ export function DashboardCharts() {
                     month: 'short', 
                     day: 'numeric' 
                   })}
+                  fontSize={12}
                 />
-                <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
+                <YAxis yAxisId="left" fontSize={12} />
+                <YAxis yAxisId="right" orientation="right" fontSize={12} />
                 <Tooltip 
                   labelFormatter={(value) => new Date(value).toLocaleDateString('nl-NL')}
                   formatter={(value, name) => [
-                    name === 'count' ? `${value} bookings` : `€${value}`,
-                    name === 'count' ? 'Bookings' : 'Revenue'
+                    name === 'count' ? `${value} boekingen` : `€${value}`,
+                    name === 'count' ? 'Boekingen' : 'Omzet'
                   ]}
                 />
                 <Bar yAxisId="left" dataKey="count" fill="#3b82f6" name="count" />
@@ -57,23 +58,23 @@ export function DashboardCharts() {
       {/* Service Popularity Chart */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Service Popularity
+          <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+            <BarChart3 className="h-4 w-4 md:h-5 md:w-5" />
+            Service Populariteit
           </CardTitle>
         </CardHeader>
         <CardContent>
           {popularityLoading ? (
-            <div className="h-[250px] flex items-center justify-center">
-              <div className="animate-pulse text-muted-foreground">Loading chart data...</div>
+            <div className="h-[200px] md:h-[250px] flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground text-sm">Grafiek laden...</div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={servicePopularity?.slice(0, 5)} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="service_name" type="category" width={100} />
-                <Tooltip formatter={(value, name) => [`${value} bookings`, 'Bookings']} />
+                <XAxis type="number" fontSize={12} />
+                <YAxis dataKey="service_name" type="category" width={80} fontSize={10} />
+                <Tooltip formatter={(value, name) => [`${value} boekingen`, 'Boekingen']} />
                 <Bar dataKey="booking_count" fill="#3b82f6" />
               </BarChart>
             </ResponsiveContainer>
@@ -84,15 +85,15 @@ export function DashboardCharts() {
       {/* Revenue by Service */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChartIcon className="h-5 w-5" />
-            Revenue by Service
+          <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+            <PieChartIcon className="h-4 w-4 md:h-5 md:w-5" />
+            Omzet per Service
           </CardTitle>
         </CardHeader>
         <CardContent>
           {popularityLoading ? (
-            <div className="h-[250px] flex items-center justify-center">
-              <div className="animate-pulse text-muted-foreground">Loading chart data...</div>
+            <div className="h-[200px] md:h-[250px] flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground text-sm">Grafiek laden...</div>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={250}>
@@ -106,12 +107,13 @@ export function DashboardCharts() {
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="total_revenue"
+                  fontSize={10}
                 >
                   {servicePopularity?.slice(0, 6).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`€${value}`, 'Revenue']} />
+                <Tooltip formatter={(value) => [`€${value}`, 'Omzet']} />
               </PieChart>
             </ResponsiveContainer>
           )}
