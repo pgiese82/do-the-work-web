@@ -66,6 +66,9 @@ const adminMenuItems = [
     url: "/admin/notifications",
     icon: Bell,
   },
+];
+
+const bottomMenuItems = [
   {
     title: "Audit Logs",
     url: "/admin/audit-logs",
@@ -121,6 +124,37 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {adminMenuItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                    >
+                      <a 
+                        href={item.url}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.url);
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {bottomMenuItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
