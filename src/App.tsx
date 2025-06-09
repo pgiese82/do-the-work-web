@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +20,7 @@ import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminWaitingList from "./pages/AdminWaitingList";
 import AdminPricing from "./pages/AdminPricing";
 import AdminAvailability from "./pages/AdminAvailability";
+import AdminSettings from "./pages/AdminSettings";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import NotFound from "./pages/NotFound";
@@ -119,6 +119,16 @@ function App() {
                 <AdminProtectedRoute>
                   <AdminLayout>
                     <AdminPayments />
+                  </AdminLayout>
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <AdminProtectedRoute>
+                  <AdminLayout>
+                    <AdminSettings />
                   </AdminLayout>
                 </AdminProtectedRoute>
               }
