@@ -69,96 +69,119 @@ export function Documents() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-black text-white mb-2">Documents</h1>
-          <p className="text-gray-300">Loading your documents...</p>
+      <div className="p-8 space-y-6 max-w-6xl mx-auto">
+        <div className="space-y-3">
+          <div className="h-8 bg-gray-100 rounded-lg w-64 animate-pulse"></div>
+          <div className="h-5 bg-gray-100 rounded w-96 animate-pulse"></div>
+        </div>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-40 bg-gray-100 rounded-xl animate-pulse"></div>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-black text-white mb-2">Documents</h1>
-        <p className="text-gray-300">
+    <div className="p-8 space-y-8 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900">Documents</h1>
+        <p className="text-gray-600 text-lg">
           Access your training documents, contracts, and receipts
         </p>
       </div>
 
-      <div className="flex gap-4 items-center">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search documents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white/10 border-white/20 text-white pl-10"
-          />
-        </div>
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <Input
+          placeholder="Search documents..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
 
-      <div className="grid gap-6">
+      <div className="space-y-8">
         {/* Personal Documents */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              My Documents
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Documents uploaded specifically for you
-            </CardDescription>
+        <Card className="border-0 shadow-sm bg-white">
+          <CardHeader className="pb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  My Documents
+                </CardTitle>
+                <CardDescription className="text-base text-gray-600">
+                  Documents uploaded specifically for you
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {filteredDocuments.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-white/10">
-                    <TableHead className="text-gray-300">Title</TableHead>
-                    <TableHead className="text-gray-300">Category</TableHead>
-                    <TableHead className="text-gray-300">Size</TableHead>
-                    <TableHead className="text-gray-300">Upload Date</TableHead>
-                    <TableHead className="text-gray-300">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDocuments.map((document) => (
-                    <TableRow key={document.id} className="border-white/10">
-                      <TableCell className="text-white font-medium">
-                        {document.title}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="capitalize border-white/20 text-gray-300">
-                          {document.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-gray-300">
-                        {formatFileSize(document.file_size)}
-                      </TableCell>
-                      <TableCell className="text-gray-300">
-                        {new Date(document.upload_date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Download className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="text-gray-700 font-medium">Title</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Category</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Size</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Upload Date</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredDocuments.map((document) => (
+                      <TableRow key={document.id} className="hover:bg-gray-50">
+                        <TableCell className="text-gray-900 font-medium">
+                          {document.title}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize bg-blue-50 text-blue-700 border-blue-200">
+                            {document.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-600">
+                          {formatFileSize(document.file_size)}
+                        </TableCell>
+                        <TableCell className="text-gray-600">
+                          {new Date(document.upload_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            >
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
-              <div className="text-center py-12">
-                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No personal documents yet</h3>
-                <p className="text-gray-300">
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">No personal documents yet</h3>
+                <p className="text-gray-600 max-w-sm mx-auto">
                   Your trainer will upload documents specifically for you here
                 </p>
               </div>
@@ -167,64 +190,82 @@ export function Documents() {
         </Card>
 
         {/* Template Documents */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Available Templates
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Training programs and forms assigned to you
-            </CardDescription>
+        <Card className="border-0 shadow-sm bg-white">
+          <CardHeader className="pb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-semibold text-gray-900">
+                  Available Templates
+                </CardTitle>
+                <CardDescription className="text-base text-gray-600">
+                  Training programs and forms assigned to you
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {filteredAssignments.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-white/10">
-                    <TableHead className="text-gray-300">Document</TableHead>
-                    <TableHead className="text-gray-300">Category</TableHead>
-                    <TableHead className="text-gray-300">Description</TableHead>
-                    <TableHead className="text-gray-300">Delivery Date</TableHead>
-                    <TableHead className="text-gray-300">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAssignments.map((assignment: any) => (
-                    <TableRow key={assignment.id} className="border-white/10">
-                      <TableCell className="text-white font-medium">
-                        {assignment.document_templates?.name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="capitalize border-white/20 text-gray-300">
-                          {assignment.document_templates?.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-gray-300">
-                        {assignment.document_templates?.description || 'No description'}
-                      </TableCell>
-                      <TableCell className="text-gray-300">
-                        {assignment.delivery_date ? new Date(assignment.delivery_date).toLocaleDateString() : 'N/A'}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Download className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="text-gray-700 font-medium">Document</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Category</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Description</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Delivery Date</TableHead>
+                      <TableHead className="text-gray-700 font-medium">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredAssignments.map((assignment: any) => (
+                      <TableRow key={assignment.id} className="hover:bg-gray-50">
+                        <TableCell className="text-gray-900 font-medium">
+                          {assignment.document_templates?.name}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize bg-green-50 text-green-700 border-green-200">
+                            {assignment.document_templates?.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-600 max-w-xs truncate">
+                          {assignment.document_templates?.description || 'No description'}
+                        </TableCell>
+                        <TableCell className="text-gray-600">
+                          {assignment.delivery_date ? new Date(assignment.delivery_date).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            >
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
-              <div className="text-center py-12">
-                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No templates assigned yet</h3>
-                <p className="text-gray-300">
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">No templates assigned yet</h3>
+                <p className="text-gray-600 max-w-sm mx-auto">
                   Your trainer will assign training programs and forms as needed
                 </p>
               </div>
