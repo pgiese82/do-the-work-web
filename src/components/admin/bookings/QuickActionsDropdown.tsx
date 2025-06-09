@@ -38,7 +38,7 @@ interface QuickActionsDropdownProps {
 export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActionsDropdownProps) {
   const { toast } = useToast();
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show') => {
     try {
       const { error } = await supabase
         .from('bookings')

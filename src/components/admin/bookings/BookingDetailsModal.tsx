@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -40,9 +39,6 @@ interface BookingDetails {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
   notes: string | null;
-  internal_notes: string | null;
-  session_notes: string | null;
-  attendance_status: 'present' | 'absent' | 'late' | null;
   user: {
     id: string;
     name: string;
@@ -105,9 +101,9 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
       setBooking(data);
       setStatus(data.status);
       setPaymentStatus(data.payment_status);
-      setInternalNotes(data.internal_notes || '');
-      setSessionNotes(data.session_notes || '');
-      setAttendanceStatus(data.attendance_status || '');
+      setInternalNotes(''); // Initialize as empty since not in DB yet
+      setSessionNotes(''); // Initialize as empty since not in DB yet
+      setAttendanceStatus(''); // Initialize as empty since not in DB yet
       setNewDateTime(format(new Date(data.date_time), "yyyy-MM-dd'T'HH:mm"));
     } catch (error) {
       console.error('Error fetching booking details:', error);
@@ -129,13 +125,22 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
       const updates: any = {
         status,
         payment_status: paymentStatus,
-        internal_notes: internalNotes,
-        session_notes: sessionNotes,
-        attendance_status: attendanceStatus,
       };
 
       if (newDateTime !== format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm")) {
         updates.date_time = newDateTime;
+      }
+
+      // For now, we'll store internal notes, session notes, and attendance in the existing notes field
+      // This is a temporary solution until we add proper database fields
+      if (internalNotes || sessionNotes || attendanceStatus) {
+        const notesData = {
+          internal_notes: internalNotes,
+          session_notes: sessionNotes,
+          attendance_status: attendanceStatus,
+          original_notes: booking.notes
+        };
+        updates.notes = JSON.stringify(notesData);
       }
 
       const { error } = await supabase
@@ -173,7 +178,7 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
         .from('bookings')
         .update({ 
           payment_status: 'refunded',
-          internal_notes: `${internalNotes}\n\nRefund processed: €${refundAmount} on ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
+          notes: `${booking.notes || ''}\n\nRefund processed: €${refundAmount} on ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
         })
         .eq('id', booking.id);
 
@@ -398,6 +403,7 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
             </Card>
           </TabsContent>
 
+          
           <TabsContent value="communication" className="space-y-6">
             {/* Email Section */}
             <Card className="bg-gray-700/50 border-orange-900/20">
