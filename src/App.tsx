@@ -28,108 +28,133 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route
-                path="/dashboard/*"
-                element={
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes - no sidebar */}
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            
+            {/* Client dashboard - with sidebar */}
+            <Route
+              path="/dashboard/*"
+              element={
+                <SidebarProvider>
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                }
-              />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route
-                path="/admin/dashboard"
-                element={
+                </SidebarProvider>
+              }
+            />
+            
+            {/* Admin routes - with sidebar */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminDashboard />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/bookings"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/bookings"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminBookings />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/clients"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/clients"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminClients />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/documents"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/documents"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminDocuments />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/notifications"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/notifications"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminNotifications />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/calendar"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/calendar"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminCalendar />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/audit-logs"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/audit-logs"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminAuditLogs />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/waiting-list"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/waiting-list"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminWaitingList />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/pricing"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/pricing"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminPricing />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/availability"
-                element={
+                </SidebarProvider>
+              }
+            />
+            <Route
+              path="/admin/availability"
+              element={
+                <SidebarProvider>
                   <AdminProtectedRoute>
                     <AdminAvailability />
                   </AdminProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </SidebarProvider>
+                </SidebarProvider>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
