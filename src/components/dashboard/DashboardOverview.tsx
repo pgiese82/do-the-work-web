@@ -143,7 +143,7 @@ export function DashboardOverview() {
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground">Voltooid</p>
                 <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold`}>
-                  {statsLoading ? <LoadingSpinner size="sm" /> : stats?.completedSessions || 0}
+                  {statsLoading ? <LoadingSpinner size="sm" /> : stats?.completedBookings || 0}
                 </p>
               </div>
               <div className="h-8 w-8 bg-green-500/10 rounded-lg flex items-center justify-center">

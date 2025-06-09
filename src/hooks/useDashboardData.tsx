@@ -41,12 +41,12 @@ export const useDashboardStats = () => {
         supabase
           .from('payments')
           .select('*')
-          .in('booking_id', 
-            supabase
+          .in('booking_id', (
+            await supabase
               .from('bookings')
               .select('id')
               .eq('user_id', user.id)
-          )
+          ).data?.map(b => b.id) || [])
       ]);
 
       if (bookingsResult.error) throw bookingsResult.error;
@@ -92,5 +92,90 @@ export const useDashboardStats = () => {
     enabled: !!user,
     staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 60 * 1000, // 1 minute
+  });
+};
+
+export const useRecentBookings = (limit: number = 10) => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['recent-bookings', user?.id, limit],
+    queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          services:service_id (
+            name,
+            price,
+            duration
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('date_time', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user,
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useNextBooking = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['next-booking', user?.id],
+    queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          services:service_id (
+            name,
+            price,
+            duration
+          )
+        `)
+        .eq('user_id', user.id)
+        .gt('date_time', new Date().toISOString())
+        .eq('status', 'confirmed')
+        .order('date_time', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!user,
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useUserProfile = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
