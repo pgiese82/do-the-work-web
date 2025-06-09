@@ -70,12 +70,6 @@ const Header = () => {
             >
               Login
             </Button>
-            <Button
-              onClick={() => scrollToSection('booking')}
-              className="bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#e8851a] text-white"
-            >
-              Book Nu
-            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -130,12 +124,6 @@ const Header = () => {
                   className="w-full border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white"
                 >
                   Login
-                </Button>
-                <Button
-                  onClick={() => scrollToSection('booking')}
-                  className="w-full bg-gradient-to-r from-[#ff6b35] to-[#f7931e] hover:from-[#e55a2b] hover:to-[#e8851a] text-white"
-                >
-                  Book Nu
                 </Button>
               </div>
             </div>
