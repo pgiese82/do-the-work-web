@@ -8,8 +8,8 @@ const AdminAuditLogs = () => {
     <AdminMiddleware>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-black text-white mb-2">Audit Logs</h2>
-          <p className="text-gray-300">
+          <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
+          <p className="text-muted-foreground">
             Track all administrative actions and system events.
           </p>
         </div>
