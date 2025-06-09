@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import BookingForm from '@/components/booking/BookingForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -133,7 +132,6 @@ export function BookSession() {
                       <span>{service.duration} minutes</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4" />
                       <span className="font-medium">€{service.price}</span>
                     </div>
                   </div>
