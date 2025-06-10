@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Upload, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CreateTemplateModal } from './CreateTemplateModal';
 
@@ -83,24 +83,21 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
       return <Badge variant="secondary">Manual</Badge>;
     }
     return autoDeliverOn === 'booking_confirmation' 
-      ? <Badge className="bg-blue-600">On Booking</Badge>
-      : <Badge className="bg-green-600">On Completion</Badge>;
+      ? <Badge variant="default">On Booking</Badge>
+      : <Badge variant="default">On Completion</Badge>;
   };
 
   if (isLoading) {
-    return <div className="text-white">Loading templates...</div>;
+    return <div className="text-muted-foreground">Loading templates...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <Card className="bg-gray-800/50 border-orange-900/20">
+      <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="text-white">Document Templates</CardTitle>
-            <Button 
-              onClick={() => setShowCreateModal(true)}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
+            <CardTitle>Document Templates</CardTitle>
+            <Button onClick={() => setShowCreateModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Create Template
             </Button>
@@ -112,25 +109,25 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
               placeholder="Search templates..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-700 border-gray-600 text-white"
+              className="flex-1"
             />
           </div>
 
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-700">
-                <TableHead className="text-gray-300">Name</TableHead>
-                <TableHead className="text-gray-300">Category</TableHead>
-                <TableHead className="text-gray-300">Auto Delivery</TableHead>
-                <TableHead className="text-gray-300">Status</TableHead>
-                <TableHead className="text-gray-300">Created</TableHead>
-                <TableHead className="text-gray-300">Actions</TableHead>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Auto Delivery</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredTemplates.map((template: any) => (
-                <TableRow key={template.id} className="border-gray-700">
-                  <TableCell className="text-white font-medium">
+                <TableRow key={template.id}>
+                  <TableCell className="font-medium">
                     {template.name}
                   </TableCell>
                   <TableCell>
@@ -146,7 +143,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
                       {template.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {new Date(template.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -158,14 +155,12 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
                           id: template.id, 
                           isActive: template.is_active 
                         })}
-                        className="text-gray-300 hover:text-white"
                       >
                         {template.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-red-400 hover:text-red-300"
                         onClick={() => deleteTemplateMutation.mutate(template.id)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -178,7 +173,7 @@ export function DocumentTemplates({ onUpdate }: DocumentTemplatesProps) {
           </Table>
 
           {filteredTemplates.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-muted-foreground">
               No templates found. Create your first template to get started.
             </div>
           )}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,19 +72,16 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
   };
 
   if (isLoading) {
-    return <div className="text-white">Documenten laden...</div>;
+    return <div className="text-muted-foreground">Documenten laden...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <Card className="bg-gray-800/50 border-orange-900/20">
+      <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="text-white">Klant Documenten</CardTitle>
-            <Button 
-              onClick={() => setShowUploadModal(true)}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
+            <CardTitle>Klant Documenten</CardTitle>
+            <Button onClick={() => setShowUploadModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Document Uploaden
             </Button>
@@ -95,14 +93,14 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
               placeholder="Zoek documenten..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-700 border-gray-600 text-white flex-1"
+              className="flex-1"
             />
             <Select value={categoryFilter} onValueChange={(value: DocumentCategory) => setCategoryFilter(value)}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 w-48">
+              <SelectTrigger className="w-48">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
+              <SelectContent>
                 <SelectItem value="all">Alle categorieën</SelectItem>
                 <SelectItem value="contract">Contract</SelectItem>
                 <SelectItem value="invoice">Factuur</SelectItem>
@@ -116,22 +114,22 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
 
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-700">
-                <TableHead className="text-gray-300">Titel</TableHead>
-                <TableHead className="text-gray-300">Klant</TableHead>
-                <TableHead className="text-gray-300">Categorie</TableHead>
-                <TableHead className="text-gray-300">Grootte</TableHead>
-                <TableHead className="text-gray-300">Upload Datum</TableHead>
-                <TableHead className="text-gray-300">Acties</TableHead>
+              <TableRow>
+                <TableHead>Titel</TableHead>
+                <TableHead>Klant</TableHead>
+                <TableHead>Categorie</TableHead>
+                <TableHead>Grootte</TableHead>
+                <TableHead>Upload Datum</TableHead>
+                <TableHead>Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredDocuments.map((document) => (
-                <TableRow key={document.id} className="border-gray-700">
-                  <TableCell className="text-white font-medium">
+                <TableRow key={document.id}>
+                  <TableCell className="font-medium">
                     {document.title}
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {document.users?.name || 'Onbekend'}
                   </TableCell>
                   <TableCell>
@@ -139,10 +137,10 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
                       {document.category}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {formatFileSize(document.file_size)}
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {new Date(document.created_at).toLocaleDateString('nl-NL')}
                   </TableCell>
                   <TableCell>
@@ -152,7 +150,6 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
                         variant="ghost"
                         onClick={() => handleView(document)}
                         disabled={viewing === document.id}
-                        className="text-gray-300 hover:text-white"
                         title="Bekijken"
                       >
                         <Eye className="w-4 h-4" />
@@ -162,7 +159,6 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
                         variant="ghost"
                         onClick={() => handleDownload(document)}
                         disabled={downloading === document.id}
-                        className="text-gray-300 hover:text-white"
                         title="Downloaden"
                       >
                         <Download className="w-4 h-4" />
@@ -171,7 +167,6 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleShare(document)}
-                        className="text-gray-300 hover:text-white"
                         title="Delen"
                       >
                         <Share2 className="w-4 h-4" />
@@ -184,7 +179,7 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
           </Table>
 
           {filteredDocuments.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-muted-foreground">
               {searchTerm || categoryFilter !== 'all' 
                 ? 'Geen documenten gevonden met de huidige filters.'
                 : 'Nog geen documenten. Upload het eerste document om te beginnen.'

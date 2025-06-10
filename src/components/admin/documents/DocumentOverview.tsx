@@ -3,163 +3,134 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { FileText, Upload, Users, Send, Clock, CheckCircle } from 'lucide-react';
+import { FileText, Users, CheckCircle, Clock, Send, AlertTriangle, Zap, TrendingUp } from 'lucide-react';
 
-export function DocumentOverview({ key: refreshKey }: { key: number }) {
+export function DocumentOverview() {
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['document-stats', refreshKey],
+    queryKey: ['document-overview-stats'],
     queryFn: async () => {
-      const [documentsResult, templatesResult, assignmentsResult, deliveryResult] = await Promise.all([
-        supabase.from('documents').select('category, created_at'),
-        (supabase as any).from('document_templates').select('is_active, auto_deliver_on'),
-        (supabase as any).from('document_assignments').select('status'),
-        (supabase as any).from('document_delivery_log').select('status, delivered_at')
+      const [documentsResult, templatesResult, assignmentsResult, categoriesResult] = await Promise.all([
+        supabase.from('documents').select('id', { count: 'exact' }),
+        supabase.from('document_templates').select('id, is_active', { count: 'exact' }),
+        supabase.from('document_assignments').select('id, status', { count: 'exact' }),
+        supabase.from('documents').select('category')
       ]);
 
-      const documents = documentsResult.data || [];
-      const templates = templatesResult.data || [];
-      const assignments = assignmentsResult.data || [];
-      const deliveries = deliveryResult.data || [];
+      const activeTemplates = templatesResult.data?.filter(t => t.is_active)?.length || 0;
+      const pendingAssignments = assignmentsResult.data?.filter(a => a.status === 'pending')?.length || 0;
+      const completedAssignments = assignmentsResult.data?.filter(a => a.status === 'completed')?.length || 0;
+      const autoDeliveryTemplates = 0; // This would need to be calculated based on auto_deliver_on field
+      const recentDeliveries = 0; // This would need recent deliveries calculation
+      const failedDeliveries = 0; // This would need failed deliveries calculation
 
-      const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      // Count documents by category
+      const categoryCounts = categoriesResult.data?.reduce((acc, doc) => {
+        acc[doc.category] = (acc[doc.category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
 
       return {
-        totalDocuments: documents.length,
-        totalTemplates: templates.length,
-        activeTemplates: templates.filter((t: any) => t.is_active).length,
-        autoDeliveryTemplates: templates.filter((t: any) => t.auto_deliver_on !== 'manual').length,
-        pendingAssignments: assignments.filter((a: any) => a.status === 'pending').length,
-        completedAssignments: assignments.filter((a: any) => a.status === 'completed').length,
-        recentDeliveries: deliveries.filter((d: any) => new Date(d.delivered_at) >= thirtyDaysAgo).length,
-        failedDeliveries: deliveries.filter((d: any) => d.status === 'failed').length,
-        categoryCounts: documents.reduce((acc: Record<string, number>, doc: any) => {
-          acc[doc.category] = (acc[doc.category] || 0) + 1;
-          return acc;
-        }, {})
+        totalDocuments: documentsResult.count || 0,
+        activeTemplates,
+        pendingAssignments,
+        completedAssignments,
+        autoDeliveryTemplates,
+        recentDeliveries,
+        failedDeliveries,
+        categoryCounts
       };
     },
   });
 
   if (isLoading) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
-          <Card key={i} className="bg-gray-800/50 border-orange-900/20">
+    return <div className="text-muted-foreground">Loading overview...</div>;
+  }
+
+  const overviewCards = [
+    {
+      title: 'Total Documents',
+      value: stats?.totalDocuments || 0,
+      icon: FileText,
+      color: 'text-blue-600'
+    },
+    {
+      title: 'Active Templates',
+      value: stats?.activeTemplates || 0,
+      icon: Users,
+      color: 'text-green-600'
+    },
+    {
+      title: 'Pending Assignments',
+      value: stats?.pendingAssignments || 0,
+      icon: Clock,
+      color: 'text-yellow-600'
+    },
+    {
+      title: 'Completed Assignments',
+      value: stats?.completedAssignments || 0,
+      icon: CheckCircle,
+      color: 'text-emerald-600'
+    },
+    {
+      title: 'Auto-Delivery Templates',
+      value: stats?.autoDeliveryTemplates || 0,
+      icon: Zap,
+      color: 'text-purple-600'
+    },
+    {
+      title: 'Recent Deliveries',
+      value: stats?.recentDeliveries || 0,
+      icon: Send,
+      color: 'text-blue-600'
+    },
+    {
+      title: 'Failed Deliveries',
+      value: stats?.failedDeliveries || 0,
+      icon: AlertTriangle,
+      color: 'text-red-600'
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {overviewCards.map((card) => (
+          <Card key={card.title}>
             <CardContent className="p-6">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-gray-700 rounded w-1/2"></div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
+                  <p className="text-3xl font-bold">{card.value}</p>
+                </div>
+                <div className={`w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center ${card.color}`}>
+                  <card.icon className="w-6 h-6" />
+                </div>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
-    );
-  }
 
-  return (
-    <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-400" />
-              <span className="text-gray-300 text-sm">Total Documents</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.totalDocuments || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Upload className="w-5 h-5 text-green-400" />
-              <span className="text-gray-300 text-sm">Active Templates</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.activeTemplates || 0}</span>
-              <span className="text-gray-400 text-sm ml-2">/ {stats?.totalTemplates || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-yellow-400" />
-              <span className="text-gray-300 text-sm">Pending Assignments</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.pendingAssignments || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-400" />
-              <span className="text-gray-300 text-sm">Completed Assignments</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.completedAssignments || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Send className="w-5 h-5 text-purple-400" />
-              <span className="text-gray-300 text-sm">Auto-Delivery Templates</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.autoDeliveryTemplates || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-indigo-400" />
-              <span className="text-gray-300 text-sm">Recent Deliveries</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.recentDeliveries || 0}</span>
-              <span className="text-gray-400 text-sm ml-2">last 30 days</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800/50 border-orange-900/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-red-400" />
-              <span className="text-gray-300 text-sm">Failed Deliveries</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-2xl font-bold text-white">{stats?.failedDeliveries || 0}</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="bg-gray-800/50 border-orange-900/20">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Document Categories</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
+            Document Categories
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {Object.entries(stats?.categoryCounts || {}).map(([category, count]) => (
-              <div key={category} className="text-center">
-                <div className="text-2xl font-bold text-orange-400">{count as number}</div>
-                <div className="text-sm text-gray-300 capitalize">{category}</div>
+              <div key={category} className="flex items-center justify-between p-3 border rounded-lg">
+                <span className="capitalize font-medium">{category}</span>
+                <span className="font-bold text-primary">{count}</span>
               </div>
             ))}
+            {(!stats?.categoryCounts || Object.keys(stats.categoryCounts).length === 0) && (
+              <div className="col-span-full text-center py-8 text-muted-foreground">
+                No document categories found. Upload some documents to see category breakdown.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

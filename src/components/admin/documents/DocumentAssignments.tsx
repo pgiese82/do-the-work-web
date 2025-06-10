@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Send, Check, X } from 'lucide-react';
+import { Plus, Send, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { BulkAssignModal } from './BulkAssignModal';
 
@@ -69,29 +69,26 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
   ) || [];
 
   const getStatusBadge = (status: string) => {
-    const colors = {
-      pending: 'bg-yellow-600',
-      delivered: 'bg-blue-600',
-      viewed: 'bg-green-600',
-      completed: 'bg-emerald-600'
+    const variants = {
+      pending: 'secondary',
+      delivered: 'default',
+      viewed: 'default',
+      completed: 'default'
     };
-    return <Badge className={colors[status as keyof typeof colors] || 'bg-gray-600'}>{status}</Badge>;
+    return <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>{status}</Badge>;
   };
 
   if (isLoading) {
-    return <div className="text-white">Loading assignments...</div>;
+    return <div className="text-muted-foreground">Loading assignments...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <Card className="bg-gray-800/50 border-orange-900/20">
+      <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="text-white">Document Assignments</CardTitle>
-            <Button 
-              onClick={() => setShowBulkModal(true)}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
+            <CardTitle>Document Assignments</CardTitle>
+            <Button onClick={() => setShowBulkModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Bulk Assign
             </Button>
@@ -103,28 +100,28 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
               placeholder="Search assignments..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-700 border-gray-600 text-white"
+              className="flex-1"
             />
           </div>
 
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-700">
-                <TableHead className="text-gray-300">Template</TableHead>
-                <TableHead className="text-gray-300">Client</TableHead>
-                <TableHead className="text-gray-300">Category</TableHead>
-                <TableHead className="text-gray-300">Status</TableHead>
-                <TableHead className="text-gray-300">Assigned Date</TableHead>
-                <TableHead className="text-gray-300">Actions</TableHead>
+              <TableRow>
+                <TableHead>Template</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Assigned Date</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredAssignments.map((assignment: any) => (
-                <TableRow key={assignment.id} className="border-gray-700">
-                  <TableCell className="text-white font-medium">
+                <TableRow key={assignment.id}>
+                  <TableCell className="font-medium">
                     {assignment.document_templates?.name}
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {assignment.users?.name}
                   </TableCell>
                   <TableCell>
@@ -135,7 +132,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
                   <TableCell>
                     {getStatusBadge(assignment.status)}
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-muted-foreground">
                     {new Date(assignment.assigned_date).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -148,7 +145,6 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
                             id: assignment.id, 
                             status: 'delivered' 
                           })}
-                          className="text-blue-400 hover:text-blue-300"
                         >
                           <Send className="w-4 h-4" />
                         </Button>
@@ -161,7 +157,6 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
                             id: assignment.id, 
                             status: 'completed' 
                           })}
-                          className="text-green-400 hover:text-green-300"
                         >
                           <Check className="w-4 h-4" />
                         </Button>
@@ -174,7 +169,7 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
           </Table>
 
           {filteredAssignments.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-muted-foreground">
               No assignments found. Create bulk assignments to get started.
             </div>
           )}
