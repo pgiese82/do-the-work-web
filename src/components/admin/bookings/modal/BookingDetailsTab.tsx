@@ -102,7 +102,7 @@ export function BookingDetailsTab({
                 <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-800 border-orange-900/20">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>

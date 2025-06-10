@@ -216,7 +216,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     <SelectTrigger className="bg-gray-700/50 border-orange-900/20 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-gray-800 border-orange-900/20">
                       <SelectItem value="prospect">Prospect</SelectItem>
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="inactive">Inactive</SelectItem>

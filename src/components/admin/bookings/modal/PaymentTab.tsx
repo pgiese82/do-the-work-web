@@ -46,7 +46,7 @@ export function PaymentTab({
                 <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-800 border-orange-900/20">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
                   <SelectItem value="failed">Failed</SelectItem>

@@ -40,7 +40,7 @@ export function AttendanceTab({
               <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
                 <SelectValue placeholder="Select attendance status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-gray-800 border-orange-900/20">
                 <SelectItem value="present">Present</SelectItem>
                 <SelectItem value="absent">Absent</SelectItem>
                 <SelectItem value="late">Late</SelectItem>
