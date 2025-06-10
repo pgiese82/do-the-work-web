@@ -110,8 +110,8 @@ export function ClientDataDiagnostic() {
       missingClientRole: missingClientRole.length,
       needsFixing: missingClientRole,
       allUsers,
-      clientUsers,
-      nonClientUsers
+      clientUsersList: clientUsers,
+      nonClientUsersList: nonClientUsers
     };
 
     setResults(diagnosticResults);
