@@ -23,6 +23,11 @@ export const MobileMenu = ({ isOpen, user, scrollToSection, onLogout }: MobileMe
     }
   };
 
+  const handleLogoutClick = () => {
+    onLogout();
+    // Navigation to homepage happens in the parent Header component
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -67,7 +72,7 @@ export const MobileMenu = ({ isOpen, user, scrollToSection, onLogout }: MobileMe
                 Klantenportaal
               </Button>
               <Button
-                onClick={onLogout}
+                onClick={handleLogoutClick}
                 variant="ghost"
                 className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
               >

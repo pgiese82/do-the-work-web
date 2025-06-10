@@ -29,6 +29,11 @@ export const AccountSection = ({ user, onLogout }: AccountSectionProps) => {
     }
   };
 
+  const handleLogoutClick = () => {
+    onLogout();
+    // Navigation to homepage happens in the parent Header component
+  };
+
   return (
     <div className="hidden md:flex items-center">
       {user ? (
@@ -54,7 +59,7 @@ export const AccountSection = ({ user, onLogout }: AccountSectionProps) => {
               Klantenportaal
             </DropdownMenuItem>
             <DropdownMenuItem 
-              onClick={onLogout}
+              onClick={handleLogoutClick}
               className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
             >
               Uitloggen

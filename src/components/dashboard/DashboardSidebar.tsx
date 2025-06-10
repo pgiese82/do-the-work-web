@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -85,7 +84,7 @@ export function DashboardSidebar() {
         description: "Je bent uitgelogd van je account.",
       });
       
-      navigate('/auth');
+      navigate('/');
     } catch (error: any) {
       toast({
         variant: "destructive",

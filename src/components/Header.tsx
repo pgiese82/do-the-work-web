@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { AccountSection } from './header/AccountSection';
 import { MobileMenu } from './header/MobileMenu';
@@ -9,6 +10,7 @@ import { MobileMenuButton } from './header/MobileMenuButton';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -21,6 +23,7 @@ const Header = () => {
   const handleLogout = async () => {
     await signOut();
     setIsMenuOpen(false);
+    navigate('/');
   };
 
   return (
