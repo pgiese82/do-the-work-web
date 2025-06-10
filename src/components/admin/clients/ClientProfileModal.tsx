@@ -99,8 +99,8 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
     } catch (error) {
       console.error('Error fetching client profile:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch client profile',
+        title: 'Fout',
+        description: 'Kon klantprofiel niet ophalen',
         variant: 'destructive',
       });
     } finally {
@@ -121,8 +121,8 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
       if (error) throw error;
 
       toast({
-        title: 'Success',
-        description: 'Client profile updated successfully',
+        title: 'Succes',
+        description: 'Klantprofiel succesvol bijgewerkt',
       });
 
       onUpdate();
@@ -130,8 +130,8 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
     } catch (error) {
       console.error('Error updating client profile:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update client profile',
+        title: 'Fout',
+        description: 'Kon klantprofiel niet bijwerken',
         variant: 'destructive',
       });
     } finally {
@@ -149,89 +149,89 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-800 border-orange-900/20">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-gray-200">
         <DialogHeader>
-          <DialogTitle className="text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-orange-400" />
-            Client Profile - {client?.name || 'Loading...'}
+          <DialogTitle className="text-gray-900 flex items-center gap-2">
+            <User className="w-5 h-5 text-orange-500" />
+            Klantprofiel - {client?.name || 'Laden...'}
           </DialogTitle>
         </DialogHeader>
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-400"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
         ) : (
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-gray-700">
-              <TabsTrigger value="basic" className="text-gray-300 data-[state=active]:text-orange-400">Basic Info</TabsTrigger>
-              <TabsTrigger value="contact" className="text-gray-300 data-[state=active]:text-orange-400">Contact</TabsTrigger>
-              <TabsTrigger value="health" className="text-gray-300 data-[state=active]:text-orange-400">Health & Training</TabsTrigger>
-              <TabsTrigger value="notes" className="text-gray-300 data-[state=active]:text-orange-400">Notes</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 bg-gray-100">
+              <TabsTrigger value="basic" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Basisinfo</TabsTrigger>
+              <TabsTrigger value="contact" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Contact</TabsTrigger>
+              <TabsTrigger value="health" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Gezondheid & Training</TabsTrigger>
+              <TabsTrigger value="notes" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Notities</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-300">Full Name</Label>
+                  <Label htmlFor="name" className="text-gray-700">Volledige Naam</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="email" className="text-gray-700">E-mail</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-gray-300">Phone</Label>
+                  <Label htmlFor="phone" className="text-gray-700">Telefoon</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="date_of_birth" className="text-gray-300">Date of Birth</Label>
+                  <Label htmlFor="date_of_birth" className="text-gray-700">Geboortedatum</Label>
                   <Input
                     id="date_of_birth"
                     type="date"
                     value={formData.date_of_birth}
                     onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="client_status" className="text-gray-300">Client Status</Label>
+                  <Label htmlFor="client_status" className="text-gray-700">Klantstatus</Label>
                   <Select value={formData.client_status} onValueChange={(value) => handleInputChange('client_status', value)}>
-                    <SelectTrigger className="bg-gray-700/50 border-orange-900/20 text-white">
+                    <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-orange-900/20">
+                    <SelectContent className="bg-white border-gray-200">
                       <SelectItem value="prospect">Prospect</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="churned">Churned</SelectItem>
+                      <SelectItem value="active">Actief</SelectItem>
+                      <SelectItem value="inactive">Inactief</SelectItem>
+                      <SelectItem value="churned">Weggevallen</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="acquisition_source" className="text-gray-300">Acquisition Source</Label>
+                  <Label htmlFor="acquisition_source" className="text-gray-700">Aanwervingsbron</Label>
                   <Input
                     id="acquisition_source"
                     value={formData.acquisition_source}
                     onChange={(e) => handleInputChange('acquisition_source', e.target.value)}
-                    placeholder="e.g., Website, Referral, Social Media"
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    placeholder="bijv. Website, Verwijzing, Social Media"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -240,32 +240,32 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
             <TabsContent value="contact" className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="address" className="text-gray-300">Address</Label>
+                  <Label htmlFor="address" className="text-gray-700">Adres</Label>
                   <Textarea
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     rows={3}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="emergency_contact_name" className="text-gray-300">Emergency Contact Name</Label>
+                    <Label htmlFor="emergency_contact_name" className="text-gray-700">Noodcontact Naam</Label>
                     <Input
                       id="emergency_contact_name"
                       value={formData.emergency_contact_name}
                       onChange={(e) => handleInputChange('emergency_contact_name', e.target.value)}
-                      className="bg-gray-700/50 border-orange-900/20 text-white"
+                      className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emergency_contact_phone" className="text-gray-300">Emergency Contact Phone</Label>
+                    <Label htmlFor="emergency_contact_phone" className="text-gray-700">Noodcontact Telefoon</Label>
                     <Input
                       id="emergency_contact_phone"
                       value={formData.emergency_contact_phone}
                       onChange={(e) => handleInputChange('emergency_contact_phone', e.target.value)}
-                      className="bg-gray-700/50 border-orange-900/20 text-white"
+                      className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     />
                   </div>
                 </div>
@@ -275,24 +275,24 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
             <TabsContent value="health" className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="health_notes" className="text-gray-300">Health Notes</Label>
+                  <Label htmlFor="health_notes" className="text-gray-700">Gezondheidsnotities</Label>
                   <Textarea
                     id="health_notes"
                     value={formData.health_notes}
                     onChange={(e) => handleInputChange('health_notes', e.target.value)}
-                    placeholder="Any medical conditions, injuries, or health considerations..."
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    placeholder="Medische aandoeningen, blessures of gezondheidsoverwegingen..."
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     rows={4}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="training_preferences" className="text-gray-300">Training Preferences</Label>
+                  <Label htmlFor="training_preferences" className="text-gray-700">Trainingsvoorkeuren</Label>
                   <Textarea
                     id="training_preferences"
                     value={formData.training_preferences}
                     onChange={(e) => handleInputChange('training_preferences', e.target.value)}
-                    placeholder="Preferred training times, goals, exercise preferences..."
-                    className="bg-gray-700/50 border-orange-900/20 text-white"
+                    placeholder="Voorkeurstijden voor training, doelen, oefenvoorkeuren..."
+                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     rows={4}
                   />
                 </div>
@@ -301,13 +301,13 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
 
             <TabsContent value="notes" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="notes" className="text-gray-300">Internal Notes</Label>
+                <Label htmlFor="notes" className="text-gray-700">Interne Notities</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Internal notes about the client..."
-                  className="bg-gray-700/50 border-orange-900/20 text-white"
+                  placeholder="Interne notities over de klant..."
+                  className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                   rows={8}
                 />
               </div>
@@ -317,16 +317,16 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
               <Button 
                 variant="outline" 
                 onClick={() => onOpenChange(false)}
-                className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Annuleren
               </Button>
               <Button 
                 onClick={handleSave}
                 disabled={saving}
                 className="bg-orange-500 hover:bg-orange-600 text-white"
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Opslaan...' : 'Wijzigingen Opslaan'}
               </Button>
             </div>
           </Tabs>

@@ -23,6 +23,7 @@ import { ClientProfileModal } from './ClientProfileModal';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { nl } from 'date-fns/locale';
 import { Search, Edit, User, Calendar, DollarSign } from 'lucide-react';
 
 interface Client {
@@ -86,15 +87,22 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      prospect: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
-      active: 'bg-green-500/20 text-green-400 border-green-500/20',
-      inactive: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
-      churned: 'bg-red-500/20 text-red-400 border-red-500/20'
+      prospect: 'bg-blue-100 text-blue-800 border-blue-200',
+      active: 'bg-green-100 text-green-800 border-green-200',
+      inactive: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      churned: 'bg-red-100 text-red-800 border-red-200'
+    };
+
+    const labels = {
+      prospect: 'Prospect',
+      active: 'Actief',
+      inactive: 'Inactief',
+      churned: 'Weggevallen'
     };
 
     return (
       <Badge className={variants[status as keyof typeof variants] || variants.prospect}>
-        {status}
+        {labels[status as keyof typeof labels] || status}
       </Badge>
     );
   };
@@ -106,71 +114,71 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
 
   return (
     <>
-      <Card>
+      <Card className="bg-white border-gray-200">
         <CardContent className="space-y-6 p-6">
           {/* Search and Filters */}
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search by name or email..."
+                placeholder="Zoeken op naam of e-mail..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white border-gray-200 focus:border-orange-500 focus:ring-orange-500"
               />
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-orange-500 focus:ring-orange-500">
+                <SelectValue placeholder="Filter op status" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
+              <SelectContent className="bg-white border-gray-200">
+                <SelectItem value="all">Alle Statussen</SelectItem>
                 <SelectItem value="prospect">Prospect</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="churned">Churned</SelectItem>
+                <SelectItem value="active">Actief</SelectItem>
+                <SelectItem value="inactive">Inactief</SelectItem>
+                <SelectItem value="churned">Weggevallen</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Table */}
-          <div className="rounded-lg border overflow-hidden">
+          <div className="rounded-lg border border-gray-200 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Last Session</TableHead>
-                  <TableHead>Total Spent</TableHead>
-                  <TableHead>Member Since</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="text-gray-700">Klant</TableHead>
+                  <TableHead className="text-gray-700">Status</TableHead>
+                  <TableHead className="text-gray-700">Laatste Sessie</TableHead>
+                  <TableHead className="text-gray-700">Totaal Uitgegeven</TableHead>
+                  <TableHead className="text-gray-700">Lid Sinds</TableHead>
+                  <TableHead className="text-gray-700">Acties</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Loading clients...
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      Klanten laden...
                     </TableCell>
                   </TableRow>
                 ) : clients.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      No clients found
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      Geen klanten gevonden
                     </TableCell>
                   </TableRow>
                 ) : (
                   clients.map((client) => (
-                    <TableRow key={client.id}>
+                    <TableRow key={client.id} className="hover:bg-gray-50">
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-muted-foreground" />
+                          <User className="w-4 h-4 text-gray-400" />
                           <div>
-                            <div className="font-medium">{client.name}</div>
-                            <div className="text-muted-foreground text-xs">{client.email}</div>
+                            <div className="font-medium text-gray-900">{client.name}</div>
+                            <div className="text-gray-500 text-xs">{client.email}</div>
                             {client.phone && (
-                              <div className="text-muted-foreground text-xs">{client.phone}</div>
+                              <div className="text-gray-500 text-xs">{client.phone}</div>
                             )}
                           </div>
                         </div>
@@ -180,30 +188,33 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          {client.last_session_date 
-                            ? format(new Date(client.last_session_date), 'MMM dd, yyyy')
-                            : 'Never'
-                          }
+                          <Calendar className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">
+                            {client.last_session_date 
+                              ? format(new Date(client.last_session_date), 'dd MMM yyyy', { locale: nl })
+                              : 'Nooit'
+                            }
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <DollarSign className="w-4 h-4 text-muted-foreground" />
-                          €{client.total_spent?.toFixed(2) || '0.00'}
+                          <DollarSign className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">€{client.total_spent?.toFixed(2) || '0,00'}</span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {format(new Date(client.created_at), 'MMM dd, yyyy')}
+                      <TableCell className="text-gray-700">
+                        {format(new Date(client.created_at), 'dd MMM yyyy', { locale: nl })}
                       </TableCell>
                       <TableCell>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleEditClient(client.id)}
+                          className="border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                           <Edit className="w-4 h-4 mr-1" />
-                          Edit
+                          Bewerken
                         </Button>
                       </TableCell>
                     </TableRow>
