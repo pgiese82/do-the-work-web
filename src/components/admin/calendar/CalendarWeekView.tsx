@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
+import { nl } from 'date-fns/locale';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,9 +37,9 @@ export function CalendarWeekView({
   getServiceColor,
   onBookingDrag
 }: CalendarWeekViewProps) {
-  const weekStart = startOfWeek(startDate, { weekStartsOn: 1 }); // Monday start
+  const weekStart = startOfWeek(startDate, { weekStartsOn: 1 }); // Maandag start
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8 AM to 9 PM
+  const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 tot 21:00
 
   const getBookingsForTimeSlot = (date: Date, hour: number) => {
     return bookings.filter(booking => {
@@ -80,19 +81,29 @@ export function CalendarWeekView({
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'bevestigd';
+      case 'pending': return 'wachtend';
+      case 'completed': return 'voltooid';
+      case 'cancelled': return 'geannuleerd';
+      default: return status;
+    }
+  };
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+      <div className="overflow-x-auto bg-background rounded-lg border border-border">
         <div className="min-w-[800px]">
           {/* Header with days */}
-          <div className="grid grid-cols-8 gap-0 border-b border-gray-200">
-            <div className="h-16 bg-gray-50 border-r border-gray-200"></div>
+          <div className="grid grid-cols-8 gap-0 border-b border-border">
+            <div className="h-16 bg-muted/30 border-r border-border"></div>
             {days.map((day, index) => (
-              <div key={index} className="text-center p-4 bg-gray-50 border-r border-gray-200 last:border-r-0">
-                <div className="text-sm text-gray-600 font-medium">
-                  {format(day, 'EEE')}
+              <div key={index} className="text-center p-4 bg-muted/30 border-r border-border last:border-r-0">
+                <div className="text-sm text-muted-foreground font-medium">
+                  {format(day, 'EEE', { locale: nl })}
                 </div>
-                <div className="text-lg text-gray-900 font-semibold mt-1">
+                <div className="text-lg text-foreground font-semibold mt-1">
                   {format(day, 'd')}
                 </div>
               </div>
@@ -104,7 +115,7 @@ export function CalendarWeekView({
             {hours.map(hour => (
               <React.Fragment key={hour}>
                 {/* Time label */}
-                <div className="text-right pr-3 py-4 text-sm font-medium text-gray-700 bg-gray-50 border-r border-gray-200 border-b border-gray-100">
+                <div className="text-right pr-3 py-4 text-sm font-medium text-foreground bg-muted/30 border-r border-border border-b border-border/50">
                   {formatTime(hour)}
                 </div>
                 
@@ -121,8 +132,8 @@ export function CalendarWeekView({
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
-                          className={`min-h-[70px] p-2 border-r border-gray-200 border-b border-gray-100 last:border-r-0 transition-colors ${
-                            snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
+                          className={`min-h-[70px] p-2 border-r border-border border-b border-border/50 last:border-r-0 transition-colors ${
+                            snapshot.isDraggingOver ? 'bg-primary/10' : 'bg-background hover:bg-muted/30'
                           }`}
                         >
                           {timeSlotBookings.map((booking, index) => (
@@ -136,7 +147,7 @@ export function CalendarWeekView({
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className={`p-2 mb-1 border-l-4 cursor-move transition-all bg-white hover:shadow-md border border-gray-200 ${
+                                  className={`p-2 mb-1 border-l-4 cursor-move transition-all bg-background hover:shadow-md border border-border ${
                                     getStatusColor(booking.status)
                                   } ${
                                     snapshot.isDragging ? 'shadow-lg rotate-2 scale-105' : ''
@@ -145,14 +156,14 @@ export function CalendarWeekView({
                                   onMouseLeave={() => onBookingDrag(null)}
                                 >
                                   <div className="text-xs space-y-1">
-                                    <div className="font-semibold text-gray-900 truncate">
+                                    <div className="font-semibold text-foreground truncate">
                                       {booking.users.name}
                                     </div>
-                                    <div className="text-gray-700 truncate font-medium">
+                                    <div className="text-muted-foreground truncate font-medium">
                                       {booking.services.name}
                                     </div>
                                     <div className="flex justify-between items-center">
-                                      <span className="text-gray-600 font-medium">
+                                      <span className="text-muted-foreground font-medium">
                                         {format(parseISO(booking.date_time), 'HH:mm')}
                                       </span>
                                       <Badge 
@@ -163,7 +174,7 @@ export function CalendarWeekView({
                                           'bg-gray-100 text-gray-800'
                                         }`}
                                       >
-                                        {booking.status}
+                                        {getStatusText(booking.status)}
                                       </Badge>
                                     </div>
                                   </div>

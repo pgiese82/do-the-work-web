@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameDay, isSameMonth, parseISO } from 'date-fns';
+import { nl } from 'date-fns/locale';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -87,11 +88,11 @@ export function CalendarMonthView({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
         <div className="grid grid-cols-7 gap-0">
           {/* Day headers */}
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <div key={day} className="p-4 text-center text-sm font-semibold text-gray-700 bg-gray-50 border-b border-gray-200">
+          {['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'].map(day => (
+            <div key={day} className="p-4 text-center text-sm font-semibold text-foreground bg-muted/30 border-b border-border">
               {day}
             </div>
           ))}
@@ -108,14 +109,14 @@ export function CalendarMonthView({
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`min-h-[140px] p-2 border-b border-gray-100 border-r border-gray-100 transition-colors ${
-                      snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
-                    } ${!isCurrentMonth ? 'opacity-40 bg-gray-50' : ''} ${
-                      isToday ? 'ring-2 ring-blue-500 ring-inset' : ''
+                    className={`min-h-[140px] p-2 border-b border-border/50 border-r border-border/50 transition-colors ${
+                      snapshot.isDraggingOver ? 'bg-primary/10' : 'bg-background hover:bg-muted/30'
+                    } ${!isCurrentMonth ? 'opacity-40 bg-muted/10' : ''} ${
+                      isToday ? 'ring-2 ring-primary ring-inset' : ''
                     }`}
                   >
                     <div className={`text-sm font-semibold mb-2 ${
-                      isToday ? 'text-blue-600' : isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                      isToday ? 'text-primary' : isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'
                     }`}>
                       {format(day, 'd')}
                     </div>
@@ -132,7 +133,7 @@ export function CalendarMonthView({
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`p-2 text-xs cursor-move border-l-2 transition-all bg-white hover:shadow-md border border-gray-200 ${
+                              className={`p-2 text-xs cursor-move border-l-2 transition-all bg-background hover:shadow-md border border-border ${
                                 getStatusColor(booking.status)
                               } ${
                                 snapshot.isDragging ? 'shadow-lg rotate-1 scale-105' : ''
@@ -140,13 +141,13 @@ export function CalendarMonthView({
                               onMouseEnter={() => onBookingDrag(booking)}
                               onMouseLeave={() => onBookingDrag(null)}
                             >
-                              <div className="truncate text-gray-900 font-semibold mb-1">
+                              <div className="truncate text-foreground font-semibold mb-1">
                                 {format(parseISO(booking.date_time), 'HH:mm')}
                               </div>
-                              <div className="truncate text-gray-700 font-medium">
+                              <div className="truncate text-foreground font-medium">
                                 {booking.users.name}
                               </div>
-                              <div className="truncate text-gray-600 text-xs">
+                              <div className="truncate text-muted-foreground text-xs">
                                 {booking.services.name}
                               </div>
                             </Card>
@@ -155,8 +156,8 @@ export function CalendarMonthView({
                       ))}
                       
                       {dayBookings.length > 3 && (
-                        <div className="text-xs text-gray-500 font-medium pl-2">
-                          +{dayBookings.length - 3} more
+                        <div className="text-xs text-muted-foreground font-medium pl-2">
+                          +{dayBookings.length - 3} meer
                         </div>
                       )}
                     </div>

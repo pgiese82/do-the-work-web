@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, User, CreditCard } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 interface Booking {
   id: string;
@@ -51,41 +52,60 @@ export function BookingDragModal({ booking, onClose, onConfirm }: BookingDragMod
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'bevestigd';
+      case 'pending': return 'wachtend';
+      case 'completed': return 'voltooid';
+      case 'cancelled': return 'geannuleerd';
+      default: return status;
+    }
+  };
+
+  const getPaymentStatusText = (status: string) => {
+    switch (status) {
+      case 'paid': return 'betaald';
+      case 'pending': return 'wachtend';
+      case 'failed': return 'mislukt';
+      default: return status;
+    }
+  };
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-gradient-to-br from-gray-900 to-gray-800 border-white/20">
+      <DialogContent className="max-w-md bg-background border-border">
         <DialogHeader>
-          <DialogTitle className="text-white">Booking Details</DialogTitle>
+          <DialogTitle className="text-foreground">Boeking Details</DialogTitle>
         </DialogHeader>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
+        <Card className="bg-muted/20 backdrop-blur-md border-border">
           <CardContent className="p-4 space-y-4">
             {/* Client Info */}
             <div className="flex items-center gap-3">
-              <User className="w-5 h-5 text-orange-400" />
+              <User className="w-5 h-5 text-primary" />
               <div>
-                <div className="text-white font-medium">{booking.users.name}</div>
-                <div className="text-sm text-gray-300">{booking.users.email}</div>
+                <div className="text-foreground font-medium">{booking.users.name}</div>
+                <div className="text-sm text-muted-foreground">{booking.users.email}</div>
               </div>
             </div>
 
             {/* Service Info */}
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 bg-orange-500 rounded-full"></div>
+              <div className="w-5 h-5 bg-primary rounded-full"></div>
               <div>
-                <div className="text-white font-medium">{booking.services.name}</div>
-                <div className="text-sm text-gray-300">{booking.services.duration} minutes</div>
+                <div className="text-foreground font-medium">{booking.services.name}</div>
+                <div className="text-sm text-muted-foreground">{booking.services.duration} minuten</div>
               </div>
             </div>
 
             {/* Date & Time */}
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-orange-400" />
+              <Calendar className="w-5 h-5 text-primary" />
               <div>
-                <div className="text-white font-medium">
-                  {format(bookingDate, 'EEEE, MMMM d, yyyy')}
+                <div className="text-foreground font-medium">
+                  {format(bookingDate, 'EEEE, d MMMM yyyy', { locale: nl })}
                 </div>
-                <div className="text-sm text-gray-300 flex items-center gap-1">
+                <div className="text-sm text-muted-foreground flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {format(bookingDate, 'HH:mm')}
                 </div>
@@ -95,22 +115,22 @@ export function BookingDragModal({ booking, onClose, onConfirm }: BookingDragMod
             {/* Status Badges */}
             <div className="flex gap-2">
               <Badge className={`${getStatusColor(booking.status)} text-white`}>
-                {booking.status}
+                {getStatusText(booking.status)}
               </Badge>
               <Badge className={`${getPaymentStatusColor(booking.payment_status)} text-white flex items-center gap-1`}>
                 <CreditCard className="w-3 h-3" />
-                {booking.payment_status}
+                {getPaymentStatusText(booking.payment_status)}
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         <div className="text-center py-4">
-          <div className="text-gray-300 text-sm mb-2">
-            This booking is currently being dragged
+          <div className="text-muted-foreground text-sm mb-2">
+            Deze boeking wordt momenteel verplaatst
           </div>
-          <div className="text-gray-400 text-xs">
-            Drop it on a time slot to reschedule, or click cancel to abort
+          <div className="text-muted-foreground text-xs">
+            Sleep naar een tijdslot om te verplaatsen, of klik annuleren om te stoppen
           </div>
         </div>
 
@@ -118,9 +138,9 @@ export function BookingDragModal({ booking, onClose, onConfirm }: BookingDragMod
           <Button
             onClick={onClose}
             variant="outline"
-            className="border-white/20 text-white hover:bg-white/10"
+            className="border-border text-foreground hover:bg-muted"
           >
-            Cancel
+            Annuleren
           </Button>
         </div>
       </DialogContent>

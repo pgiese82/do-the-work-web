@@ -14,6 +14,7 @@ import { BookingDragModal } from './BookingDragModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format, addDays, addWeeks, addMonths, startOfDay, endOfDay } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 interface Booking {
   id: string;
@@ -49,7 +50,7 @@ export function AdminCalendar() {
   const loadBookings = async () => {
     try {
       setLoading(true);
-      console.log('Loading bookings...');
+      console.log('Boekingen laden...');
       
       const { data, error } = await supabase
         .from('bookings')
@@ -68,17 +69,17 @@ export function AdminCalendar() {
         .order('date_time', { ascending: false });
 
       if (error) {
-        console.error('Error loading bookings:', error);
+        console.error('Fout bij laden boekingen:', error);
         throw error;
       }
 
-      console.log('Loaded bookings:', data);
+      console.log('Boekingen geladen:', data);
       setBookings(data || []);
     } catch (error: any) {
-      console.error('Failed to load bookings:', error);
+      console.error('Laden boekingen mislukt:', error);
       toast({
         variant: "destructive",
-        title: "Error loading bookings",
+        title: "Fout bij laden boekingen",
         description: error.message,
       });
     } finally {
@@ -104,7 +105,7 @@ export function AdminCalendar() {
 
   const handleBookingDrop = async (bookingId: string, newDateTime: Date) => {
     try {
-      console.log('Updating booking:', bookingId, 'to:', newDateTime);
+      console.log('Boeking bijwerken:', bookingId, 'naar:', newDateTime);
       
       const { error } = await supabase
         .from('bookings')
@@ -112,21 +113,21 @@ export function AdminCalendar() {
         .eq('id', bookingId);
 
       if (error) {
-        console.error('Error updating booking:', error);
+        console.error('Fout bij bijwerken boeking:', error);
         throw error;
       }
       
       toast({
-        title: "Booking rescheduled",
-        description: "The booking has been successfully moved to the new time slot.",
+        title: "Boeking verplaatst",
+        description: "De boeking is succesvol verplaatst naar het nieuwe tijdslot.",
       });
       
       await loadBookings();
     } catch (error: any) {
-      console.error('Failed to reschedule booking:', error);
+      console.error('Verplaatsen boeking mislukt:', error);
       toast({
         variant: "destructive",
-        title: "Error rescheduling booking",
+        title: "Fout bij verplaatsen boeking",
         description: error.message,
       });
     }
@@ -151,13 +152,13 @@ export function AdminCalendar() {
   const formatDateRange = () => {
     switch (view) {
       case 'day':
-        return format(currentDate, 'EEEE, MMMM d, yyyy');
+        return format(currentDate, 'EEEE, d MMMM yyyy', { locale: nl });
       case 'week':
         const weekStart = startOfDay(currentDate);
         const weekEnd = endOfDay(addDays(weekStart, 6));
-        return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+        return `${format(weekStart, 'd MMM', { locale: nl })} - ${format(weekEnd, 'd MMM yyyy', { locale: nl })}`;
       case 'month':
-        return format(currentDate, 'MMMM yyyy');
+        return format(currentDate, 'MMMM yyyy', { locale: nl });
       default:
         return '';
     }
@@ -166,7 +167,7 @@ export function AdminCalendar() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -176,9 +177,9 @@ export function AdminCalendar() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Calendar</h1>
-          <p className="text-gray-600 mt-1">
-            Manage bookings, availability, and schedules across all services.
+          <h1 className="text-2xl font-semibold text-foreground">Kalender</h1>
+          <p className="text-muted-foreground mt-1">
+            Beheer boekingen, beschikbaarheid en roosters voor alle diensten.
           </p>
         </div>
         <div className="flex gap-3">
@@ -186,25 +187,25 @@ export function AdminCalendar() {
             onClick={() => setShowAvailability(true)}
             variant="outline"
             size="sm"
-            className="text-gray-700 border-gray-300 hover:bg-gray-50"
+            className="text-foreground border-border hover:bg-muted"
           >
             <Settings className="w-4 h-4 mr-2" />
-            Availability
+            Beschikbaarheid
           </Button>
           <Button
             onClick={() => setShowHolidays(true)}
             variant="outline"
             size="sm"
-            className="text-gray-700 border-gray-300 hover:bg-gray-50"
+            className="text-foreground border-border hover:bg-muted"
           >
             <Calendar className="w-4 h-4 mr-2" />
-            Holidays
+            Feestdagen
           </Button>
         </div>
       </div>
 
       {/* Calendar Controls */}
-      <Card className="border-gray-200">
+      <Card className="border-border">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -212,12 +213,12 @@ export function AdminCalendar() {
                 onClick={() => navigateDate('prev')}
                 variant="outline"
                 size="sm"
-                className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                className="text-foreground border-border hover:bg-muted"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
               
-              <h2 className="text-xl font-semibold text-gray-900 min-w-[300px] text-center">
+              <h2 className="text-xl font-semibold text-foreground min-w-[300px] text-center">
                 {formatDateRange()}
               </h2>
               
@@ -225,7 +226,7 @@ export function AdminCalendar() {
                 onClick={() => navigateDate('next')}
                 variant="outline"
                 size="sm"
-                className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                className="text-foreground border-border hover:bg-muted"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -236,21 +237,21 @@ export function AdminCalendar() {
                 onClick={() => setCurrentDate(new Date())}
                 variant="outline"
                 size="sm"
-                className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                className="text-foreground border-border hover:bg-muted"
               >
-                Today
+                Vandaag
               </Button>
               
               <Tabs value={view} onValueChange={(value) => setView(value as any)}>
-                <TabsList className="bg-gray-100">
-                  <TabsTrigger value="day" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
-                    Day
+                <TabsList className="bg-muted">
+                  <TabsTrigger value="day" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground">
+                    Dag
                   </TabsTrigger>
-                  <TabsTrigger value="week" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
+                  <TabsTrigger value="week" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground">
                     Week
                   </TabsTrigger>
-                  <TabsTrigger value="month" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-gray-900">
-                    Month
+                  <TabsTrigger value="month" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground">
+                    Maand
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -292,9 +293,9 @@ export function AdminCalendar() {
       </Card>
 
       {/* Service Legend */}
-      <Card className="border-gray-200">
+      <Card className="border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-gray-900">Service Types</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Dienst Types</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
@@ -303,7 +304,8 @@ export function AdminCalendar() {
               return service ? (
                 <Badge
                   key={serviceId}
-                  className="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200"
+                  variant="secondary"
+                  className="px-3 py-1 text-sm font-medium"
                 >
                   {service.name}
                 </Badge>
