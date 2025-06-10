@@ -99,33 +99,39 @@ export function BookSession() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service) => (
-            <Card key={service.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  {service.name}
-                  <span className="text-lg font-bold text-primary">€{service.price}</span>
+            <Card key={service.id} className="hover:shadow-lg transition-shadow flex flex-col">
+              <CardHeader className="flex-shrink-0">
+                <CardTitle className="flex items-center justify-between min-h-[3rem]">
+                  <span className="flex-1 leading-tight">{service.name}</span>
+                  <span className="text-lg font-bold text-primary ml-4">€{service.price}</span>
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
                   {service.duration} minuten
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {service.description && (
-                  <p className="text-sm text-muted-foreground">{service.description}</p>
-                )}
-                
-                <div className="flex items-center gap-2 text-sm text-green-600">
-                  <CheckCircle className="w-4 h-4" />
-                  Direct beschikbaar
+              <CardContent className="flex flex-col flex-1">
+                <div className="flex-1 space-y-4">
+                  {service.description && (
+                    <div className="min-h-[4rem] flex items-start">
+                      <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <CheckCircle className="w-4 h-4" />
+                    Direct beschikbaar
+                  </div>
                 </div>
                 
-                <Button 
-                  onClick={() => handleBookService(service.id)}
-                  className="w-full bg-primary hover:bg-primary/90"
-                >
-                  Boek Nu
-                </Button>
+                <div className="mt-6 pt-4 border-t border-border">
+                  <Button 
+                    onClick={() => handleBookService(service.id)}
+                    className="w-full bg-primary hover:bg-primary/90"
+                  >
+                    Boek Nu
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
