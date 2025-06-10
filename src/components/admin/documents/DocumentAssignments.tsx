@@ -69,13 +69,15 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
   ) || [];
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      pending: 'secondary',
-      delivered: 'default',
-      viewed: 'default',
-      completed: 'default'
+    const statusConfig = {
+      pending: { variant: 'secondary' as const, label: 'Pending' },
+      delivered: { variant: 'default' as const, label: 'Delivered' },
+      viewed: { variant: 'outline' as const, label: 'Viewed' },
+      completed: { variant: 'default' as const, label: 'Completed' }
     };
-    return <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>{status}</Badge>;
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || { variant: 'secondary' as const, label: status };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   if (isLoading) {
@@ -84,17 +86,17 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0">
           <div className="flex justify-between items-center">
             <CardTitle>Document Assignments</CardTitle>
-            <Button onClick={() => setShowBulkModal(true)}>
+            <Button onClick={() => setShowBulkModal(true)} variant="outline">
               <Plus className="w-4 h-4 mr-2" />
               Bulk Assign
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-0">
           <div className="flex gap-4">
             <Input
               placeholder="Search assignments..."
@@ -104,69 +106,71 @@ export function DocumentAssignments({ onUpdate }: DocumentAssignmentsProps) {
             />
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Template</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Assigned Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAssignments.map((assignment: any) => (
-                <TableRow key={assignment.id}>
-                  <TableCell className="font-medium">
-                    {assignment.document_templates?.name}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {assignment.users?.name}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {assignment.document_templates?.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(assignment.status)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(assignment.assigned_date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {assignment.status === 'pending' && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => updateStatusMutation.mutate({ 
-                            id: assignment.id, 
-                            status: 'delivered' 
-                          })}
-                        >
-                          <Send className="w-4 h-4" />
-                        </Button>
-                      )}
-                      {assignment.status === 'delivered' && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => updateStatusMutation.mutate({ 
-                            id: assignment.id, 
-                            status: 'completed' 
-                          })}
-                        >
-                          <Check className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Template</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Assigned Date</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredAssignments.map((assignment: any) => (
+                  <TableRow key={assignment.id}>
+                    <TableCell className="font-medium">
+                      {assignment.document_templates?.name}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {assignment.users?.name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {assignment.document_templates?.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(assignment.status)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {new Date(assignment.assigned_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        {assignment.status === 'pending' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => updateStatusMutation.mutate({ 
+                              id: assignment.id, 
+                              status: 'delivered' 
+                            })}
+                          >
+                            <Send className="w-4 h-4" />
+                          </Button>
+                        )}
+                        {assignment.status === 'delivered' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => updateStatusMutation.mutate({ 
+                              id: assignment.id, 
+                              status: 'completed' 
+                            })}
+                          >
+                            <Check className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
           {filteredAssignments.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
