@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -35,6 +35,7 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
   const { toast } = useToast();
 
   const {
@@ -52,11 +53,30 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     setError(null);
+    setDebugInfo('Starting registration process...');
 
     try {
+      console.log('🚀 Starting user registration for:', data.email);
+      
+      // First, check if user already exists
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('email')
+        .eq('email', data.email)
+        .single();
+
+      if (existingUser) {
+        setError('Er bestaat al een account met dit emailadres');
+        setLoading(false);
+        return;
+      }
+
+      setDebugInfo('Creating auth user...');
+
       const redirectUrl = `${window.location.origin}/auth?type=signup`;
       
-      const { error } = await supabase.auth.signUp({
+      // Create the auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -68,23 +88,88 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
         },
       });
 
-      if (error) {
-        if (error.message.includes('User already registered')) {
+      console.log('📧 Auth signup result:', { user: authData.user?.id, error: authError });
+
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        
+        if (authError.message.includes('User already registered')) {
           setError('Er bestaat al een account met dit emailadres');
+        } else if (authError.message.includes('Invalid email')) {
+          setError('Ongeldig emailadres');
+        } else if (authError.message.includes('Password')) {
+          setError('Wachtwoord voldoet niet aan de eisen');
         } else {
-          setError(error.message);
+          setError(`Registratie fout: ${authError.message}`);
         }
         return;
       }
 
+      if (!authData.user) {
+        setError('Gebruiker kon niet worden aangemaakt');
+        return;
+      }
+
+      setDebugInfo('Auth user created, checking database...');
+
+      // Wait a moment for the trigger to execute
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Verify that the user was created in the database
+      const { data: dbUser, error: dbError } = await supabase
+        .from('users')
+        .select('id, email, name')
+        .eq('id', authData.user.id)
+        .single();
+
+      console.log('🔍 Database user check:', { user: dbUser, error: dbError });
+
+      if (dbError && dbError.code !== 'PGRST116') {
+        console.error('❌ Database error:', dbError);
+        setError(`Database error: ${dbError.message}`);
+        return;
+      }
+
+      // If user doesn't exist in database, create manually
+      if (!dbUser) {
+        setDebugInfo('Creating user in database manually...');
+        console.log('📝 Creating user in database manually...');
+        
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: authData.user.id,
+            email: data.email,
+            name: data.name,
+            phone: data.phone || null,
+            role: 'client',
+            client_status: 'active',
+            subscription_status: 'trial',
+          });
+
+        if (insertError) {
+          console.error('❌ Manual insert error:', insertError);
+          setError(`Database error saving new user: ${insertError.message}`);
+          return;
+        }
+
+        console.log('✅ User created in database manually');
+      }
+
+      // Success!
+      console.log('✅ Registration completed successfully');
+      
       toast({
         title: "Registratie succesvol",
         description: "Check je email voor de bevestigingslink.",
       });
 
       onEmailSent();
+
     } catch (error: any) {
-      setError('Er is een onverwachte fout opgetreden');
+      console.error('💥 Unexpected registration error:', error);
+      setError(`Onverwachte fout: ${error.message}`);
+      setDebugInfo(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -93,136 +178,157 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && (
-        <Alert className="bg-red-500/10 border-red-500/20 text-red-300">
+        <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="name" className="text-white">
-          Volledige naam *
-        </Label>
-        <Input
-          {...register('name')}
-          id="name"
-          placeholder="Je volledige naam"
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-orange-500"
-        />
-        {errors.name && (
-          <p className="text-red-400 text-sm">{errors.name.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-white">
-          Email *
-        </Label>
-        <Input
-          {...register('email')}
-          id="email"
-          type="email"
-          placeholder="je@email.com"
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-orange-500"
-        />
-        {errors.email && (
-          <p className="text-red-400 text-sm">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="phone" className="text-white">
-          Telefoonnummer
-        </Label>
-        <Input
-          {...register('phone')}
-          id="phone"
-          type="tel"
-          placeholder="06 12345678"
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-orange-500"
-        />
-        {errors.phone && (
-          <p className="text-red-400 text-sm">{errors.phone.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-white">
-          Wachtwoord *
-        </Label>
-        <div className="relative">
-          <Input
-            {...register('password')}
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Minimaal 8 karakters"
-            className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-          >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        </div>
-        {errors.password && (
-          <p className="text-red-400 text-sm">{errors.password.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-white">
-          Bevestig wachtwoord *
-        </Label>
-        <div className="relative">
-          <Input
-            {...register('confirmPassword')}
-            id="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="Herhaal je wachtwoord"
-            className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-          >
-            {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        </div>
-        {errors.confirmPassword && (
-          <p className="text-red-400 text-sm">{errors.confirmPassword.message}</p>
-        )}
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="terms"
-          checked={termsValue}
-          onCheckedChange={(checked) => setValue('terms', checked as boolean)}
-          className="border-white/20 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-        />
-        <Label htmlFor="terms" className="text-white text-sm">
-          Ik ga akkoord met de{' '}
-          <a href="#" className="text-orange-400 hover:text-orange-300 underline">
-            algemene voorwaarden
-          </a>{' '}
-          en{' '}
-          <a href="#" className="text-orange-400 hover:text-orange-300 underline">
-            privacybeleid
-          </a>
-        </Label>
-      </div>
-      {errors.terms && (
-        <p className="text-red-400 text-sm">{errors.terms.message}</p>
+      {debugInfo && loading && (
+        <Alert>
+          <AlertDescription className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 animate-spin" />
+            {debugInfo}
+          </AlertDescription>
+        </Alert>
       )}
 
-      <Button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold"
-      >
-        {loading ? 'Bezig met registreren...' : 'Account aanmaken'}
+      <div className="space-y-2">
+        <Label htmlFor="name">Volledige naam *</Label>
+        <Input
+          id="name"
+          {...register('name')}
+          disabled={loading}
+          className={errors.name ? 'border-red-500' : ''}
+        />
+        {errors.name && (
+          <p className="text-sm text-red-500">{errors.name.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Email *</Label>
+        <Input
+          id="email"
+          type="email"
+          {...register('email')}
+          disabled={loading}
+          className={errors.email ? 'border-red-500' : ''}
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="phone">Telefoonnummer</Label>
+        <Input
+          id="phone"
+          type="tel"
+          {...register('phone')}
+          disabled={loading}
+          className={errors.phone ? 'border-red-500' : ''}
+        />
+        {errors.phone && (
+          <p className="text-sm text-red-500">{errors.phone.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="password">Wachtwoord *</Label>
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            {...register('password')}
+            disabled={loading}
+            className={errors.password ? 'border-red-500' : ''}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowPassword(!showPassword)}
+            disabled={loading}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Bevestig wachtwoord *</Label>
+        <div className="relative">
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            {...register('confirmPassword')}
+            disabled={loading}
+            className={errors.confirmPassword ? 'border-red-500' : ''}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            disabled={loading}
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        {errors.confirmPassword && (
+          <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="terms"
+            checked={termsValue}
+            onCheckedChange={(checked) => setValue('terms', checked as boolean)}
+            disabled={loading}
+          />
+          <Label
+            htmlFor="terms"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Ik ga akkoord met de{' '}
+            <a href="#" className="text-primary hover:underline">
+              algemene voorwaarden
+            </a>{' '}
+            en{' '}
+            <a href="#" className="text-primary hover:underline">
+              privacybeleid
+            </a>
+          </Label>
+        </div>
+        {errors.terms && (
+          <p className="text-sm text-red-500">{errors.terms.message}</p>
+        )}
+      </div>
+
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? (
+          <>
+            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            Account aanmaken...
+          </>
+        ) : (
+          'Account aanmaken'
+        )}
       </Button>
     </form>
   );
