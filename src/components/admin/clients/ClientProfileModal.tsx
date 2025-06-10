@@ -113,9 +113,23 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
 
     setSaving(true);
     try {
+      // Prepare data for database - convert empty strings to null for date fields
+      const updateData = {
+        ...formData,
+        date_of_birth: formData.date_of_birth.trim() === '' ? null : formData.date_of_birth,
+        phone: formData.phone.trim() === '' ? null : formData.phone,
+        address: formData.address.trim() === '' ? null : formData.address,
+        emergency_contact_name: formData.emergency_contact_name.trim() === '' ? null : formData.emergency_contact_name,
+        emergency_contact_phone: formData.emergency_contact_phone.trim() === '' ? null : formData.emergency_contact_phone,
+        health_notes: formData.health_notes.trim() === '' ? null : formData.health_notes,
+        training_preferences: formData.training_preferences.trim() === '' ? null : formData.training_preferences,
+        acquisition_source: formData.acquisition_source.trim() === '' ? null : formData.acquisition_source,
+        notes: formData.notes.trim() === '' ? null : formData.notes
+      };
+
       const { error } = await supabase
         .from('users')
-        .update(formData)
+        .update(updateData)
         .eq('id', client.id);
 
       if (error) throw error;
@@ -149,7 +163,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-gray-200">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle className="text-gray-900 flex items-center gap-2">
             <User className="w-5 h-5 text-orange-500" />
@@ -163,11 +177,11 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
           </div>
         ) : (
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-gray-100">
-              <TabsTrigger value="basic" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Basisinfo</TabsTrigger>
-              <TabsTrigger value="contact" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Contact</TabsTrigger>
-              <TabsTrigger value="health" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Gezondheid & Training</TabsTrigger>
-              <TabsTrigger value="notes" className="text-gray-700 data-[state=active]:text-orange-500 data-[state=active]:bg-white">Notities</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic" className="data-[state=active]:text-orange-500">Basisinfo</TabsTrigger>
+              <TabsTrigger value="contact" className="data-[state=active]:text-orange-500">Contact</TabsTrigger>
+              <TabsTrigger value="health" className="data-[state=active]:text-orange-500">Gezondheid & Training</TabsTrigger>
+              <TabsTrigger value="notes" className="data-[state=active]:text-orange-500">Notities</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-4">
@@ -178,7 +192,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -188,7 +202,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -197,7 +211,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -207,16 +221,16 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     type="date"
                     value={formData.date_of_birth}
                     onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="client_status" className="text-gray-700">Klantstatus</Label>
                   <Select value={formData.client_status} onValueChange={(value) => handleInputChange('client_status', value)}>
-                    <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500">
+                    <SelectTrigger className="focus:border-orange-500 focus:ring-orange-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200">
+                    <SelectContent>
                       <SelectItem value="prospect">Prospect</SelectItem>
                       <SelectItem value="active">Actief</SelectItem>
                       <SelectItem value="inactive">Inactief</SelectItem>
@@ -231,7 +245,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     value={formData.acquisition_source}
                     onChange={(e) => handleInputChange('acquisition_source', e.target.value)}
                     placeholder="bijv. Website, Verwijzing, Social Media"
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -245,7 +259,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                     rows={3}
                   />
                 </div>
@@ -256,7 +270,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                       id="emergency_contact_name"
                       value={formData.emergency_contact_name}
                       onChange={(e) => handleInputChange('emergency_contact_name', e.target.value)}
-                      className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                      className="focus:border-orange-500 focus:ring-orange-500"
                     />
                   </div>
                   <div className="space-y-2">
@@ -265,7 +279,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                       id="emergency_contact_phone"
                       value={formData.emergency_contact_phone}
                       onChange={(e) => handleInputChange('emergency_contact_phone', e.target.value)}
-                      className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                      className="focus:border-orange-500 focus:ring-orange-500"
                     />
                   </div>
                 </div>
@@ -281,7 +295,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     value={formData.health_notes}
                     onChange={(e) => handleInputChange('health_notes', e.target.value)}
                     placeholder="Medische aandoeningen, blessures of gezondheidsoverwegingen..."
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                     rows={4}
                   />
                 </div>
@@ -292,7 +306,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     value={formData.training_preferences}
                     onChange={(e) => handleInputChange('training_preferences', e.target.value)}
                     placeholder="Voorkeurstijden voor training, doelen, oefenvoorkeuren..."
-                    className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                    className="focus:border-orange-500 focus:ring-orange-500"
                     rows={4}
                   />
                 </div>
@@ -307,7 +321,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
                   placeholder="Interne notities over de klant..."
-                  className="bg-white border-gray-200 text-gray-900 focus:border-orange-500 focus:ring-orange-500"
+                  className="focus:border-orange-500 focus:ring-orange-500"
                   rows={8}
                 />
               </div>
@@ -317,7 +331,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
               <Button 
                 variant="outline" 
                 onClick={() => onOpenChange(false)}
-                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="hover:bg-gray-50"
               >
                 Annuleren
               </Button>
