@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, Calendar, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, parseISO, isAfter, isBefore } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 interface Holiday {
   id: string;
@@ -43,13 +44,13 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
   const { toast } = useToast();
   
   const colorOptions = [
-    { name: 'Orange', value: '#ff6b35' },
-    { name: 'Red', value: '#ef4444' },
-    { name: 'Green', value: '#22c55e' },
-    { name: 'Blue', value: '#3b82f6' },
-    { name: 'Purple', value: '#a855f7' },
-    { name: 'Pink', value: '#ec4899' },
-    { name: 'Yellow', value: '#eab308' },
+    { name: 'Oranje', value: '#ff6b35' },
+    { name: 'Rood', value: '#ef4444' },
+    { name: 'Groen', value: '#22c55e' },
+    { name: 'Blauw', value: '#3b82f6' },
+    { name: 'Paars', value: '#a855f7' },
+    { name: 'Roze', value: '#ec4899' },
+    { name: 'Geel', value: '#eab308' },
     { name: 'Indigo', value: '#6366f1' }
   ];
 
@@ -64,20 +65,20 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     const defaultHolidays: Holiday[] = [
       {
         id: '1',
-        name: 'Christmas Day',
+        name: 'Eerste Kerstdag',
         startDate: '2024-12-25',
         endDate: '2024-12-25',
-        description: 'Christmas holiday - gym closed',
+        description: 'Kerstfeest - gym gesloten',
         isRecurring: true,
         color: '#ef4444',
         blockBookings: true
       },
       {
         id: '2',
-        name: 'New Year\'s Day',
+        name: 'Nieuwjaarsdag',
         startDate: '2025-01-01',
         endDate: '2025-01-01',
-        description: 'New Year holiday - gym closed',
+        description: 'Nieuwjaar - gym gesloten',
         isRecurring: true,
         color: '#6366f1',
         blockBookings: true
@@ -91,8 +92,8 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     if (!newHoliday.name || !newHoliday.startDate || !newHoliday.endDate) {
       toast({
         variant: "destructive",
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: "Ontbrekende informatie",
+        description: "Vul alle verplichte velden in.",
       });
       return;
     }
@@ -100,8 +101,8 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     if (isAfter(parseISO(newHoliday.startDate), parseISO(newHoliday.endDate))) {
       toast({
         variant: "destructive",
-        title: "Invalid Date Range",
-        description: "End date must be after start date.",
+        title: "Ongeldige datumbereik",
+        description: "Einddatum moet na startdatum liggen.",
       });
       return;
     }
@@ -129,16 +130,16 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     });
 
     toast({
-      title: "Holiday Added",
-      description: `${holiday.name} has been added to the calendar.`,
+      title: "Feestdag toegevoegd",
+      description: `${holiday.name} is toegevoegd aan de kalender.`,
     });
   };
 
   const removeHoliday = (holidayId: string) => {
     setHolidays(prev => prev.filter(holiday => holiday.id !== holidayId));
     toast({
-      title: "Holiday Removed",
-      description: "Holiday has been removed from the calendar.",
+      title: "Feestdag verwijderd",
+      description: "Feestdag is verwijderd van de kalender.",
     });
   };
 
@@ -147,8 +148,8 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     console.log('Saving holidays:', holidays);
     
     toast({
-      title: "Holidays Saved",
-      description: "Your holiday settings have been saved successfully.",
+      title: "Feestdagen opgeslagen",
+      description: "Uw feestdaginstellingen zijn succesvol opgeslagen.",
     });
     
     onClose();
@@ -159,10 +160,10 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
     const end = parseISO(endDate);
     
     if (format(start, 'yyyy-MM-dd') === format(end, 'yyyy-MM-dd')) {
-      return format(start, 'MMMM d, yyyy');
+      return format(start, 'd MMMM yyyy', { locale: nl });
     }
     
-    return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
+    return `${format(start, 'd MMM', { locale: nl })} - ${format(end, 'd MMM yyyy', { locale: nl })}`;
   };
 
   const getUpcomingHolidays = () => {
@@ -175,77 +176,77 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-gray-800 border-white/20">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-border">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl">Holiday & Vacation Management</DialogTitle>
+          <DialogTitle className="text-foreground text-xl">Feestdag & vakantiebeheer</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Quick Overview */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-foreground flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
-                Upcoming Holidays
+                Aankomende feestdagen
               </CardTitle>
             </CardHeader>
             <CardContent>
               {getUpcomingHolidays().length > 0 ? (
                 <div className="space-y-2">
                   {getUpcomingHolidays().map(holiday => (
-                    <div key={holiday.id} className="flex items-center gap-3 p-2 bg-white/5 rounded">
+                    <div key={holiday.id} className="flex items-center gap-3 p-2 border border-border rounded">
                       <div 
                         className="w-3 h-3 rounded-full" 
                         style={{ backgroundColor: holiday.color }}
                       />
                       <div className="flex-1">
-                        <div className="text-white font-medium">{holiday.name}</div>
-                        <div className="text-sm text-gray-300">
+                        <div className="text-foreground font-medium">{holiday.name}</div>
+                        <div className="text-sm text-muted-foreground">
                           {formatDateRange(holiday.startDate, holiday.endDate)}
                         </div>
                       </div>
                       {holiday.blockBookings && (
-                        <Badge className="bg-red-500/20 text-red-300">
+                        <Badge variant="destructive" className="text-xs">
                           <AlertCircle className="w-3 h-3 mr-1" />
-                          Blocks Bookings
+                          Blokkeert boekingen
                         </Badge>
                       )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-4 text-gray-400">
-                  No upcoming holidays
+                <div className="text-center py-4 text-muted-foreground">
+                  Geen aankomende feestdagen
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Add New Holiday */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-white">Add Holiday/Vacation</CardTitle>
+              <CardTitle className="text-foreground">Feestdag/vakantie toevoegen</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-white">Holiday Name *</Label>
+                  <Label className="text-foreground">Naam feestdag *</Label>
                   <Input
                     value={newHoliday.name}
                     onChange={(e) => setNewHoliday(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="e.g., Christmas, Personal Vacation"
-                    className="bg-white/10 border-white/20 text-white"
+                    placeholder="bijv. Kerst, Persoonlijke vakantie"
+                    className="bg-background border-border text-foreground"
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Color</Label>
+                  <Label className="text-foreground">Kleur</Label>
                   <div className="flex gap-2 mt-1">
                     {colorOptions.map(color => (
                       <button
                         key={color.value}
                         onClick={() => setNewHoliday(prev => ({ ...prev, color: color.value }))}
                         className={`w-8 h-8 rounded-full border-2 ${
-                          newHoliday.color === color.value ? 'border-white' : 'border-transparent'
+                          newHoliday.color === color.value ? 'border-foreground' : 'border-transparent'
                         }`}
                         style={{ backgroundColor: color.value }}
                         title={color.name}
@@ -257,32 +258,32 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-white">Start Date *</Label>
+                  <Label className="text-foreground">Startdatum *</Label>
                   <Input
                     type="date"
                     value={newHoliday.startDate}
                     onChange={(e) => setNewHoliday(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="bg-white/10 border-white/20 text-white"
+                    className="bg-background border-border text-foreground"
                   />
                 </div>
                 <div>
-                  <Label className="text-white">End Date *</Label>
+                  <Label className="text-foreground">Einddatum *</Label>
                   <Input
                     type="date"
                     value={newHoliday.endDate}
                     onChange={(e) => setNewHoliday(prev => ({ ...prev, endDate: e.target.value }))}
-                    className="bg-white/10 border-white/20 text-white"
+                    className="bg-background border-border text-foreground"
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-white">Description</Label>
+                <Label className="text-foreground">Beschrijving</Label>
                 <Textarea
                   value={newHoliday.description}
                   onChange={(e) => setNewHoliday(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Optional description or notes"
-                  className="bg-white/10 border-white/20 text-white"
+                  placeholder="Optionele beschrijving of notities"
+                  className="bg-background border-border text-foreground"
                   rows={2}
                 />
               </div>
@@ -293,7 +294,7 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
                     checked={newHoliday.isRecurring}
                     onCheckedChange={(checked) => setNewHoliday(prev => ({ ...prev, isRecurring: checked }))}
                   />
-                  <Label className="text-white">Recurring annually</Label>
+                  <Label className="text-foreground">Jaarlijks herhalend</Label>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -301,29 +302,29 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
                     checked={newHoliday.blockBookings}
                     onCheckedChange={(checked) => setNewHoliday(prev => ({ ...prev, blockBookings: checked }))}
                   />
-                  <Label className="text-white">Block new bookings</Label>
+                  <Label className="text-foreground">Nieuwe boekingen blokkeren</Label>
                 </div>
               </div>
 
               <Button
                 onClick={addHoliday}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Holiday
+                Feestdag toevoegen
               </Button>
             </CardContent>
           </Card>
 
           {/* Holiday List */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-white">All Holidays & Vacations</CardTitle>
+              <CardTitle className="text-foreground">Alle feestdagen & vakanties</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {holidays.map((holiday) => (
-                  <div key={holiday.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div key={holiday.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div className="flex items-center gap-4">
                       <div 
                         className="w-4 h-4 rounded-full" 
@@ -331,24 +332,24 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{holiday.name}</span>
+                          <span className="text-foreground font-medium">{holiday.name}</span>
                           {holiday.isRecurring && (
-                            <Badge className="bg-blue-500/20 text-blue-300 text-xs">
-                              Recurring
+                            <Badge variant="secondary" className="text-xs">
+                              Herhalend
                             </Badge>
                           )}
                           {holiday.blockBookings && (
-                            <Badge className="bg-red-500/20 text-red-300 text-xs">
+                            <Badge variant="destructive" className="text-xs">
                               <AlertCircle className="w-3 h-3 mr-1" />
-                              Blocks
+                              Blokkeert
                             </Badge>
                           )}
                         </div>
-                        <div className="text-sm text-gray-300">
+                        <div className="text-sm text-muted-foreground">
                           {formatDateRange(holiday.startDate, holiday.endDate)}
                         </div>
                         {holiday.description && (
-                          <div className="text-sm text-gray-400 mt-1">
+                          <div className="text-sm text-muted-foreground mt-1">
                             {holiday.description}
                           </div>
                         )}
@@ -358,7 +359,7 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
                       onClick={() => removeHoliday(holiday.id)}
                       variant="outline"
                       size="sm"
-                      className="border-red-500/20 text-red-400 hover:bg-red-500/20"
+                      className="border-destructive/50 text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -366,8 +367,8 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
                 ))}
                 
                 {holidays.length === 0 && (
-                  <div className="text-center py-8 text-gray-400">
-                    No holidays configured
+                  <div className="text-center py-8 text-muted-foreground">
+                    Geen feestdagen geconfigureerd
                   </div>
                 )}
               </div>
@@ -375,19 +376,19 @@ export function HolidayManager({ isOpen, onClose }: HolidayManagerProps) {
           </Card>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
           <Button
             onClick={onClose}
             variant="outline"
-            className="border-white/20 text-white hover:bg-white/10"
+            className="border-border text-foreground hover:bg-muted"
           >
-            Cancel
+            Annuleren
           </Button>
           <Button
             onClick={saveHolidays}
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            Save Holidays
+            Feestdagen opslaan
           </Button>
         </div>
       </DialogContent>
