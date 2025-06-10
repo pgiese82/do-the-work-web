@@ -11,15 +11,22 @@ export function useDocumentDownload() {
     setDownloading(documentId);
     
     try {
-      // Get secure download URL
-      const { data, error } = await supabase.rpc('get_document_download_url', {
+      // Get document storage path from database
+      const { data: storagePath, error } = await supabase.rpc('get_document_download_url', {
         document_id: documentId
       });
 
       if (error) throw error;
 
+      // Generate signed URL using client-side storage API
+      const { data: signedUrlData, error: urlError } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(storagePath, 3600); // 1 hour expiry
+
+      if (urlError) throw urlError;
+
       // Download file
-      const response = await fetch(data);
+      const response = await fetch(signedUrlData.signedUrl);
       if (!response.ok) throw new Error('Download failed');
 
       const blob = await response.blob();
