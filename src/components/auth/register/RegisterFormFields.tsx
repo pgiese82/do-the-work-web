@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
@@ -6,15 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
-
-interface RegisterFormData {
-  name: string;
-  email: string;
-  phone?: string;
-  password: string;
-  confirmPassword: string;
-  terms: boolean;
-}
+import { RegisterFormData } from '@/hooks/useRegisterForm';
 
 interface RegisterFormFieldsProps {
   register: UseFormRegister<RegisterFormData>;
