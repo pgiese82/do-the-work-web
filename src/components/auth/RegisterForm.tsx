@@ -41,16 +41,38 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, touchedFields },
+    formState: { errors, isValid },
     setValue,
     watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: 'onChange'
+    mode: 'onChange', // This ensures real-time validation
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      terms: false,
+    }
   });
 
   const termsValue = watch('terms');
   const watchedValues = watch();
+
+  // Check if all required fields are filled and valid
+  const isFormValid = () => {
+    const { name, email, password, confirmPassword, terms } = watchedValues;
+    
+    return !!(
+      name && name.length >= 2 &&
+      email && email.includes('@') &&
+      password && password.length >= 8 &&
+      confirmPassword && confirmPassword === password &&
+      terms === true &&
+      Object.keys(errors).length === 0
+    );
+  };
 
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
@@ -158,11 +180,10 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
 
   const getFieldValidationState = (fieldName: keyof RegisterFormData) => {
     const hasError = errors[fieldName];
-    const isTouched = touchedFields[fieldName];
     const hasValue = watchedValues[fieldName];
     
-    if (hasError && isTouched) return 'error';
-    if (!hasError && hasValue && isTouched) return 'success';
+    if (hasError) return 'error';
+    if (!hasError && hasValue) return 'success';
     return 'default';
   };
 
@@ -375,7 +396,7 @@ const RegisterForm = ({ onEmailSent }: RegisterFormProps) => {
       {/* Submit Button */}
       <Button 
         type="submit" 
-        disabled={loading || !isValid}
+        disabled={loading || !isFormValid()}
         className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
