@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
   const [categoryFilter, setCategoryFilter] = useState<DocumentCategory>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
   
-  const { downloadDocument, shareDocument, downloading } = useDocumentDownload();
+  const { downloadDocument, viewDocument, shareDocument, downloading, viewing } = useDocumentDownload();
 
   const { data: documents, isLoading } = useQuery({
     queryKey: ['client-documents', categoryFilter],
@@ -61,6 +60,10 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
 
   const handleDownload = (document: any) => {
     downloadDocument(document.id, document.title);
+  };
+
+  const handleView = (document: any) => {
+    viewDocument(document.id, document.title);
   };
 
   const handleShare = (document: any) => {
@@ -147,6 +150,8 @@ export function ClientDocuments({ onUpdate }: ClientDocumentsProps) {
                       <Button
                         size="sm"
                         variant="ghost"
+                        onClick={() => handleView(document)}
+                        disabled={viewing === document.id}
                         className="text-gray-300 hover:text-white"
                         title="Bekijken"
                       >

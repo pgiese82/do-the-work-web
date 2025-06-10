@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export function useDocumentDownload() {
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<string | null>(null);
   const { toast } = useToast();
 
   const downloadDocument = async (documentId: string, fileName: string) => {
@@ -55,6 +56,43 @@ export function useDocumentDownload() {
     }
   };
 
+  const viewDocument = async (documentId: string, fileName: string) => {
+    setViewing(documentId);
+    
+    try {
+      // Get document storage path from database
+      const { data: storagePath, error } = await supabase.rpc('get_document_download_url', {
+        document_id: documentId
+      });
+
+      if (error) throw error;
+
+      // Generate signed URL using client-side storage API
+      const { data: signedUrlData, error: urlError } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(storagePath, 3600); // 1 hour expiry
+
+      if (urlError) throw urlError;
+
+      // Open document in new tab/window
+      window.open(signedUrlData.signedUrl, '_blank');
+
+      toast({
+        title: "Document geopend",
+        description: "Het document wordt geopend in een nieuw venster.",
+      });
+    } catch (error: any) {
+      console.error('View error:', error);
+      toast({
+        variant: "destructive",
+        title: "Bekijken mislukt",
+        description: error.message || "Er is een fout opgetreden bij het openen van het document.",
+      });
+    } finally {
+      setViewing(null);
+    }
+  };
+
   const shareDocument = async (documentId: string, expiresInHours: number = 24) => {
     try {
       const { data, error } = await supabase.rpc('create_document_share_token', {
@@ -86,5 +124,5 @@ export function useDocumentDownload() {
     }
   };
 
-  return { downloadDocument, shareDocument, downloading };
+  return { downloadDocument, viewDocument, shareDocument, downloading, viewing };
 }

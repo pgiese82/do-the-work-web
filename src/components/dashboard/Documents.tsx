@@ -20,7 +20,7 @@ export function Documents() {
   const [categoryFilter, setCategoryFilter] = useState<DocumentCategory>('all');
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
-  const { downloadDocument, shareDocument, downloading } = useDocumentDownload();
+  const { downloadDocument, viewDocument, shareDocument, downloading, viewing } = useDocumentDownload();
   const { toast } = useToast();
 
   const { data: documents, isLoading, refetch } = useQuery({
@@ -138,6 +138,10 @@ export function Documents() {
 
   const handleDownload = (document: any) => {
     downloadDocument(document.id, document.title);
+  };
+
+  const handleView = (document: any) => {
+    viewDocument(document.id, document.title);
   };
 
   const handleShare = (document: any) => {
@@ -267,6 +271,15 @@ export function Documents() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleView(document)}
+                          disabled={viewing === document.id}
+                          title="Bekijken"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button
                           size="sm"
                           variant="ghost"
