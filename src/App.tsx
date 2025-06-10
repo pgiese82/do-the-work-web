@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RealtimeProvider } from '@/components/RealtimeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import Index from '@/pages/Index';
-import Dashboard from '@/pages/Dashboard';
 import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
 import AdminLogin from '@/pages/AdminLogin';
@@ -26,6 +25,16 @@ import AdminProtectedRoute from '@/components/auth/AdminProtectedRoute';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { AuthProvider } from '@/hooks/useAuth';
 
+// Import dashboard components directly
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
+import { BookSession } from '@/components/dashboard/BookSession';
+import { BookingsOverview } from '@/components/dashboard/BookingsOverview';
+import { Documents } from '@/components/dashboard/Documents';
+import { ProfileSettings } from '@/components/dashboard/ProfileSettings';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -38,6 +47,35 @@ const queryClient = new QueryClient({
   },
 });
 
+// Dashboard Layout Wrapper
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen bg-background">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <DashboardSidebar />
+        <SidebarInset className="flex-1">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="hover:bg-accent" />
+            <div className="ml-auto">
+              <div className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString('nl-NL', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+            </div>
+          </header>
+          <main className="flex-1">
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  </div>
+);
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -48,10 +86,44 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               
-              {/* Client Dashboard Routes */}
+              {/* Dashboard Routes - Individual explicit routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <DashboardLayout>
+                    <DashboardOverview />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/book" element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <BookSession />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/bookings" element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <BookingsOverview />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/documents" element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Documents />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/profile" element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ProfileSettings />
+                  </DashboardLayout>
                 </ProtectedRoute>
               } />
               
