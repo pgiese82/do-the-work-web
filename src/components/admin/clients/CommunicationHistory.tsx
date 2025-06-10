@@ -83,16 +83,8 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
   };
 
   const getTypeBadge = (type: string) => {
-    const variants = {
-      email: 'bg-blue-500/20 text-blue-300 border-blue-500/20',
-      sms: 'bg-green-500/20 text-green-300 border-green-500/20',
-      call: 'bg-purple-500/20 text-purple-300 border-purple-500/20',
-      in_person: 'bg-orange-500/20 text-orange-300 border-orange-500/20',
-      note: 'bg-gray-500/20 text-gray-300 border-gray-500/20'
-    };
-
     return (
-      <Badge className={variants[type as keyof typeof variants] || variants.note}>
+      <Badge variant="outline" className="capitalize">
         {type.replace('_', ' ')}
       </Badge>
     );
@@ -100,80 +92,77 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
 
   const getDirectionBadge = (direction: string) => {
     return direction === 'outbound' ? (
-      <Badge className="bg-green-500/20 text-green-300 border-green-500/20">
+      <Badge variant="default">
         Outbound
       </Badge>
     ) : (
-      <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/20">
+      <Badge variant="secondary">
         Inbound
       </Badge>
     );
   };
 
   return (
-    <Card className="bg-gray-800/50 border-orange-900/20">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center justify-between">
+    <Card className="border-0 shadow-none">
+      <CardHeader className="px-0">
+        <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-orange-400" />
+            <MessageCircle className="w-5 h-5" />
             Communication History
           </span>
-          <Button 
-            size="sm"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-          >
+          <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
             New Communication
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 px-0">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search communications by client or content..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-gray-700/50 border-orange-900/20 text-white placeholder:text-gray-400"
+            className="pl-10"
           />
         </div>
 
         {/* Table */}
-        <div className="rounded-lg border border-orange-900/20 overflow-hidden">
+        <div className="rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow className="border-orange-900/20 hover:bg-gray-700/30">
-                <TableHead className="text-gray-300">Client</TableHead>
-                <TableHead className="text-gray-300">Type</TableHead>
-                <TableHead className="text-gray-300">Direction</TableHead>
-                <TableHead className="text-gray-300">Subject/Content</TableHead>
-                <TableHead className="text-gray-300">Date</TableHead>
-                <TableHead className="text-gray-300">Admin</TableHead>
+              <TableRow>
+                <TableHead>Client</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Direction</TableHead>
+                <TableHead>Subject/Content</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Admin</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     Loading communications...
                   </TableCell>
                 </TableRow>
               ) : communications.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No communications found
                   </TableCell>
                 </TableRow>
               ) : (
                 communications.map((comm) => (
-                  <TableRow key={comm.id} className="border-orange-900/20 hover:bg-gray-700/20">
+                  <TableRow key={comm.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-400" />
+                        <User className="w-4 h-4 text-muted-foreground" />
                         <div>
-                          <div className="text-white font-medium">{comm.user?.name}</div>
-                          <div className="text-gray-400 text-xs">{comm.user?.email}</div>
+                          <div className="font-medium">{comm.user?.name}</div>
+                          <div className="text-muted-foreground text-xs">{comm.user?.email}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -189,15 +178,15 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
                     <TableCell>
                       <div className="max-w-xs">
                         {comm.subject && (
-                          <div className="text-white font-medium text-sm mb-1">{comm.subject}</div>
+                          <div className="font-medium text-sm mb-1">{comm.subject}</div>
                         )}
-                        <div className="text-gray-400 text-sm truncate">{comm.content}</div>
+                        <div className="text-muted-foreground text-sm truncate">{comm.content}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-gray-300">
+                    <TableCell className="text-muted-foreground">
                       {format(new Date(comm.created_at), 'MMM dd, yyyy HH:mm')}
                     </TableCell>
-                    <TableCell className="text-gray-300">
+                    <TableCell className="text-muted-foreground">
                       {comm.admin?.name || 'System'}
                     </TableCell>
                   </TableRow>

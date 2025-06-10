@@ -85,35 +85,29 @@ export function FollowUpScheduler({ onUpdate }: FollowUpSchedulerProps) {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      pending: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/20',
-      completed: 'bg-green-500/20 text-green-300 border-green-500/20',
-      cancelled: 'bg-gray-500/20 text-gray-300 border-gray-500/20',
-      overdue: 'bg-red-500/20 text-red-300 border-red-500/20'
+    const statusConfig = {
+      pending: { variant: 'secondary' as const, label: 'Pending' },
+      completed: { variant: 'default' as const, label: 'Completed' },
+      cancelled: { variant: 'outline' as const, label: 'Cancelled' },
+      overdue: { variant: 'destructive' as const, label: 'Overdue' }
     };
 
-    return (
-      <Badge className={variants[status as keyof typeof variants] || variants.pending}>
-        {status}
-      </Badge>
-    );
+    const config = statusConfig[status as keyof typeof statusConfig] || { variant: 'secondary' as const, label: status };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const getPriorityBadge = (priority: string | null) => {
     if (!priority) return null;
     
-    const variants = {
-      low: 'bg-blue-500/20 text-blue-300 border-blue-500/20',
-      medium: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/20',
-      high: 'bg-orange-500/20 text-orange-300 border-orange-500/20',
-      urgent: 'bg-red-500/20 text-red-300 border-red-500/20'
+    const priorityConfig = {
+      low: { variant: 'outline' as const, label: 'Low' },
+      medium: { variant: 'secondary' as const, label: 'Medium' },
+      high: { variant: 'default' as const, label: 'High' },
+      urgent: { variant: 'destructive' as const, label: 'Urgent' }
     };
 
-    return (
-      <Badge className={variants[priority as keyof typeof variants]}>
-        {priority}
-      </Badge>
-    );
+    const config = priorityConfig[priority as keyof typeof priorityConfig] || { variant: 'outline' as const, label: priority };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const getTypeIcon = (type: string) => {
@@ -126,37 +120,34 @@ export function FollowUpScheduler({ onUpdate }: FollowUpSchedulerProps) {
   };
 
   return (
-    <Card className="bg-gray-800/50 border-orange-900/20">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center justify-between">
+    <Card className="border-0 shadow-none">
+      <CardHeader className="px-0">
+        <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-orange-400" />
+            <Calendar className="w-5 h-5" />
             Follow-up Scheduler
           </span>
-          <Button 
-            size="sm"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-          >
+          <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
             Schedule Follow-up
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 px-0">
         {/* Search and Filters */}
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search follow-ups by client or title..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-gray-700/50 border-orange-900/20 text-white placeholder:text-gray-400"
+              className="pl-10"
             />
           </div>
           
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 bg-gray-700/50 border-orange-900/20 text-white">
+            <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -170,58 +161,58 @@ export function FollowUpScheduler({ onUpdate }: FollowUpSchedulerProps) {
         </div>
 
         {/* Table */}
-        <div className="rounded-lg border border-orange-900/20 overflow-hidden">
+        <div className="rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow className="border-orange-900/20 hover:bg-gray-700/30">
-                <TableHead className="text-gray-300">Client</TableHead>
-                <TableHead className="text-gray-300">Follow-up</TableHead>
-                <TableHead className="text-gray-300">Type</TableHead>
-                <TableHead className="text-gray-300">Scheduled Date</TableHead>
-                <TableHead className="text-gray-300">Priority</TableHead>
-                <TableHead className="text-gray-300">Status</TableHead>
-                <TableHead className="text-gray-300">Actions</TableHead>
+              <TableRow>
+                <TableHead>Client</TableHead>
+                <TableHead>Follow-up</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Scheduled Date</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Loading follow-ups...
                   </TableCell>
                 </TableRow>
               ) : followUps.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     No follow-ups found
                   </TableCell>
                 </TableRow>
               ) : (
                 followUps.map((followUp) => (
-                  <TableRow key={followUp.id} className="border-orange-900/20 hover:bg-gray-700/20">
+                  <TableRow key={followUp.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div>
-                          <div className="text-white font-medium">{followUp.user?.name}</div>
-                          <div className="text-gray-400 text-xs">{followUp.user?.email}</div>
+                          <div className="font-medium">{followUp.user?.name}</div>
+                          <div className="text-muted-foreground text-xs">{followUp.user?.email}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="text-white font-medium">{followUp.title}</div>
+                        <div className="font-medium">{followUp.title}</div>
                         {followUp.description && (
-                          <div className="text-gray-400 text-xs">{followUp.description}</div>
+                          <div className="text-muted-foreground text-xs">{followUp.description}</div>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getTypeIcon(followUp.follow_up_type)}
-                        <span className="text-gray-300">{followUp.follow_up_type.replace('_', ' ')}</span>
+                        <span className="text-muted-foreground">{followUp.follow_up_type.replace('_', ' ')}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-gray-300">
+                    <TableCell className="text-muted-foreground">
                       {format(new Date(followUp.scheduled_date), 'MMM dd, yyyy HH:mm')}
                     </TableCell>
                     <TableCell>
@@ -235,14 +226,12 @@ export function FollowUpScheduler({ onUpdate }: FollowUpSchedulerProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
                         >
                           Edit
                         </Button>
                         {followUp.status === 'pending' && (
                           <Button
                             size="sm"
-                            className="bg-green-500 hover:bg-green-600 text-white"
                           >
                             Complete
                           </Button>
