@@ -972,6 +972,10 @@ export type Database = {
         }
         Returns: string
       }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_document_download_url: {
         Args: { document_id: string }
         Returns: string
