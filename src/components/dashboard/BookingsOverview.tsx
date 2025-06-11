@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookingTabs } from './mybookings/BookingTabs';
-import { Calendar, Plus, Eye } from 'lucide-react';
+import { Calendar, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useRecentBookings } from '@/hooks/useDashboardData';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -18,10 +18,6 @@ export function BookingsOverview() {
     error, 
     refetch 
   } = useRecentBookings(50);
-
-  // Debug logging
-  console.log('BookingsOverview - isMobile:', isMobile);
-  console.log('BookingsOverview - window.innerWidth:', window.innerWidth);
 
   const isUpcoming = (dateTime: string) => {
     return new Date(dateTime) > new Date();
@@ -104,36 +100,7 @@ export function BookingsOverview() {
           </Button>
         </div>
       ) : (
-        <>
-          <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
-          
-          {/* Action Buttons - Extra Large on mobile with debug info */}
-          <div className={`flex ${isMobile ? 'flex-col gap-6' : 'flex-row gap-4 justify-center'} mt-8`}>
-            {/* Debug info - will be visible in mobile */}
-            {isMobile && (
-              <div className="text-xs text-muted-foreground text-center mb-2">
-                Debug: Mobile mode active (width: {window.innerWidth}px)
-              </div>
-            )}
-            
-            <Button
-              variant="outline"
-              onClick={() => navigate('/dashboard/bookings')}
-              className={`${isMobile ? 'h-20 text-xl py-6 px-8' : 'h-10'} gap-3 flex-1 max-w-md font-medium`}
-            >
-              <Eye className={`${isMobile ? 'w-8 h-8' : 'w-4 h-4'}`} />
-              Alle Boekingen Bekijken
-            </Button>
-            
-            <Button
-              onClick={() => navigate('/dashboard/book')}
-              className={`${isMobile ? 'h-20 text-xl py-6 px-8' : 'h-10'} gap-3 flex-1 max-w-md font-medium`}
-            >
-              <Plus className={`${isMobile ? 'w-8 h-8' : 'w-4 h-4'}`} />
-              Nieuwe Sessie Boeken
-            </Button>
-          </div>
-        </>
+        <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
       )}
     </div>
   );
