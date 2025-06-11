@@ -88,8 +88,8 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
     } catch (error) {
       console.error('Error fetching booking details:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch booking details',
+        title: 'Fout',
+        description: 'Kan boekinggegevens niet ophalen',
         variant: 'destructive',
       });
     } finally {
@@ -98,16 +98,25 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
   };
 
   const handleSave = async () => {
-    if (!booking) return;
+    if (!booking) return false;
 
     setSaving(true);
     try {
+      console.log('🔄 Saving booking with data:', {
+        status,
+        payment_status: paymentStatus,
+        internal_notes: internalNotes,
+        session_notes: sessionNotes,
+        attendance_status: attendanceStatus || null,
+        date_time: newDateTime
+      });
+
       const updates: any = {
         status,
         payment_status: paymentStatus,
         internal_notes: internalNotes,
         session_notes: sessionNotes,
-        attendance_status: attendanceStatus,
+        attendance_status: attendanceStatus || null,
       };
 
       if (newDateTime !== format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm")) {
@@ -119,19 +128,24 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         .update(updates)
         .eq('id', booking.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error updating booking:', error);
+        throw error;
+      }
+
+      console.log('✅ Booking updated successfully');
 
       toast({
-        title: 'Success',
-        description: 'Booking updated successfully',
+        title: 'Succes',
+        description: 'Boeking succesvol bijgewerkt',
       });
 
       return true;
-    } catch (error) {
-      console.error('Error updating booking:', error);
+    } catch (error: any) {
+      console.error('💥 Error updating booking:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update booking',
+        title: 'Fout',
+        description: error.message || 'Kan boeking niet bijwerken',
         variant: 'destructive',
       });
       return false;
@@ -148,23 +162,23 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         .from('bookings')
         .update({ 
           payment_status: 'refunded',
-          internal_notes: `${internalNotes}\n\nRefund processed: €${refundAmount} on ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
+          internal_notes: `${internalNotes}\n\nTerugbetaling verwerkt: €${refundAmount} op ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
         })
         .eq('id', booking.id);
 
       if (error) throw error;
 
       toast({
-        title: 'Refund Processed',
-        description: `Refund of €${refundAmount} has been processed`,
+        title: 'Terugbetaling Verwerkt',
+        description: `Terugbetaling van €${refundAmount} is verwerkt`,
       });
 
       fetchBookingDetails();
     } catch (error) {
       console.error('Error processing refund:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to process refund',
+        title: 'Fout',
+        description: 'Kan terugbetaling niet verwerken',
         variant: 'destructive',
       });
     }
@@ -187,8 +201,8 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
       if (error) throw error;
 
       toast({
-        title: 'Email Sent',
-        description: `Email sent to ${booking.user.email}`,
+        title: 'Email Verzonden',
+        description: `Email verzonden naar ${booking.user.email}`,
       });
 
       setEmailSubject('');
@@ -196,8 +210,8 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
     } catch (error) {
       console.error('Error sending email:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send email',
+        title: 'Fout',
+        description: 'Kan email niet verzenden',
         variant: 'destructive',
       });
     } finally {
@@ -221,16 +235,16 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
       if (error) throw error;
 
       toast({
-        title: 'SMS Sent',
-        description: `SMS sent to ${booking.user.phone}`,
+        title: 'SMS Verzonden',
+        description: `SMS verzonden naar ${booking.user.phone}`,
       });
 
       setSmsMessage('');
     } catch (error) {
       console.error('Error sending SMS:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send SMS',
+        title: 'Fout',
+        description: 'Kan SMS niet verzenden',
         variant: 'destructive',
       });
     } finally {

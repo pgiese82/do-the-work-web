@@ -62,7 +62,7 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Loading...</DialogTitle>
+            <DialogTitle className="text-foreground">Laden...</DialogTitle>
           </DialogHeader>
           {loading && (
             <div className="flex items-center justify-center py-8">
@@ -80,16 +80,16 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
         <DialogHeader>
           <DialogTitle className="text-foreground flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
-            Booking Details - {booking.user.name}
+            Boekingdetails - {booking.user.name}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-muted">
             <TabsTrigger value="details" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Details</TabsTrigger>
-            <TabsTrigger value="communication" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Communication</TabsTrigger>
-            <TabsTrigger value="attendance" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Attendance</TabsTrigger>
-            <TabsTrigger value="payment" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Payment</TabsTrigger>
+            <TabsTrigger value="communication" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Communicatie</TabsTrigger>
+            <TabsTrigger value="attendance" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Aanwezigheid</TabsTrigger>
+            <TabsTrigger value="payment" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Betaling</TabsTrigger>
           </TabsList>
 
           <TabsContent value="details">

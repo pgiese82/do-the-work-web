@@ -40,18 +40,18 @@ export function BookingDetailsTab({
           <CardHeader>
             <CardTitle className="text-card-foreground flex items-center gap-2">
               <User className="w-4 h-4 text-primary" />
-              Client Information
+              Klantinformatie
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="text-card-foreground">
-              <strong>Name:</strong> {booking.user.name}
+              <strong>Naam:</strong> {booking.user.name}
             </div>
             <div className="text-card-foreground">
               <strong>Email:</strong> {booking.user.email}
             </div>
             <div className="text-card-foreground">
-              <strong>Phone:</strong> {booking.user.phone || 'Not provided'}
+              <strong>Telefoon:</strong> {booking.user.phone || 'Niet opgegeven'}
             </div>
           </CardContent>
         </Card>
@@ -61,7 +61,7 @@ export function BookingDetailsTab({
           <CardHeader>
             <CardTitle className="text-card-foreground flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary" />
-              Service Information
+              Service Informatie
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -69,10 +69,10 @@ export function BookingDetailsTab({
               <strong>Service:</strong> {booking.service.name}
             </div>
             <div className="text-card-foreground">
-              <strong>Duration:</strong> {booking.service.duration} minutes
+              <strong>Duur:</strong> {booking.service.duration} minuten
             </div>
             <div className="text-card-foreground">
-              <strong>Price:</strong> €{booking.service.price}
+              <strong>Prijs:</strong> €{booking.service.price}
             </div>
           </CardContent>
         </Card>
@@ -81,12 +81,12 @@ export function BookingDetailsTab({
       {/* Booking Details Form */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-card-foreground">Booking Management</CardTitle>
+          <CardTitle className="text-card-foreground">Boeking Beheer</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="datetime" className="text-foreground">Date & Time</Label>
+              <Label htmlFor="datetime" className="text-foreground">Datum & Tijd</Label>
               <Input
                 id="datetime"
                 type="datetime-local"
@@ -103,23 +103,23 @@ export function BookingDetailsTab({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="no_show">No Show</SelectItem>
+                  <SelectItem value="pending">In afwachting</SelectItem>
+                  <SelectItem value="confirmed">Bevestigd</SelectItem>
+                  <SelectItem value="completed">Voltooid</SelectItem>
+                  <SelectItem value="cancelled">Geannuleerd</SelectItem>
+                  <SelectItem value="no_show">Niet verschenen</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="internal-notes" className="text-foreground">Internal Notes</Label>
+            <Label htmlFor="internal-notes" className="text-foreground">Interne Notities</Label>
             <Textarea
               id="internal-notes"
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
-              placeholder="Add internal notes (not visible to client)..."
+              placeholder="Voeg interne notities toe (niet zichtbaar voor klant)..."
               className="bg-background border-border text-foreground"
               rows={3}
             />
@@ -127,7 +127,7 @@ export function BookingDetailsTab({
 
           <Button onClick={onSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Save className="w-4 h-4 mr-2" />
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? 'Opslaan...' : 'Wijzigingen Opslaan'}
           </Button>
         </CardContent>
       </Card>
