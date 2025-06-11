@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bell, Search, Filter, Trash2, Check, CheckCheck, AlertCircle } from 'lucide-react';
+import { Bell, Search, Filter, Trash2, Check, CheckCheck, AlertTriangle, Info, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,29 +22,31 @@ export function NotificationPanel() {
     switch (priority) {
       case 'critical': return 'destructive';
       case 'high': return 'destructive';
-      case 'medium': return 'default';
-      case 'low': return 'secondary';
-      default: return 'secondary';
+      case 'medium': return 'secondary';
+      case 'low': return 'outline';
+      default: return 'outline';
     }
   };
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case 'critical': return <AlertCircle className="h-4 w-4 text-red-500" />;
-      case 'high': return <AlertCircle className="h-4 w-4 text-orange-500" />;
-      default: return null;
+      case 'critical': return <AlertTriangle className="h-4 w-4 text-destructive" />;
+      case 'high': return <AlertTriangle className="h-4 w-4 text-destructive" />;
+      case 'medium': return <Info className="h-4 w-4 text-muted-foreground" />;
+      case 'low': return <Info className="h-4 w-4 text-muted-foreground" />;
+      default: return <Info className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'new_booking': return '📅';
-      case 'payment_confirmation': return '💰';
-      case 'payment_failed': return '❌';
-      case 'booking_cancelled': return '🚫';
-      case 'same_day_cancellation': return '⚠️';
-      case 'no_show': return '👻';
-      default: return '🔔';
+      case 'new_booking': return <CheckCircle className="h-5 w-5 text-primary" />;
+      case 'payment_confirmation': return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case 'payment_failed': return <XCircle className="h-5 w-5 text-destructive" />;
+      case 'booking_cancelled': return <XCircle className="h-5 w-5 text-destructive" />;
+      case 'same_day_cancellation': return <AlertTriangle className="h-5 w-5 text-orange-600" />;
+      case 'no_show': return <AlertTriangle className="h-5 w-5 text-destructive" />;
+      default: return <Bell className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -113,7 +115,7 @@ export function NotificationPanel() {
             <CardTitle className="text-sm text-muted-foreground">Ongelezen</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-500">{unreadCount}</div>
+            <div className="text-2xl font-bold text-primary">{unreadCount}</div>
           </CardContent>
         </Card>
         
@@ -122,7 +124,7 @@ export function NotificationPanel() {
             <CardTitle className="text-sm text-muted-foreground">Kritiek</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-500">
+            <div className="text-2xl font-bold text-destructive">
               {notifications.filter(n => n.priority === 'critical').length}
             </div>
           </CardContent>
@@ -133,7 +135,7 @@ export function NotificationPanel() {
             <CardTitle className="text-sm text-muted-foreground">Vandaag</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-500">
+            <div className="text-2xl font-bold text-primary">
               {notifications.filter(n => 
                 new Date(n.created_at).toDateString() === new Date().toDateString()
               ).length}
@@ -242,8 +244,8 @@ export function NotificationPanel() {
                     key={notification.id}
                     className={`cursor-pointer transition-colors border-l-4 ${
                       !notification.is_read 
-                        ? 'bg-orange-50 border-l-orange-500 hover:bg-orange-100' 
-                        : 'border-l-muted hover:bg-muted/50'
+                        ? 'bg-muted/50 border-l-primary hover:bg-muted' 
+                        : 'border-l-border hover:bg-muted/50'
                     }`}
                     onClick={() => {
                       if (!notification.is_read) {
@@ -253,7 +255,7 @@ export function NotificationPanel() {
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 text-xl">
+                        <div className="flex-shrink-0">
                           {getNotificationIcon(notification.type)}
                         </div>
                         
@@ -265,7 +267,7 @@ export function NotificationPanel() {
                               </h4>
                               {getPriorityIcon(notification.priority)}
                               {!notification.is_read && (
-                                <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
+                                <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                               )}
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
