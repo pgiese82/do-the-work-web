@@ -42,6 +42,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export function EnhancedBookingsTable() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,6 +57,7 @@ export function EnhancedBookingsTable() {
   const [showFilters, setShowFilters] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const { 
     bookings, 
@@ -109,15 +111,45 @@ export function EnhancedBookingsTable() {
   const confirmDeleteBooking = async () => {
     if (!bookingToDelete) return;
     
-    const success = await deleteBooking(bookingToDelete);
-    if (success) {
-      await refetch();
-      // Also remove from selected bookings if it was selected
-      setSelectedBookings(prev => prev.filter(id => id !== bookingToDelete));
+    try {
+      console.log('🗑️ Attempting to delete booking:', bookingToDelete);
+      
+      const success = await deleteBooking(bookingToDelete);
+      
+      if (success) {
+        console.log('✅ Booking deleted successfully, refreshing data...');
+        
+        // Force a complete refetch of the data
+        await refetch();
+        
+        // Also remove from selected bookings if it was selected
+        setSelectedBookings(prev => prev.filter(id => id !== bookingToDelete));
+        
+        toast({
+          title: "Boeking verwijderd",
+          description: "De boeking is succesvol verwijderd.",
+        });
+        
+        console.log('🔄 Data refresh completed');
+      } else {
+        console.error('❌ Failed to delete booking');
+        toast({
+          variant: "destructive",
+          title: "Fout bij verwijderen",
+          description: "Er is een fout opgetreden bij het verwijderen van de boeking.",
+        });
+      }
+    } catch (error) {
+      console.error('💥 Error in delete process:', error);
+      toast({
+        variant: "destructive",
+        title: "Fout bij verwijderen",
+        description: "Er is een onverwachte fout opgetreden.",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setBookingToDelete(null);
     }
-    
-    setDeleteDialogOpen(false);
-    setBookingToDelete(null);
   };
 
   const handleDuplicateBooking = async (bookingId: string) => {

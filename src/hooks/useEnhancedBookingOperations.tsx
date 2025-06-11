@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -92,19 +93,34 @@ export const useEnhancedBookingOperations = () => {
   const deleteBooking = async (bookingId: string) => {
     setLoading(true);
     try {
+      console.log('🗑️ Starting deletion process for booking:', bookingId);
+      
       // First get booking details for audit log
-      const { data: booking } = await supabase
+      const { data: booking, error: fetchError } = await supabase
         .from('bookings')
         .select('*, user:users(name, email), service:services(name)')
         .eq('id', bookingId)
         .single();
 
-      const { error } = await supabase
+      if (fetchError) {
+        console.error('❌ Error fetching booking for deletion:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('📋 Booking details retrieved:', booking);
+
+      // Delete the booking
+      const { error: deleteError } = await supabase
         .from('bookings')
         .delete()
         .eq('id', bookingId);
 
-      if (error) throw error;
+      if (deleteError) {
+        console.error('❌ Error deleting booking:', deleteError);
+        throw deleteError;
+      }
+
+      console.log('✅ Booking successfully deleted from database');
 
       // Log deletion
       await logAdminAction(
@@ -118,18 +134,15 @@ export const useEnhancedBookingOperations = () => {
         }
       );
 
-      toast({
-        title: "Booking Deleted",
-        description: "The booking has been permanently deleted.",
-      });
+      console.log('📝 Audit log created for deletion');
 
       return true;
     } catch (error: any) {
-      console.error('Delete booking error:', error);
+      console.error('💥 Delete booking error:', error);
       toast({
         variant: "destructive",
         title: "Delete Failed",
-        description: error.message,
+        description: error.message || 'Failed to delete booking',
       });
       return false;
     } finally {
