@@ -20,7 +20,8 @@ import {
   Calendar, 
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Database
 } from 'lucide-react';
 
 export function ClientLifecycleTracker() {
@@ -31,6 +32,8 @@ export function ClientLifecycleTracker() {
     updateClientStatus, 
     autoScheduleFollowUps 
   } = useClientLifecycle();
+
+  console.log('🎯 ClientLifecycleTracker - clients:', clients.length, clients);
 
   const getLifecycleBadge = (stage: string) => {
     const variants = {
@@ -48,13 +51,6 @@ export function ClientLifecycleTracker() {
     );
   };
 
-  const getEngagementColor = (score: number) => {
-    if (score >= 80) return 'bg-green-500';
-    if (score >= 60) return 'bg-yellow-500';
-    if (score >= 40) return 'bg-orange-500';
-    return 'bg-red-500';
-  };
-
   const lifecycleStats = {
     prospects: clients.filter(c => c.lifecycle_stage === 'prospect').length,
     onboarding: clients.filter(c => c.lifecycle_stage === 'onboarding').length,
@@ -67,7 +63,48 @@ export function ClientLifecycleTracker() {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-400"></div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-400 mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Client lifecycle data laden...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show debug info if no clients
+  if (clients.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="w-5 h-5 text-orange-400" />
+            Client Lifecycle Tracking - Debug
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h4 className="font-medium text-yellow-800 mb-2">Geen clients gevonden</h4>
+            <p className="text-sm text-yellow-700 mb-3">
+              Er zijn geen clients gevonden in de lifecycle tracker. Dit kan verschillende oorzaken hebben:
+            </p>
+            <ul className="text-sm text-yellow-700 space-y-1 ml-4">
+              <li>• Geen users met role 'client' in de database</li>
+              <li>• Database connectie problemen</li>
+              <li>• RLS (Row Level Security) blokkeert toegang</li>
+            </ul>
+            <p className="text-xs text-yellow-600 mt-3">
+              Check de browser console voor meer details over de database queries.
+            </p>
+          </div>
+          
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="outline"
+            className="w-full"
+          >
+            Pagina Herladen
+          </Button>
         </CardContent>
       </Card>
     );
@@ -122,7 +159,7 @@ export function ClientLifecycleTracker() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Client Lifecycle Tracking
+            Client Lifecycle Tracking ({clients.length} clients)
             <Button onClick={autoScheduleFollowUps} className="bg-orange-500 hover:bg-orange-600">
               <Calendar className="w-4 h-4 mr-2" />
               Auto-Schedule Follow-ups

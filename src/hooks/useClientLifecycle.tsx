@@ -26,62 +26,150 @@ export const useClientLifecycle = () => {
   const { data: clients = [], isLoading, refetch } = useQuery({
     queryKey: ['client-lifecycle'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select(`
-          *,
-          bookings(count),
-          communication_history(created_at),
-          follow_ups(scheduled_date, status)
-        `)
-        .eq('role', 'client');
+      console.log('🔍 Fetching client lifecycle data...');
+      
+      try {
+        // First, get all clients with role 'client'
+        const { data: clientsData, error: clientsError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('role', 'client');
 
-      if (error) throw error;
-
-      return data.map(client => {
-        const bookingCount = client.bookings?.[0]?.count || 0;
-        const lastCommunication = client.communication_history?.[0]?.created_at;
-        const nextFollowUp = client.follow_ups?.find(f => f.status === 'pending')?.scheduled_date;
-        
-        // Calculate lifecycle stage
-        const daysSinceLastSession = client.last_session_date 
-          ? Math.floor((Date.now() - new Date(client.last_session_date).getTime()) / (1000 * 60 * 60 * 24))
-          : null;
-
-        let lifecycle_stage: ClientLifecycleData['lifecycle_stage'] = 'prospect';
-        
-        if (bookingCount === 0) {
-          lifecycle_stage = 'prospect';
-        } else if (bookingCount <= 2) {
-          lifecycle_stage = 'onboarding';
-        } else if (daysSinceLastSession && daysSinceLastSession > 60) {
-          lifecycle_stage = 'churned';
-        } else if (daysSinceLastSession && daysSinceLastSession > 30) {
-          lifecycle_stage = 'at_risk';
-        } else {
-          lifecycle_stage = 'active';
+        if (clientsError) {
+          console.error('❌ Error fetching clients:', clientsError);
+          throw clientsError;
         }
 
-        // Calculate engagement score (0-100)
-        let engagement_score = 50; // Base score
-        
-        if (bookingCount > 0) engagement_score += Math.min(bookingCount * 5, 30);
-        if (client.total_spent > 0) engagement_score += Math.min(client.total_spent / 50, 20);
-        if (daysSinceLastSession) {
-          if (daysSinceLastSession <= 7) engagement_score += 20;
-          else if (daysSinceLastSession <= 30) engagement_score += 10;
-          else if (daysSinceLastSession > 60) engagement_score -= 30;
+        console.log('👥 Found clients:', clientsData?.length || 0, clientsData);
+
+        if (!clientsData || clientsData.length === 0) {
+          console.log('⚠️ No clients found with role "client"');
+          return [];
         }
 
-        return {
-          ...client,
-          booking_count: bookingCount,
-          last_communication_date: lastCommunication,
-          next_follow_up_date: nextFollowUp,
-          lifecycle_stage,
-          engagement_score: Math.max(0, Math.min(100, engagement_score))
-        } as ClientLifecycleData;
-      });
+        // Get booking counts for each client
+        const { data: bookingsData, error: bookingsError } = await supabase
+          .from('bookings')
+          .select('user_id, id, status, date_time')
+          .in('user_id', clientsData.map(c => c.id));
+
+        if (bookingsError) {
+          console.error('❌ Error fetching bookings:', bookingsError);
+          // Don't throw here, just log and continue with empty bookings
+        }
+
+        console.log('📅 Found bookings:', bookingsData?.length || 0);
+
+        // Get communication history for each client
+        const { data: communicationData, error: communicationError } = await supabase
+          .from('communication_history')
+          .select('user_id, created_at')
+          .in('user_id', clientsData.map(c => c.id))
+          .order('created_at', { ascending: false });
+
+        if (communicationError) {
+          console.error('❌ Error fetching communication history:', communicationError);
+          // Don't throw here, just log and continue
+        }
+
+        console.log('💬 Found communications:', communicationData?.length || 0);
+
+        // Get follow-ups for each client
+        const { data: followUpsData, error: followUpsError } = await supabase
+          .from('follow_ups')
+          .select('user_id, scheduled_date, status')
+          .in('user_id', clientsData.map(c => c.id))
+          .eq('status', 'pending')
+          .order('scheduled_date', { ascending: true });
+
+        if (followUpsError) {
+          console.error('❌ Error fetching follow-ups:', followUpsError);
+          // Don't throw here, just log and continue
+        }
+
+        console.log('📋 Found follow-ups:', followUpsData?.length || 0);
+
+        // Process the data
+        const processedClients = clientsData.map(client => {
+          // Ensure client_status is never empty
+          const normalizedStatus = client.client_status && client.client_status.trim() !== '' 
+            ? client.client_status 
+            : 'prospect';
+
+          // Count bookings for this client
+          const clientBookings = bookingsData?.filter(b => b.user_id === client.id) || [];
+          const bookingCount = clientBookings.length;
+          
+          // Get last communication
+          const lastCommunication = communicationData?.find(c => c.user_id === client.id);
+          
+          // Get next follow-up
+          const nextFollowUp = followUpsData?.find(f => f.user_id === client.id);
+          
+          // Calculate lifecycle stage
+          const completedBookings = clientBookings.filter(b => b.status === 'completed');
+          const daysSinceLastSession = client.last_session_date 
+            ? Math.floor((Date.now() - new Date(client.last_session_date).getTime()) / (1000 * 60 * 60 * 24))
+            : null;
+
+          let lifecycle_stage: ClientLifecycleData['lifecycle_stage'] = 'prospect';
+          
+          if (completedBookings.length === 0) {
+            lifecycle_stage = 'prospect';
+          } else if (completedBookings.length <= 2) {
+            lifecycle_stage = 'onboarding';
+          } else if (daysSinceLastSession && daysSinceLastSession > 90) {
+            lifecycle_stage = 'churned';
+          } else if (daysSinceLastSession && daysSinceLastSession > 30) {
+            lifecycle_stage = 'at_risk';
+          } else {
+            lifecycle_stage = 'active';
+          }
+
+          // Calculate engagement score (0-100)
+          let engagement_score = 50; // Base score
+          
+          if (completedBookings.length > 0) {
+            engagement_score += Math.min(completedBookings.length * 5, 30);
+          }
+          
+          if (client.total_spent && client.total_spent > 0) {
+            engagement_score += Math.min(client.total_spent / 50, 20);
+          }
+          
+          if (daysSinceLastSession !== null) {
+            if (daysSinceLastSession <= 7) engagement_score += 20;
+            else if (daysSinceLastSession <= 30) engagement_score += 10;
+            else if (daysSinceLastSession > 60) engagement_score -= 30;
+          }
+
+          const processedClient = {
+            ...client,
+            client_status: normalizedStatus,
+            booking_count: bookingCount,
+            last_communication_date: lastCommunication?.created_at,
+            next_follow_up_date: nextFollowUp?.scheduled_date,
+            lifecycle_stage,
+            engagement_score: Math.max(0, Math.min(100, engagement_score)),
+            total_spent: client.total_spent || 0
+          } as ClientLifecycleData;
+
+          console.log(`👤 Processed client ${client.name}:`, {
+            bookings: bookingCount,
+            lifecycle: lifecycle_stage,
+            engagement: processedClient.engagement_score
+          });
+
+          return processedClient;
+        });
+
+        console.log('✅ Processed clients:', processedClients.length);
+        return processedClients;
+
+      } catch (error) {
+        console.error('💥 Error in client lifecycle query:', error);
+        throw error;
+      }
     },
   });
 
