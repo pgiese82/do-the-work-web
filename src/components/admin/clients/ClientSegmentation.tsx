@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -52,16 +51,13 @@ export function ClientSegmentation() {
     queryFn: async () => {
       console.log('🔍 Fetching client segments with criteria:', criteria);
       
+      // First get all clients
       let query = supabase
         .from('users')
-        .select(`
-          *,
-          bookings(count),
-          payments(amount)
-        `)
+        .select('*')
         .eq('role', 'client');
 
-      // Apply segmentation criteria
+      // Apply segmentation criteria that can be filtered at the database level
       if (criteria.client_status && criteria.client_status !== 'all') {
         query = query.eq('client_status', criteria.client_status);
       }
@@ -78,45 +74,62 @@ export function ClientSegmentation() {
         query = query.lte('total_spent', criteria.max_total_spent);
       }
 
-      const { data, error } = await query;
+      const { data: clientsData, error } = await query;
       if (error) {
         console.error('❌ Error fetching segments:', error);
         throw error;
       }
 
-      console.log('📊 Raw segment data:', data?.length || 0, 'clients');
+      console.log('📊 Raw segment data:', clientsData?.length || 0, 'clients');
 
-      // Apply additional client-side filtering for complex criteria
-      let filteredData = data || [];
-      
+      if (!clientsData || clientsData.length === 0) {
+        console.log('⚠️ No clients found matching criteria');
+        return [];
+      }
+
+      // Get booking counts for remaining criteria
+      let filteredData = clientsData;
+
+      // If we need booking count filtering, get booking data
+      if (criteria.booking_count_min !== undefined || criteria.booking_count_max !== undefined) {
+        const { data: bookingsData } = await supabase
+          .from('bookings')
+          .select('user_id, id')
+          .in('user_id', clientsData.map(c => c.id));
+
+        // Apply booking count filtering
+        filteredData = filteredData.filter(client => {
+          const bookingCount = bookingsData?.filter(b => b.user_id === client.id).length || 0;
+          
+          if (criteria.booking_count_min !== undefined && bookingCount < criteria.booking_count_min) {
+            return false;
+          }
+          
+          if (criteria.booking_count_max !== undefined && bookingCount > criteria.booking_count_max) {
+            return false;
+          }
+
+          return true;
+        });
+      }
+
+      // Apply days since last session filtering
+      if (criteria.days_since_last_session !== undefined) {
+        filteredData = filteredData.filter(client => {
+          if (!client.last_session_date) return false;
+          
+          const daysSince = Math.floor(
+            (Date.now() - new Date(client.last_session_date).getTime()) / (1000 * 60 * 60 * 24)
+          );
+          return daysSince >= criteria.days_since_last_session;
+        });
+      }
+
       // Ensure client_status is never empty
       filteredData = filteredData.map(client => ({
         ...client,
         client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
       }));
-
-      filteredData = filteredData.filter(client => {
-        const bookingCount = client.bookings?.[0]?.count || 0;
-        
-        if (criteria.booking_count_min !== undefined && bookingCount < criteria.booking_count_min) {
-          return false;
-        }
-        
-        if (criteria.booking_count_max !== undefined && bookingCount > criteria.booking_count_max) {
-          return false;
-        }
-
-        if (criteria.days_since_last_session !== undefined && client.last_session_date) {
-          const daysSince = Math.floor(
-            (Date.now() - new Date(client.last_session_date).getTime()) / (1000 * 60 * 60 * 24)
-          );
-          if (daysSince < criteria.days_since_last_session) {
-            return false;
-          }
-        }
-
-        return true;
-      });
 
       console.log('✅ Filtered segment results:', filteredData.length, 'clients');
       return filteredData;
