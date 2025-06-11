@@ -25,6 +25,7 @@ import {
 import { format } from 'date-fns';
 import { useAdvancedBookingSearch } from '@/hooks/useAdvancedBookingSearch';
 import { useEnhancedBookingOperations } from '@/hooks/useEnhancedBookingOperations';
+import { useBookingUpdate } from '@/hooks/booking-operations/useBookingUpdate';
 import { BookingsFilters } from './BookingsFilters';
 import { BookingsBulkActions } from './BookingsBulkActions';
 import { BookingDetailsModal } from './BookingDetailsModal';
@@ -75,12 +76,17 @@ export function EnhancedBookingsTable() {
     clientStatusFilter
   });
 
+  // Use direct booking operations for bulk and duplication
   const { 
     performBulkUpdate, 
-    cancelBooking, 
     duplicateBooking, 
-    loading: operationLoading 
+    loading: bulkOperationLoading 
   } = useEnhancedBookingOperations();
+
+  // Use direct single update hook for cancellations
+  const { updateBooking, loading: singleUpdateLoading } = useBookingUpdate();
+
+  const loading = bulkOperationLoading || singleUpdateLoading;
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -112,9 +118,13 @@ export function EnhancedBookingsTable() {
     if (!bookingToCancel) return;
     
     try {
-      console.log('🚫 Attempting to cancel booking:', bookingToCancel);
+      console.log('🚫 Attempting to cancel booking using direct update:', bookingToCancel);
       
-      const success = await cancelBooking(bookingToCancel, 'Cancelled via admin interface');
+      // Use direct update instead of enhanced operations to avoid bulk function
+      const success = await updateBooking(bookingToCancel, { 
+        status: 'cancelled',
+        internal_notes: 'Cancelled via admin interface'
+      });
       
       if (success) {
         console.log('✅ Booking cancelled successfully, refreshing data...');
@@ -126,6 +136,11 @@ export function EnhancedBookingsTable() {
         setSelectedBookings(prev => prev.filter(id => id !== bookingToCancel));
         
         console.log('🔄 Data refresh completed');
+        
+        toast({
+          title: "Boeking geannuleerd",
+          description: "De boeking is succesvol geannuleerd.",
+        });
       }
     } catch (error) {
       console.error('💥 Error in cancellation process:', error);
@@ -385,7 +400,7 @@ export function EnhancedBookingsTable() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDuplicateBooking(booking.id)}
-                            disabled={operationLoading}
+                            disabled={loading}
                           >
                             <Copy className="w-4 h-4" />
                           </Button>
@@ -395,7 +410,7 @@ export function EnhancedBookingsTable() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleCancelBooking(booking.id)}
-                              disabled={operationLoading}
+                              disabled={loading}
                               className="text-orange-600 hover:text-orange-700"
                             >
                               <Ban className="w-4 h-4" />
