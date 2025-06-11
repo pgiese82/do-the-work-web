@@ -110,19 +110,33 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         date_time: newDateTime
       });
 
-      // Use the bulk_update_bookings function for consistent handling
-      const updateData: any = {
-        status,
-        payment_status: paymentStatus,
-        internal_notes: internalNotes,
-        session_notes: sessionNotes,
-        attendance_status: attendanceStatus || null,
-      };
-
+      // Prepare update data - only include fields that have changed
+      const updateData: any = {};
+      
+      // Always include these fields as they may have been modified
+      if (status !== booking.status) {
+        updateData.status = status;
+      }
+      if (paymentStatus !== booking.payment_status) {
+        updateData.payment_status = paymentStatus;
+      }
+      if (internalNotes !== (booking.internal_notes || '')) {
+        updateData.internal_notes = internalNotes;
+      }
+      if (sessionNotes !== (booking.session_notes || '')) {
+        updateData.session_notes = sessionNotes;
+      }
+      if (attendanceStatus !== (booking.attendance_status || '')) {
+        updateData.attendance_status = attendanceStatus || null;
+      }
+      
       // Check if date_time needs to be updated
-      if (newDateTime !== format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm")) {
+      const originalDateTime = format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm");
+      if (newDateTime !== originalDateTime) {
         updateData.date_time = newDateTime;
       }
+
+      console.log('📤 Sending update data:', updateData);
 
       const { data, error } = await supabase.rpc('bulk_update_bookings', {
         booking_ids: [booking.id],
@@ -134,7 +148,7 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         throw error;
       }
 
-      console.log('✅ Booking updated successfully');
+      console.log('✅ Booking updated successfully, response:', data);
 
       toast({
         title: 'Succes',
