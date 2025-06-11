@@ -56,6 +56,8 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
+  console.log('Current statusFilter value:', statusFilter);
+
   const { data: clients = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-clients', searchTerm, statusFilter],
     queryFn: async () => {
@@ -73,19 +75,32 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
       
       if (error) throw error;
 
-      // Filter by search term
+      // Filter by search term and ensure client_status is not empty
+      let filteredData = data || [];
+      
       if (searchTerm) {
-        return data.filter(client => 
+        filteredData = filteredData.filter(client => 
           client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           client.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
 
-      return data as Client[];
+      // Ensure client_status is never empty
+      filteredData = filteredData.map(client => ({
+        ...client,
+        client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
+      }));
+
+      console.log('Filtered clients:', filteredData.map(c => ({ id: c.id, client_status: c.client_status })));
+
+      return filteredData as Client[];
     },
   });
 
   const getStatusBadge = (status: string) => {
+    // Ensure status is never empty
+    const normalizedStatus = status && status.trim() !== '' ? status : 'prospect';
+    
     const variants = {
       prospect: 'bg-blue-100 text-blue-800 border-blue-200',
       active: 'bg-green-100 text-green-800 border-green-200',
@@ -101,8 +116,8 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
     };
 
     return (
-      <Badge className={variants[status as keyof typeof variants] || variants.prospect}>
-        {labels[status as keyof typeof labels] || status}
+      <Badge className={variants[normalizedStatus as keyof typeof variants] || variants.prospect}>
+        {labels[normalizedStatus as keyof typeof labels] || normalizedStatus}
       </Badge>
     );
   };
@@ -110,6 +125,11 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
   const handleEditClient = (clientId: string) => {
     setSelectedClientId(clientId);
     setProfileModalOpen(true);
+  };
+
+  const handleStatusFilterChange = (value: string) => {
+    console.log('Status filter changing to:', value);
+    setStatusFilter(value);
   };
 
   return (
@@ -128,7 +148,7 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
               />
             </div>
             
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
               <SelectTrigger className="w-48 bg-white border-gray-200 focus:border-orange-500 focus:ring-orange-500">
                 <SelectValue placeholder="Filter op status" />
               </SelectTrigger>
