@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookingTabs } from './mybookings/BookingTabs';
-import { Calendar, Plus } from 'lucide-react';
+import { Calendar, Plus, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useRecentBookings } from '@/hooks/useDashboardData';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -100,7 +100,29 @@ export function BookingsOverview() {
           </Button>
         </div>
       ) : (
-        <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
+        <>
+          <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
+          
+          {/* Action Buttons - Larger on mobile */}
+          <div className={`flex ${isMobile ? 'flex-col gap-4' : 'flex-row gap-4 justify-center'} mt-8`}>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard/bookings')}
+              className={`${isMobile ? 'h-14 text-base' : 'h-10'} gap-3 flex-1 max-w-md`}
+            >
+              <Eye className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
+              Alle Boekingen Bekijken
+            </Button>
+            
+            <Button
+              onClick={() => navigate('/dashboard/book')}
+              className={`${isMobile ? 'h-14 text-base' : 'h-10'} gap-3 flex-1 max-w-md`}
+            >
+              <Plus className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
+              Nieuwe Sessie Boeken
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );
