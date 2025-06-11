@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Target, Users, Send } from 'lucide-react';
+import { Target, Users, Send, Filter } from 'lucide-react';
 
 interface SegmentCriteria {
   client_status?: string;
@@ -35,9 +35,23 @@ export function ClientSegmentation() {
   const [emailMessage, setEmailMessage] = useState('');
   const { toast } = useToast();
 
-  const { data: segments = [], refetch } = useQuery({
+  // Auto-trigger segmentation when criteria change
+  useEffect(() => {
+    // Only trigger if there's at least one meaningful criteria
+    const hasCriteria = Object.values(criteria).some(value => 
+      value !== undefined && value !== '' && value !== 'all'
+    );
+    
+    if (hasCriteria) {
+      refetch();
+    }
+  }, [criteria]);
+
+  const { data: segments = [], refetch, isLoading } = useQuery({
     queryKey: ['client-segments', criteria],
     queryFn: async () => {
+      console.log('🔍 Fetching client segments with criteria:', criteria);
+      
       let query = supabase
         .from('users')
         .select(`
@@ -65,7 +79,12 @@ export function ClientSegmentation() {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching segments:', error);
+        throw error;
+      }
+
+      console.log('📊 Raw segment data:', data?.length || 0, 'clients');
 
       // Apply additional client-side filtering for complex criteria
       let filteredData = data || [];
@@ -76,7 +95,7 @@ export function ClientSegmentation() {
         client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
       }));
 
-      return filteredData.filter(client => {
+      filteredData = filteredData.filter(client => {
         const bookingCount = client.bookings?.[0]?.count || 0;
         
         if (criteria.booking_count_min !== undefined && bookingCount < criteria.booking_count_min) {
@@ -98,12 +117,21 @@ export function ClientSegmentation() {
 
         return true;
       });
+
+      console.log('✅ Filtered segment results:', filteredData.length, 'clients');
+      return filteredData;
     },
-    enabled: Object.keys(criteria).length > 0,
+    enabled: false, // We'll manually trigger this
   });
 
   const handleCriteriaChange = (field: keyof SegmentCriteria, value: any) => {
+    console.log(`🎯 Updating criteria - ${field}:`, value);
     setCriteria(prev => ({ ...prev, [field]: value }));
+  };
+
+  const clearSegmentation = () => {
+    setCriteria({});
+    setSegmentName('');
   };
 
   const sendSegmentEmail = async () => {
@@ -163,6 +191,11 @@ export function ClientSegmentation() {
     }
   };
 
+  // Check if any criteria are set
+  const hasCriteria = Object.values(criteria).some(value => 
+    value !== undefined && value !== '' && value !== 'all'
+  );
+
   return (
     <div className="space-y-6">
       <Card>
@@ -180,10 +213,10 @@ export function ClientSegmentation() {
               <Label>Client Status</Label>
               <Select onValueChange={(value) => handleCriteriaChange('client_status', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Any status" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Any status</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
                   <SelectItem value="prospect">Prospect</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
@@ -197,7 +230,7 @@ export function ClientSegmentation() {
               <Input
                 type="number"
                 placeholder="0"
-                onChange={(e) => handleCriteriaChange('min_total_spent', Number(e.target.value))}
+                onChange={(e) => handleCriteriaChange('min_total_spent', Number(e.target.value) || undefined)}
               />
             </div>
 
@@ -206,7 +239,7 @@ export function ClientSegmentation() {
               <Input
                 type="number"
                 placeholder="No limit"
-                onChange={(e) => handleCriteriaChange('max_total_spent', Number(e.target.value))}
+                onChange={(e) => handleCriteriaChange('max_total_spent', Number(e.target.value) || undefined)}
               />
             </div>
 
@@ -215,7 +248,7 @@ export function ClientSegmentation() {
               <Input
                 type="number"
                 placeholder="0"
-                onChange={(e) => handleCriteriaChange('booking_count_min', Number(e.target.value))}
+                onChange={(e) => handleCriteriaChange('booking_count_min', Number(e.target.value) || undefined)}
               />
             </div>
 
@@ -224,7 +257,7 @@ export function ClientSegmentation() {
               <Input
                 type="number"
                 placeholder="Any"
-                onChange={(e) => handleCriteriaChange('days_since_last_session', Number(e.target.value))}
+                onChange={(e) => handleCriteriaChange('days_since_last_session', Number(e.target.value) || undefined)}
               />
             </div>
 
@@ -232,13 +265,39 @@ export function ClientSegmentation() {
               <Label>Acquisition Source</Label>
               <Input
                 placeholder="e.g., Website, Referral"
-                onChange={(e) => handleCriteriaChange('acquisition_source', e.target.value)}
+                onChange={(e) => handleCriteriaChange('acquisition_source', e.target.value || undefined)}
               />
             </div>
           </div>
 
+          {/* Clear Filters Button */}
+          {hasCriteria && (
+            <div className="flex justify-end">
+              <Button 
+                variant="outline" 
+                onClick={clearSegmentation}
+                className="flex items-center gap-2"
+              >
+                <Filter className="w-4 h-4" />
+                Clear Filters
+              </Button>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && hasCriteria && (
+            <Card className="bg-blue-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-400"></div>
+                  <span>Searching for clients...</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Segment Results */}
-          {segments.length > 0 && (
+          {!isLoading && segments.length > 0 && (
             <Card className="bg-gray-50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
@@ -247,6 +306,27 @@ export function ClientSegmentation() {
                     <span className="font-medium">Segment Results: {segments.length} clients</span>
                   </div>
                   <Badge variant="outline">{segments.length} matches</Badge>
+                </div>
+
+                {/* Client List */}
+                <div className="space-y-3 mb-4">
+                  <h4 className="font-medium text-sm text-gray-700">Clients in this segment:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                    {segments.map((client) => (
+                      <div key={client.id} className="bg-white p-3 rounded border text-sm">
+                        <div className="font-medium">{client.name}</div>
+                        <div className="text-gray-500">{client.email}</div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary" className="text-xs">
+                            {client.client_status}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            €{client.total_spent?.toFixed(2) || '0.00'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -280,6 +360,36 @@ export function ClientSegmentation() {
                     Send Email to Segment ({segments.length} clients)
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* No Results State */}
+          {!isLoading && hasCriteria && segments.length === 0 && (
+            <Card className="bg-yellow-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-yellow-700">
+                  <Users className="w-4 h-4" />
+                  <span className="font-medium">No clients match the selected criteria</span>
+                </div>
+                <p className="text-sm text-yellow-600 mt-2">
+                  Try adjusting your filters or clearing them to see more results.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Instructions */}
+          {!hasCriteria && (
+            <Card className="bg-blue-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-blue-700">
+                  <Filter className="w-4 h-4" />
+                  <span className="font-medium">Select criteria to segment your clients</span>
+                </div>
+                <p className="text-sm text-blue-600 mt-2">
+                  Choose one or more filters above to find specific client groups. Results will appear automatically.
+                </p>
               </CardContent>
             </Card>
           )}
