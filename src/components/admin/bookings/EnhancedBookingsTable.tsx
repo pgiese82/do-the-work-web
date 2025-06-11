@@ -17,7 +17,7 @@ import {
   Download, 
   User,
   Edit,
-  Trash2,
+  Ban,
   Copy,
   ArrowUpDown,
   Filter
@@ -55,8 +55,8 @@ export function EnhancedBookingsTable() {
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
   const { toast } = useToast();
 
   const { 
@@ -77,7 +77,7 @@ export function EnhancedBookingsTable() {
 
   const { 
     performBulkUpdate, 
-    deleteBooking, 
+    cancelBooking, 
     duplicateBooking, 
     loading: operationLoading 
   } = useEnhancedBookingOperations();
@@ -103,52 +103,40 @@ export function EnhancedBookingsTable() {
     setDetailsModalOpen(true);
   };
 
-  const handleDeleteBooking = async (bookingId: string) => {
-    setBookingToDelete(bookingId);
-    setDeleteDialogOpen(true);
+  const handleCancelBooking = async (bookingId: string) => {
+    setBookingToCancel(bookingId);
+    setCancelDialogOpen(true);
   };
 
-  const confirmDeleteBooking = async () => {
-    if (!bookingToDelete) return;
+  const confirmCancelBooking = async () => {
+    if (!bookingToCancel) return;
     
     try {
-      console.log('🗑️ Attempting to delete booking:', bookingToDelete);
+      console.log('🚫 Attempting to cancel booking:', bookingToCancel);
       
-      const success = await deleteBooking(bookingToDelete);
+      const success = await cancelBooking(bookingToCancel, 'Cancelled via admin interface');
       
       if (success) {
-        console.log('✅ Booking deleted successfully, refreshing data...');
+        console.log('✅ Booking cancelled successfully, refreshing data...');
         
         // Force a complete refetch of the data
         await refetch();
         
         // Also remove from selected bookings if it was selected
-        setSelectedBookings(prev => prev.filter(id => id !== bookingToDelete));
-        
-        toast({
-          title: "Boeking verwijderd",
-          description: "De boeking is succesvol verwijderd.",
-        });
+        setSelectedBookings(prev => prev.filter(id => id !== bookingToCancel));
         
         console.log('🔄 Data refresh completed');
-      } else {
-        console.error('❌ Failed to delete booking');
-        toast({
-          variant: "destructive",
-          title: "Fout bij verwijderen",
-          description: "Er is een fout opgetreden bij het verwijderen van de boeking.",
-        });
       }
     } catch (error) {
-      console.error('💥 Error in delete process:', error);
+      console.error('💥 Error in cancellation process:', error);
       toast({
         variant: "destructive",
-        title: "Fout bij verwijderen",
+        title: "Fout bij annuleren",
         description: "Er is een onverwachte fout opgetreden.",
       });
     } finally {
-      setDeleteDialogOpen(false);
-      setBookingToDelete(null);
+      setCancelDialogOpen(false);
+      setBookingToCancel(null);
     }
   };
 
@@ -402,15 +390,17 @@ export function EnhancedBookingsTable() {
                             <Copy className="w-4 h-4" />
                           </Button>
                           
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteBooking(booking.id)}
-                            disabled={operationLoading}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          {booking.status !== 'cancelled' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleCancelBooking(booking.id)}
+                              disabled={operationLoading}
+                              className="text-orange-600 hover:text-orange-700"
+                            >
+                              <Ban className="w-4 h-4" />
+                            </Button>
+                          )}
                           
                           <QuickActionsDropdown
                             booking={booking}
@@ -435,21 +425,21 @@ export function EnhancedBookingsTable() {
         onUpdate={refetch}
       />
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Boeking verwijderen</AlertDialogTitle>
+            <AlertDialogTitle>Boeking annuleren</AlertDialogTitle>
             <AlertDialogDescription>
-              Weet je zeker dat je deze boeking wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+              Weet je zeker dat je deze boeking wilt annuleren? De boeking wordt op "geannuleerd" gezet en blijft zichtbaar in de administratie.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>Niet annuleren</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmDeleteBooking}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={confirmCancelBooking}
+              className="bg-orange-600 text-white hover:bg-orange-700"
             >
-              Verwijderen
+              Annuleren
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

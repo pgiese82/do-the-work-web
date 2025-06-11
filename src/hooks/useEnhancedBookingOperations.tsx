@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -90,10 +89,10 @@ export const useEnhancedBookingOperations = () => {
     }
   };
 
-  const deleteBooking = async (bookingId: string) => {
+  const cancelBooking = async (bookingId: string, reason?: string) => {
     setLoading(true);
     try {
-      console.log('🗑️ Starting deletion process for booking:', bookingId);
+      console.log('🚫 Starting cancellation process for booking:', bookingId);
       
       // First get booking details for audit log
       const { data: booking, error: fetchError } = await supabase
@@ -103,46 +102,57 @@ export const useEnhancedBookingOperations = () => {
         .single();
 
       if (fetchError) {
-        console.error('❌ Error fetching booking for deletion:', fetchError);
+        console.error('❌ Error fetching booking for cancellation:', fetchError);
         throw fetchError;
       }
 
       console.log('📋 Booking details retrieved:', booking);
 
-      // Delete the booking
-      const { error: deleteError } = await supabase
+      // Update booking status to cancelled instead of deleting
+      const { error: updateError } = await supabase
         .from('bookings')
-        .delete()
+        .update({ 
+          status: 'cancelled',
+          internal_notes: booking.internal_notes 
+            ? `${booking.internal_notes}\n\nCancelled by admin: ${reason || 'No reason provided'}`
+            : `Cancelled by admin: ${reason || 'No reason provided'}`
+        })
         .eq('id', bookingId);
 
-      if (deleteError) {
-        console.error('❌ Error deleting booking:', deleteError);
-        throw deleteError;
+      if (updateError) {
+        console.error('❌ Error cancelling booking:', updateError);
+        throw updateError;
       }
 
-      console.log('✅ Booking successfully deleted from database');
+      console.log('✅ Booking successfully cancelled');
 
-      // Log deletion
+      // Log cancellation
       await logAdminAction(
-        'booking_deleted',
+        'booking_cancelled',
         'booking',
         bookingId,
         {
           client_name: booking?.user?.name,
           service_name: booking?.service?.name,
-          original_date: booking?.date_time
+          original_date: booking?.date_time,
+          cancellation_reason: reason || 'No reason provided'
         }
       );
 
-      console.log('📝 Audit log created for deletion');
+      console.log('📝 Audit log created for cancellation');
+
+      toast({
+        title: "Boeking geannuleerd",
+        description: "De boeking is succesvol geannuleerd.",
+      });
 
       return true;
     } catch (error: any) {
-      console.error('💥 Delete booking error:', error);
+      console.error('💥 Cancel booking error:', error);
       toast({
         variant: "destructive",
-        title: "Delete Failed",
-        description: error.message || 'Failed to delete booking',
+        title: "Annulering mislukt",
+        description: error.message || 'Failed to cancel booking',
       });
       return false;
     } finally {
@@ -209,9 +219,15 @@ export const useEnhancedBookingOperations = () => {
     }
   };
 
+  // Keep the old deleteBooking function for backwards compatibility, but now it cancels
+  const deleteBooking = async (bookingId: string) => {
+    return await cancelBooking(bookingId, 'Booking deleted via admin interface');
+  };
+
   return {
     performBulkUpdate,
-    deleteBooking,
+    cancelBooking,
+    deleteBooking, // This now cancels instead of deletes
     duplicateBooking,
     loading
   };
