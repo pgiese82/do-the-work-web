@@ -10,16 +10,16 @@ const AdminNotifications = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Notificaties</h1>
           <p className="text-muted-foreground">
-            Manage your notification preferences and view notification history.
+            Beheer uw notificatie-instellingen en bekijk de notificatiegeschiedenis.
           </p>
         </div>
 
         <Tabs defaultValue="notifications" className="w-full">
           <TabsList>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
+            <TabsTrigger value="notifications">Notificaties</TabsTrigger>
+            <TabsTrigger value="preferences">Instellingen</TabsTrigger>
           </TabsList>
 
           <TabsContent value="notifications" className="space-y-6">

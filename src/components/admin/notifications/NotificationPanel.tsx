@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications } from '@/hooks/useNotifications';
 import { formatDistanceToNow, format } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 export function NotificationPanel() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
@@ -48,7 +49,25 @@ export function NotificationPanel() {
   };
 
   const getTypeDisplayName = (type: string) => {
-    return type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const typeNames = {
+      'new_booking': 'Nieuwe Boeking',
+      'payment_confirmation': 'Betaling Bevestigd',
+      'payment_failed': 'Betaling Mislukt',
+      'booking_cancelled': 'Boeking Geannuleerd',
+      'same_day_cancellation': 'Zelfde Dag Annulering',
+      'no_show': 'Niet Verschenen'
+    };
+    return typeNames[type as keyof typeof typeNames] || type;
+  };
+
+  const getPriorityDisplayName = (priority: string) => {
+    const priorityNames = {
+      'critical': 'Kritiek',
+      'high': 'Hoog',
+      'medium': 'Gemiddeld',
+      'low': 'Laag'
+    };
+    return priorityNames[priority as keyof typeof priorityNames] || priority;
   };
 
   // Filter notifications
@@ -80,27 +99,27 @@ export function NotificationPanel() {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gray-800 border-gray-700">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-400">Total</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Totaal</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{notifications.length}</div>
+            <div className="text-2xl font-bold">{notifications.length}</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-gray-800 border-gray-700">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-400">Unread</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Ongelezen</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-500">{unreadCount}</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-gray-800 border-gray-700">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-400">Critical</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Kritiek</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-500">
@@ -109,9 +128,9 @@ export function NotificationPanel() {
           </CardContent>
         </Card>
         
-        <Card className="bg-gray-800 border-gray-700">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-400">Today</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Vandaag</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-500">
@@ -124,20 +143,19 @@ export function NotificationPanel() {
       </div>
 
       {/* Filters and Actions */}
-      <Card className="bg-gray-800 border-gray-700">
+      <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <CardTitle className="text-white">Notification History</CardTitle>
+            <CardTitle>Notificatie Geschiedenis</CardTitle>
             <div className="flex gap-2">
               {unreadCount > 0 && (
                 <Button
                   onClick={markAllAsRead}
                   variant="outline"
                   size="sm"
-                  className="border-orange-500/20 text-orange-300 hover:bg-orange-500/20"
                 >
                   <CheckCheck className="h-4 w-4 mr-2" />
-                  Mark All Read
+                  Alles Markeren als Gelezen
                 </Button>
               )}
             </div>
@@ -148,21 +166,21 @@ export function NotificationPanel() {
           {/* Search and Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search notifications..."
+                placeholder="Zoek notificaties..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                className="pl-10"
               />
             </div>
             
             <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="all">All Types</SelectItem>
+              <SelectContent>
+                <SelectItem value="all">Alle Types</SelectItem>
                 {notificationTypes.map(type => (
                   <SelectItem key={type} value={type}>
                     {getTypeDisplayName(type)}
@@ -172,26 +190,26 @@ export function NotificationPanel() {
             </Select>
             
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="unread">Unread</SelectItem>
-                <SelectItem value="read">Read</SelectItem>
+              <SelectContent>
+                <SelectItem value="all">Alle Status</SelectItem>
+                <SelectItem value="unread">Ongelezen</SelectItem>
+                <SelectItem value="read">Gelezen</SelectItem>
               </SelectContent>
             </Select>
             
             <Select value={filterPriority} onValueChange={setFilterPriority}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                <SelectValue placeholder="Priority" />
+              <SelectTrigger>
+                <SelectValue placeholder="Prioriteit" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
+              <SelectContent>
+                <SelectItem value="all">Alle Prioriteiten</SelectItem>
+                <SelectItem value="critical">Kritiek</SelectItem>
+                <SelectItem value="high">Hoog</SelectItem>
+                <SelectItem value="medium">Gemiddeld</SelectItem>
+                <SelectItem value="low">Laag</SelectItem>
               </SelectContent>
             </Select>
             
@@ -203,9 +221,8 @@ export function NotificationPanel() {
                 setFilterStatus('all');
                 setFilterPriority('all');
               }}
-              className="border-gray-600 text-gray-300 hover:bg-gray-700"
             >
-              Clear Filters
+              Filters Wissen
             </Button>
           </div>
 
@@ -213,10 +230,10 @@ export function NotificationPanel() {
           <ScrollArea className="h-[600px]">
             <div className="space-y-3">
               {filteredNotifications.length === 0 ? (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-muted-foreground">
                   {searchTerm || filterType !== 'all' || filterStatus !== 'all' || filterPriority !== 'all' 
-                    ? 'No notifications match your filters'
-                    : 'No notifications yet'
+                    ? 'Geen notificaties voldoen aan uw filters'
+                    : 'Nog geen notificaties'
                   }
                 </div>
               ) : (
@@ -225,9 +242,9 @@ export function NotificationPanel() {
                     key={notification.id}
                     className={`cursor-pointer transition-colors border-l-4 ${
                       !notification.is_read 
-                        ? 'bg-gray-700/50 border-l-orange-500' 
-                        : 'bg-gray-800/50 border-l-gray-600'
-                    } hover:bg-gray-700/70`}
+                        ? 'bg-orange-50 border-l-orange-500 hover:bg-orange-100' 
+                        : 'border-l-muted hover:bg-muted/50'
+                    }`}
                     onClick={() => {
                       if (!notification.is_read) {
                         markAsRead(notification.id);
@@ -243,7 +260,7 @@ export function NotificationPanel() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <h4 className="font-medium text-white truncate">
+                              <h4 className="font-medium truncate">
                                 {notification.title}
                               </h4>
                               {getPriorityIcon(notification.priority)}
@@ -253,24 +270,24 @@ export function NotificationPanel() {
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <Badge variant={getPriorityColor(notification.priority)} className="text-xs">
-                                {notification.priority}
+                                {getPriorityDisplayName(notification.priority)}
                               </Badge>
-                              <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
+                              <Badge variant="outline" className="text-xs">
                                 {getTypeDisplayName(notification.type)}
                               </Badge>
                             </div>
                           </div>
                           
-                          <p className="text-sm text-gray-300 mt-1 line-clamp-2">
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                             {notification.message}
                           </p>
                           
                           <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs text-gray-500">
-                              {format(new Date(notification.created_at), 'MMM dd, yyyy HH:mm')}
+                            <span className="text-xs text-muted-foreground">
+                              {format(new Date(notification.created_at), 'dd MMM, yyyy HH:mm', { locale: nl })}
                             </span>
-                            <span className="text-xs text-gray-500">
-                              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                            <span className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: nl })}
                             </span>
                           </div>
                         </div>
