@@ -51,53 +51,75 @@ export function ClientSegmentation() {
     queryFn: async () => {
       console.log('🔍 Fetching client segments with criteria:', criteria);
       
-      // First get all clients
-      let query = supabase
+      // Start by getting ALL clients to debug what we have
+      const { data: allClients, error: allClientsError } = await supabase
         .from('users')
         .select('*')
         .eq('role', 'client');
 
-      // Apply segmentation criteria that can be filtered at the database level
-      if (criteria.client_status && criteria.client_status !== 'all') {
-        query = query.eq('client_status', criteria.client_status);
+      if (allClientsError) {
+        console.error('❌ Error fetching all clients:', allClientsError);
+        throw allClientsError;
       }
 
-      if (criteria.acquisition_source) {
-        query = query.eq('acquisition_source', criteria.acquisition_source);
-      }
+      console.log('📊 All clients in database:', allClients?.length || 0);
+      console.log('📊 Client statuses found:', allClients?.map(c => ({
+        name: c.name,
+        status: c.client_status,
+        statusType: typeof c.client_status
+      })));
 
-      if (criteria.min_total_spent !== undefined) {
-        query = query.gte('total_spent', criteria.min_total_spent);
-      }
-
-      if (criteria.max_total_spent !== undefined) {
-        query = query.lte('total_spent', criteria.max_total_spent);
-      }
-
-      const { data: clientsData, error } = await query;
-      if (error) {
-        console.error('❌ Error fetching segments:', error);
-        throw error;
-      }
-
-      console.log('📊 Raw segment data:', clientsData?.length || 0, 'clients');
-
-      if (!clientsData || clientsData.length === 0) {
-        console.log('⚠️ No clients found matching criteria');
+      if (!allClients || allClients.length === 0) {
+        console.log('⚠️ No clients found with role "client"');
         return [];
       }
 
-      // Get booking counts for remaining criteria
-      let filteredData = clientsData;
+      // Start with all clients, then apply filters
+      let filteredData = allClients;
 
-      // If we need booking count filtering, get booking data
+      // Apply client status filter
+      if (criteria.client_status && criteria.client_status !== 'all') {
+        console.log('🎯 Filtering by client_status:', criteria.client_status);
+        
+        filteredData = filteredData.filter(client => {
+          // Normalize both values for comparison
+          const clientStatus = (client.client_status || 'prospect').toLowerCase().trim();
+          const filterStatus = criteria.client_status!.toLowerCase().trim();
+          
+          console.log(`Comparing: "${clientStatus}" === "${filterStatus}" for client ${client.name}`);
+          return clientStatus === filterStatus;
+        });
+        
+        console.log('✅ After status filter:', filteredData.length, 'clients');
+      }
+
+      // Apply acquisition source filter
+      if (criteria.acquisition_source) {
+        filteredData = filteredData.filter(client => 
+          client.acquisition_source?.toLowerCase().includes(criteria.acquisition_source!.toLowerCase())
+        );
+      }
+
+      // Apply total spent filters
+      if (criteria.min_total_spent !== undefined) {
+        filteredData = filteredData.filter(client => 
+          (client.total_spent || 0) >= criteria.min_total_spent!
+        );
+      }
+
+      if (criteria.max_total_spent !== undefined) {
+        filteredData = filteredData.filter(client => 
+          (client.total_spent || 0) <= criteria.max_total_spent!
+        );
+      }
+
+      // Apply booking count filtering if needed
       if (criteria.booking_count_min !== undefined || criteria.booking_count_max !== undefined) {
         const { data: bookingsData } = await supabase
           .from('bookings')
           .select('user_id, id')
-          .in('user_id', clientsData.map(c => c.id));
+          .in('user_id', filteredData.map(c => c.id));
 
-        // Apply booking count filtering
         filteredData = filteredData.filter(client => {
           const bookingCount = bookingsData?.filter(b => b.user_id === client.id).length || 0;
           
@@ -125,13 +147,14 @@ export function ClientSegmentation() {
         });
       }
 
-      // Ensure client_status is never empty
+      // Ensure client_status is never empty (normalize data)
       filteredData = filteredData.map(client => ({
         ...client,
         client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
       }));
 
-      console.log('✅ Filtered segment results:', filteredData.length, 'clients');
+      console.log('✅ Final filtered segment results:', filteredData.length, 'clients');
+      console.log('✅ Final results:', filteredData.map(c => ({ name: c.name, status: c.client_status })));
       return filteredData;
     },
     enabled: false, // We'll manually trigger this
