@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +31,17 @@ import { BookingDetailsModal } from './BookingDetailsModal';
 import { QuickActionsDropdown } from './QuickActionsDropdown';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { PaymentStatusBadge } from './PaymentStatusBadge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export function EnhancedBookingsTable() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,6 +54,8 @@ export function EnhancedBookingsTable() {
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
 
   const { 
     bookings, 
@@ -90,12 +102,22 @@ export function EnhancedBookingsTable() {
   };
 
   const handleDeleteBooking = async (bookingId: string) => {
-    if (window.confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
-      const success = await deleteBooking(bookingId);
-      if (success) {
-        refetch();
-      }
+    setBookingToDelete(bookingId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteBooking = async () => {
+    if (!bookingToDelete) return;
+    
+    const success = await deleteBooking(bookingToDelete);
+    if (success) {
+      await refetch();
+      // Also remove from selected bookings if it was selected
+      setSelectedBookings(prev => prev.filter(id => id !== bookingToDelete));
     }
+    
+    setDeleteDialogOpen(false);
+    setBookingToDelete(null);
   };
 
   const handleDuplicateBooking = async (bookingId: string) => {
@@ -103,7 +125,7 @@ export function EnhancedBookingsTable() {
     if (newDateTime) {
       const success = await duplicateBooking(bookingId, newDateTime);
       if (success) {
-        refetch();
+        await refetch();
       }
     }
   };
@@ -380,6 +402,26 @@ export function EnhancedBookingsTable() {
         bookingId={selectedBookingId}
         onUpdate={refetch}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Boeking verwijderen</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze boeking wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteBooking}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
