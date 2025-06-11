@@ -31,22 +31,22 @@ export function PaymentTab({
 }: PaymentTabProps) {
   return (
     <div className="space-y-6">
-      <Card className="bg-gray-700/50 border-orange-900/20">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-orange-400" />
+          <CardTitle className="text-card-foreground flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-primary" />
             Payment Management
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="payment-status" className="text-gray-300">Payment Status</Label>
+              <Label htmlFor="payment-status" className="text-foreground">Payment Status</Label>
               <Select value={paymentStatus} onValueChange={setPaymentStatus}>
-                <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-orange-900/20">
+                <SelectContent className="bg-popover border-border">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
                   <SelectItem value="failed">Failed</SelectItem>
@@ -56,7 +56,7 @@ export function PaymentTab({
             </div>
 
             <div>
-              <Label htmlFor="refund-amount" className="text-gray-300">Refund Amount (€)</Label>
+              <Label htmlFor="refund-amount" className="text-foreground">Refund Amount (€)</Label>
               <Input
                 id="refund-amount"
                 type="number"
@@ -64,13 +64,13 @@ export function PaymentTab({
                 max={booking.service.price}
                 value={refundAmount}
                 onChange={(e) => setRefundAmount(Number(e.target.value))}
-                className="bg-gray-600 border-orange-900/20 text-white"
+                className="bg-background border-border text-foreground"
               />
             </div>
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={onSave} disabled={saving} className="bg-orange-500 hover:bg-orange-600">
+            <Button onClick={onSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <Save className="w-4 h-4 mr-2" />
               Update Payment Status
             </Button>
@@ -79,21 +79,21 @@ export function PaymentTab({
               onClick={onProcessRefund} 
               disabled={refundAmount <= 0 || paymentStatus === 'refunded'}
               variant="outline"
-              className="border-red-500/20 text-red-400 hover:bg-red-500/10"
+              className="border-destructive/20 text-destructive hover:bg-destructive/10"
             >
               <DollarSign className="w-4 h-4 mr-2" />
               Process Refund
             </Button>
           </div>
 
-          <div className="bg-gray-600/50 p-4 rounded-lg">
-            <div className="text-gray-300 space-y-1">
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <div className="text-foreground space-y-1">
               <div><strong>Service Price:</strong> €{booking.service.price}</div>
               <div><strong>Current Status:</strong> <Badge variant="outline" className={`
-                ${paymentStatus === 'paid' ? 'text-green-400 border-green-400' : ''}
-                ${paymentStatus === 'pending' ? 'text-yellow-400 border-yellow-400' : ''}
-                ${paymentStatus === 'failed' ? 'text-red-400 border-red-400' : ''}
-                ${paymentStatus === 'refunded' ? 'text-gray-400 border-gray-400' : ''}
+                ${paymentStatus === 'paid' ? 'text-green-600 border-green-600' : ''}
+                ${paymentStatus === 'pending' ? 'text-yellow-600 border-yellow-600' : ''}
+                ${paymentStatus === 'failed' ? 'text-red-600 border-red-600' : ''}
+                ${paymentStatus === 'refunded' ? 'text-muted-foreground border-muted-foreground' : ''}
               `}>{paymentStatus}</Badge></div>
             </div>
           </div>

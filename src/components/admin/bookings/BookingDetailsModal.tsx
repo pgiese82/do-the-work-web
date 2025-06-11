@@ -62,11 +62,11 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-white">Loading...</DialogTitle>
+            <DialogTitle className="text-foreground">Loading...</DialogTitle>
           </DialogHeader>
           {loading && (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-400"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
         </DialogContent>
@@ -76,20 +76,20 @@ export function BookingDetailsModal({ open, onOpenChange, bookingId, onUpdate }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-800 border-orange-900/20">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-border">
         <DialogHeader>
-          <DialogTitle className="text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-orange-400" />
+          <DialogTitle className="text-foreground flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-primary" />
             Booking Details - {booking.user.name}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-700">
-            <TabsTrigger value="details" className="text-gray-300 data-[state=active]:text-orange-400">Details</TabsTrigger>
-            <TabsTrigger value="communication" className="text-gray-300 data-[state=active]:text-orange-400">Communication</TabsTrigger>
-            <TabsTrigger value="attendance" className="text-gray-300 data-[state=active]:text-orange-400">Attendance</TabsTrigger>
-            <TabsTrigger value="payment" className="text-gray-300 data-[state=active]:text-orange-400">Payment</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 bg-muted">
+            <TabsTrigger value="details" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Details</TabsTrigger>
+            <TabsTrigger value="communication" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Communication</TabsTrigger>
+            <TabsTrigger value="attendance" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Attendance</TabsTrigger>
+            <TabsTrigger value="payment" className="text-muted-foreground data-[state=active]:text-foreground data-[state=active]:bg-background">Payment</TabsTrigger>
           </TabsList>
 
           <TabsContent value="details">

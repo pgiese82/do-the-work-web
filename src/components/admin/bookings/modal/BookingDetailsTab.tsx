@@ -36,42 +36,42 @@ export function BookingDetailsTab({
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Client Info */}
-        <Card className="bg-gray-700/50 border-orange-900/20">
+        <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <User className="w-4 h-4 text-orange-400" />
+            <CardTitle className="text-card-foreground flex items-center gap-2">
+              <User className="w-4 h-4 text-primary" />
               Client Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Name:</strong> {booking.user.name}
             </div>
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Email:</strong> {booking.user.email}
             </div>
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Phone:</strong> {booking.user.phone || 'Not provided'}
             </div>
           </CardContent>
         </Card>
 
         {/* Service Info */}
-        <Card className="bg-gray-700/50 border-orange-900/20">
+        <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-orange-400" />
+            <CardTitle className="text-card-foreground flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-primary" />
               Service Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Service:</strong> {booking.service.name}
             </div>
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Duration:</strong> {booking.service.duration} minutes
             </div>
-            <div className="text-gray-300">
+            <div className="text-card-foreground">
               <strong>Price:</strong> €{booking.service.price}
             </div>
           </CardContent>
@@ -79,30 +79,30 @@ export function BookingDetailsTab({
       </div>
 
       {/* Booking Details Form */}
-      <Card className="bg-gray-700/50 border-orange-900/20">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white">Booking Management</CardTitle>
+          <CardTitle className="text-card-foreground">Booking Management</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="datetime" className="text-gray-300">Date & Time</Label>
+              <Label htmlFor="datetime" className="text-foreground">Date & Time</Label>
               <Input
                 id="datetime"
                 type="datetime-local"
                 value={newDateTime}
                 onChange={(e) => setNewDateTime(e.target.value)}
-                className="bg-gray-600 border-orange-900/20 text-white"
+                className="bg-background border-border text-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="status" className="text-gray-300">Status</Label>
+              <Label htmlFor="status" className="text-foreground">Status</Label>
               <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-orange-900/20">
+                <SelectContent className="bg-popover border-border">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
@@ -114,18 +114,18 @@ export function BookingDetailsTab({
           </div>
 
           <div>
-            <Label htmlFor="internal-notes" className="text-gray-300">Internal Notes</Label>
+            <Label htmlFor="internal-notes" className="text-foreground">Internal Notes</Label>
             <Textarea
               id="internal-notes"
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
               placeholder="Add internal notes (not visible to client)..."
-              className="bg-gray-600 border-orange-900/20 text-white"
+              className="bg-background border-border text-foreground"
               rows={3}
             />
           </div>
 
-          <Button onClick={onSave} disabled={saving} className="bg-orange-500 hover:bg-orange-600">
+          <Button onClick={onSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Save className="w-4 h-4 mr-2" />
             {saving ? 'Saving...' : 'Save Changes'}
           </Button>

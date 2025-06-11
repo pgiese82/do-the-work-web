@@ -26,21 +26,21 @@ export function AttendanceTab({
 }: AttendanceTabProps) {
   return (
     <div className="space-y-6">
-      <Card className="bg-gray-700/50 border-orange-900/20">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Clock className="w-4 h-4 text-orange-400" />
+          <CardTitle className="text-card-foreground flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
             Attendance Tracking
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="attendance" className="text-gray-300">Attendance Status</Label>
+            <Label htmlFor="attendance" className="text-foreground">Attendance Status</Label>
             <Select value={attendanceStatus} onValueChange={setAttendanceStatus}>
-              <SelectTrigger className="bg-gray-600 border-orange-900/20 text-white">
+              <SelectTrigger className="bg-background border-border text-foreground">
                 <SelectValue placeholder="Select attendance status" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-orange-900/20">
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="present">Present</SelectItem>
                 <SelectItem value="absent">Absent</SelectItem>
                 <SelectItem value="late">Late</SelectItem>
@@ -49,18 +49,18 @@ export function AttendanceTab({
           </div>
 
           <div>
-            <Label htmlFor="session-notes" className="text-gray-300">Session Notes</Label>
+            <Label htmlFor="session-notes" className="text-foreground">Session Notes</Label>
             <Textarea
               id="session-notes"
               value={sessionNotes}
               onChange={(e) => setSessionNotes(e.target.value)}
               placeholder="Add session notes, progress, observations..."
-              className="bg-gray-600 border-orange-900/20 text-white"
+              className="bg-background border-border text-foreground"
               rows={4}
             />
           </div>
 
-          <Button onClick={onSave} disabled={saving} className="bg-orange-500 hover:bg-orange-600">
+          <Button onClick={onSave} disabled={saving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Save className="w-4 h-4 mr-2" />
             Save Attendance & Notes
           </Button>
