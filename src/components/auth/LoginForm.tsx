@@ -43,7 +43,7 @@ const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -59,12 +59,33 @@ const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
         return;
       }
 
+      // Check user role to determine redirect
+      if (authData.user) {
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', authData.user.id)
+          .single();
+
+        if (userError) {
+          console.error('Error fetching user role:', userError);
+          // Default to client dashboard if we can't determine role
+          navigate('/dashboard');
+        } else {
+          // Redirect based on role
+          if (userData?.role === 'admin') {
+            navigate('/admin/dashboard');
+          } else {
+            navigate('/dashboard');
+          }
+        }
+      }
+
       toast({
         title: "Succesvol ingelogd",
         description: "Welkom terug!",
       });
 
-      navigate('/dashboard');
     } catch (error: any) {
       setError('Er is een onverwachte fout opgetreden');
     } finally {
