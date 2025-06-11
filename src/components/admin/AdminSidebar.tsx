@@ -13,7 +13,8 @@ import {
   LogOut,
   Activity,
   Bell,
-  Globe
+  Globe,
+  ArrowLeft
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -179,7 +180,14 @@ export function AdminSidebar() {
       </div>
       
       {/* Footer */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border space-y-1">
+        <button
+          onClick={() => navigate('/')}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Terug naar Website
+        </button>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
