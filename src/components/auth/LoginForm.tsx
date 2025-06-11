@@ -64,7 +64,7 @@ const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
         description: "Welkom terug!",
       });
 
-      navigate('/');
+      navigate('/dashboard');
     } catch (error: any) {
       setError('Er is een onverwachte fout opgetreden');
     } finally {
