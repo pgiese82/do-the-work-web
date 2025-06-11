@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useBookingUpdate } from '@/hooks/booking-operations/useBookingUpdate';
 import { format } from 'date-fns';
 
 interface BookingDetails {
@@ -28,7 +29,6 @@ interface BookingDetails {
 export function useBookingDetails(bookingId: string | null, open: boolean) {
   const [booking, setBooking] = useState<BookingDetails | null>(null);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingSMS, setSendingSMS] = useState(false);
   
@@ -47,6 +47,7 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
   const [smsMessage, setSmsMessage] = useState('');
 
   const { toast } = useToast();
+  const { updateBooking, loading: updating } = useBookingUpdate();
 
   useEffect(() => {
     if (open && bookingId) {
@@ -99,99 +100,70 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
   const handleSave = async () => {
     if (!booking) return false;
 
-    setSaving(true);
-    try {
-      console.log('🔄 Saving booking with data:', {
-        status,
-        payment_status: paymentStatus,
-        internal_notes: internalNotes,
-        session_notes: sessionNotes,
-        attendance_status: attendanceStatus || null,
-        date_time: newDateTime
-      });
+    console.log('🔄 Saving booking with new single update approach');
 
-      // Prepare update data - only include fields that have changed
-      const updateData: any = {};
-      
-      // Always include these fields as they may have been modified
-      if (status !== booking.status) {
-        updateData.status = status;
-      }
-      if (paymentStatus !== booking.payment_status) {
-        updateData.payment_status = paymentStatus;
-      }
-      if (internalNotes !== (booking.internal_notes || '')) {
-        updateData.internal_notes = internalNotes;
-      }
-      if (sessionNotes !== (booking.session_notes || '')) {
-        updateData.session_notes = sessionNotes;
-      }
-      if (attendanceStatus !== (booking.attendance_status || '')) {
-        updateData.attendance_status = attendanceStatus || null;
-      }
-      
-      // Check if date_time needs to be updated
-      const originalDateTime = format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm");
-      if (newDateTime !== originalDateTime) {
-        updateData.date_time = newDateTime;
-      }
+    // Prepare update data - only include fields that have changed
+    const updateData: any = {};
+    
+    if (status !== booking.status) {
+      updateData.status = status;
+    }
+    if (paymentStatus !== booking.payment_status) {
+      updateData.payment_status = paymentStatus;
+    }
+    if (internalNotes !== (booking.internal_notes || '')) {
+      updateData.internal_notes = internalNotes;
+    }
+    if (sessionNotes !== (booking.session_notes || '')) {
+      updateData.session_notes = sessionNotes;
+    }
+    if (attendanceStatus !== (booking.attendance_status || '')) {
+      updateData.attendance_status = attendanceStatus || null;
+    }
+    
+    // Check if date_time needs to be updated
+    const originalDateTime = format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm");
+    if (newDateTime !== originalDateTime) {
+      updateData.date_time = newDateTime;
+    }
 
-      console.log('📤 Sending update data:', updateData);
+    console.log('📝 Fields to update:', updateData);
 
-      const { data, error } = await supabase.rpc('bulk_update_bookings', {
-        booking_ids: [booking.id],
-        update_data: updateData
-      });
-
-      if (error) {
-        console.error('❌ Error updating booking:', error);
-        throw error;
-      }
-
-      console.log('✅ Booking updated successfully, response:', data);
-
+    // Only proceed if there are actual changes
+    if (Object.keys(updateData).length === 0) {
       toast({
-        title: 'Succes',
-        description: 'Boeking succesvol bijgewerkt',
+        title: 'Geen wijzigingen',
+        description: 'Er zijn geen wijzigingen om op te slaan',
       });
+      return true;
+    }
 
+    const success = await updateBooking(booking.id, updateData);
+    
+    if (success) {
       // Refresh booking details to show updated data
       await fetchBookingDetails();
-
-      return true;
-    } catch (error: any) {
-      console.error('💥 Error updating booking:', error);
-      toast({
-        title: 'Fout',
-        description: error.message || 'Kan boeking niet bijwerken',
-        variant: 'destructive',
-      });
-      return false;
-    } finally {
-      setSaving(false);
     }
+
+    return success;
   };
 
   const handleProcessRefund = async () => {
     if (!booking || refundAmount <= 0) return;
 
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ 
-          payment_status: 'refunded',
-          internal_notes: `${internalNotes}\n\nTerugbetaling verwerkt: €${refundAmount} op ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
-        })
-        .eq('id', booking.id);
-
-      if (error) throw error;
-
-      toast({
-        title: 'Terugbetaling Verwerkt',
-        description: `Terugbetaling van €${refundAmount} is verwerkt`,
+      const success = await updateBooking(booking.id, {
+        payment_status: 'refunded',
+        internal_notes: `${internalNotes}\n\nTerugbetaling verwerkt: €${refundAmount} op ${format(new Date(), 'yyyy-MM-dd HH:mm')}`
       });
 
-      fetchBookingDetails();
+      if (success) {
+        toast({
+          title: 'Terugbetaling Verwerkt',
+          description: `Terugbetaling van €${refundAmount} is verwerkt`,
+        });
+        fetchBookingDetails();
+      }
     } catch (error) {
       console.error('Error processing refund:', error);
       toast({
@@ -273,7 +245,7 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
   return {
     booking,
     loading,
-    saving,
+    saving: updating,
     sendingEmail,
     sendingSMS,
     status,
