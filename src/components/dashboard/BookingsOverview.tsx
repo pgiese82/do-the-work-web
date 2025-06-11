@@ -104,21 +104,21 @@ export function BookingsOverview() {
           <BookingTabs upcomingBookings={upcomingBookings} pastBookings={pastBookings} />
           
           {/* Action Buttons - Larger on mobile */}
-          <div className={`flex ${isMobile ? 'flex-col gap-4' : 'flex-row gap-4 justify-center'} mt-8`}>
+          <div className={`flex ${isMobile ? 'flex-col gap-6' : 'flex-row gap-4 justify-center'} mt-8`}>
             <Button
               variant="outline"
               onClick={() => navigate('/dashboard/bookings')}
-              className={`${isMobile ? 'h-14 text-base' : 'h-10'} gap-3 flex-1 max-w-md`}
+              className={`${isMobile ? 'h-16 text-lg py-4' : 'h-10'} gap-3 flex-1 max-w-md font-medium`}
             >
-              <Eye className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
+              <Eye className={`${isMobile ? 'w-6 h-6' : 'w-4 h-4'}`} />
               Alle Boekingen Bekijken
             </Button>
             
             <Button
               onClick={() => navigate('/dashboard/book')}
-              className={`${isMobile ? 'h-14 text-base' : 'h-10'} gap-3 flex-1 max-w-md`}
+              className={`${isMobile ? 'h-16 text-lg py-4' : 'h-10'} gap-3 flex-1 max-w-md font-medium`}
             >
-              <Plus className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
+              <Plus className={`${isMobile ? 'w-6 h-6' : 'w-4 h-4'}`} />
               Nieuwe Sessie Boeken
             </Button>
           </div>
