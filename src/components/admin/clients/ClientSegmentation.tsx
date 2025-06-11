@@ -48,7 +48,7 @@ export function ClientSegmentation() {
         .eq('role', 'client');
 
       // Apply segmentation criteria
-      if (criteria.client_status) {
+      if (criteria.client_status && criteria.client_status !== 'all') {
         query = query.eq('client_status', criteria.client_status);
       }
 
@@ -68,7 +68,15 @@ export function ClientSegmentation() {
       if (error) throw error;
 
       // Apply additional client-side filtering for complex criteria
-      return data.filter(client => {
+      let filteredData = data || [];
+      
+      // Ensure client_status is never empty
+      filteredData = filteredData.map(client => ({
+        ...client,
+        client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
+      }));
+
+      return filteredData.filter(client => {
         const bookingCount = client.bookings?.[0]?.count || 0;
         
         if (criteria.booking_count_min !== undefined && bookingCount < criteria.booking_count_min) {
@@ -175,7 +183,7 @@ export function ClientSegmentation() {
                   <SelectValue placeholder="Any status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any status</SelectItem>
+                  <SelectItem value="all">Any status</SelectItem>
                   <SelectItem value="prospect">Prospect</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
