@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -92,7 +91,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
         emergency_contact_phone: data.emergency_contact_phone || '',
         health_notes: data.health_notes || '',
         training_preferences: data.training_preferences || '',
-        client_status: data.client_status || 'prospect',
+        client_status: data.client_status && data.client_status.trim() !== '' ? data.client_status : 'prospect',
         acquisition_source: data.acquisition_source || '',
         notes: data.notes || ''
       });
