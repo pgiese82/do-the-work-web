@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -111,7 +110,8 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         date_time: newDateTime
       });
 
-      const updates: any = {
+      // Use the bulk_update_bookings function for consistent handling
+      const updateData: any = {
         status,
         payment_status: paymentStatus,
         internal_notes: internalNotes,
@@ -119,14 +119,15 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         attendance_status: attendanceStatus || null,
       };
 
+      // Check if date_time needs to be updated
       if (newDateTime !== format(new Date(booking.date_time), "yyyy-MM-dd'T'HH:mm")) {
-        updates.date_time = newDateTime;
+        updateData.date_time = newDateTime;
       }
 
-      const { error } = await supabase
-        .from('bookings')
-        .update(updates)
-        .eq('id', booking.id);
+      const { data, error } = await supabase.rpc('bulk_update_bookings', {
+        booking_ids: [booking.id],
+        update_data: updateData
+      });
 
       if (error) {
         console.error('❌ Error updating booking:', error);
@@ -139,6 +140,9 @@ export function useBookingDetails(bookingId: string | null, open: boolean) {
         title: 'Succes',
         description: 'Boeking succesvol bijgewerkt',
       });
+
+      // Refresh booking details to show updated data
+      await fetchBookingDetails();
 
       return true;
     } catch (error: any) {
