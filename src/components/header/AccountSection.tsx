@@ -12,6 +12,7 @@ import {
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { User as AuthUser } from '@supabase/supabase-js';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 interface AccountSectionProps {
   user: AuthUser | null;
@@ -20,12 +21,25 @@ interface AccountSectionProps {
 
 export const AccountSection = ({ user, onLogout }: AccountSectionProps) => {
   const navigate = useNavigate();
+  const { isAdmin } = useAdminAuth();
 
   const handleAccountClick = () => {
     if (user) {
-      navigate('/dashboard');
+      if (isAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       navigate('/auth');
+    }
+  };
+
+  const handlePortalClick = () => {
+    if (isAdmin) {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/dashboard');
     }
   };
 
@@ -53,10 +67,10 @@ export const AccountSection = ({ user, onLogout }: AccountSectionProps) => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/10" />
             <DropdownMenuItem 
-              onClick={() => navigate('/dashboard')}
+              onClick={handlePortalClick}
               className="text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer"
             >
-              Klantenportaal
+              {isAdmin ? 'Beheerportaal' : 'Klantenportaal'}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={handleLogoutClick}
