@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,10 +22,11 @@ interface Prospect {
 }
 
 export const useProspects = () => {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const { data: prospects = [], isLoading, refetch } = useQuery({
+  const { data: prospects = [], isLoading } = useQuery({
     queryKey: ['prospects'],
     queryFn: async () => {
       console.log('🔍 Fetching prospects...');
@@ -60,7 +61,7 @@ export const useProspects = () => {
         description: "De prospect status is succesvol bijgewerkt.",
       });
 
-      refetch();
+      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
       return true;
     } catch (error: any) {
       console.error('Update prospect status error:', error);
@@ -95,7 +96,7 @@ export const useProspects = () => {
         description: "De prospect is succesvol geconverteerd naar een klant.",
       });
 
-      refetch();
+      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
       return true;
     } catch (error: any) {
       console.error('Convert prospect error:', error);
@@ -125,7 +126,7 @@ export const useProspects = () => {
         description: "De prospect is succesvol verwijderd uit de database.",
       });
 
-      refetch();
+      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
       return true;
     } catch (error: any) {
       console.error('Delete prospect error:', error);
@@ -144,9 +145,9 @@ export const useProspects = () => {
     prospects,
     isLoading,
     loading,
-    refetch,
     updateProspectStatus,
     convertToClient,
     deleteProspect
   };
 };
+
