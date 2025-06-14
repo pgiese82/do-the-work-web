@@ -32,12 +32,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/78b34f25-d564-4507-866d-3367ca31062c.png" 
-              alt="DO THE WORK Logo" 
-              className="h-10 w-auto"
-            />
-            <span className="ml-3 text-xl font-bold text-white tracking-wide">THE WORK</span>
+            <span className="text-xl font-bold text-white tracking-wide">DO THE WORK</span>
           </div>
 
           {/* Desktop Navigation */}
