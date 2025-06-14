@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRealtimeSubscriptions } from '@/hooks/useRealtimeSubscriptions';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,11 +54,21 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
           queryClient.invalidateQueries({ queryKey: ['user-profile'] });
           queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
           break;
+        case 'prospects':
+          if (payload.eventType === 'INSERT') {
+            console.log('New prospect received via Realtime!', payload);
+            toast({
+              title: "Nieuwe Prospect",
+              description: "Een nieuwe prospect is binnengekomen via het contactformulier.",
+            });
+            queryClient.invalidateQueries({ queryKey: ['prospects'] });
+          }
+          break;
       }
     };
 
     // Set up subscriptions for different tables
-    const tables = ['bookings', 'payments', 'documents', 'users', 'services'];
+    const tables = ['bookings', 'payments', 'documents', 'users', 'services', 'prospects'];
     const events = ['INSERT', 'UPDATE', 'DELETE'];
     
     tables.forEach(table => {
@@ -68,7 +77,7 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
       });
     });
 
-  }, [user, createSubscription, queryClient]);
+  }, [user, createSubscription, queryClient, toast]);
 
   useEffect(() => {
     if (user && !isConnected && reconnectAttempts > 0 && !hasShownConnectionError) {
