@@ -43,10 +43,18 @@ export function ClientLifecycleTracker() {
       at_risk: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
       churned: 'bg-red-500/20 text-red-400 border-red-500/20'
     };
+    
+    const labels = {
+        prospect: 'PROSPECT',
+        onboarding: 'ONBOARDING',
+        active: 'ACTIEF',
+        at_risk: 'RISICO',
+        churned: 'VERLOREN'
+    };
 
     return (
       <Badge className={variants[stage as keyof typeof variants] || variants.prospect}>
-        {stage.replace('_', ' ').toUpperCase()}
+        {labels[stage as keyof typeof labels] || stage.replace('_', ' ').toUpperCase()}
       </Badge>
     );
   };
@@ -65,7 +73,7 @@ export function ClientLifecycleTracker() {
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-400 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Client lifecycle data laden...</p>
+            <p className="text-muted-foreground">Klantlevenscyclus data laden...</p>
           </div>
         </CardContent>
       </Card>
@@ -79,17 +87,17 @@ export function ClientLifecycleTracker() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="w-5 h-5 text-orange-400" />
-            Client Lifecycle Tracking - Debug
+            Klantlevenscyclus Tracking - Debug
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h4 className="font-medium text-yellow-800 mb-2">Geen clients gevonden</h4>
+            <h4 className="font-medium text-yellow-800 mb-2">Geen klanten gevonden</h4>
             <p className="text-sm text-yellow-700 mb-3">
-              Er zijn geen clients gevonden in de lifecycle tracker. Dit kan verschillende oorzaken hebben:
+              Er zijn geen klanten gevonden in de lifecycle tracker. Dit kan verschillende oorzaken hebben:
             </p>
             <ul className="text-sm text-yellow-700 space-y-1 ml-4">
-              <li>• Geen users met role 'client' in de database</li>
+              <li>• Geen users met rol 'client' in de database</li>
               <li>• Database connectie problemen</li>
               <li>• RLS (Row Level Security) blokkeert toegang</li>
             </ul>
@@ -134,7 +142,7 @@ export function ClientLifecycleTracker() {
           <CardContent className="p-4 text-center">
             <CheckCircle className="w-6 h-6 text-green-400 mx-auto mb-2" />
             <div className="text-2xl font-bold text-green-400">{lifecycleStats.active}</div>
-            <div className="text-xs text-muted-foreground">Active</div>
+            <div className="text-xs text-muted-foreground">Actief</div>
           </CardContent>
         </Card>
         
@@ -142,7 +150,7 @@ export function ClientLifecycleTracker() {
           <CardContent className="p-4 text-center">
             <AlertTriangle className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
             <div className="text-2xl font-bold text-yellow-400">{lifecycleStats.atRisk}</div>
-            <div className="text-xs text-muted-foreground">At Risk</div>
+            <div className="text-xs text-muted-foreground">Risico</div>
           </CardContent>
         </Card>
         
@@ -150,7 +158,7 @@ export function ClientLifecycleTracker() {
           <CardContent className="p-4 text-center">
             <Clock className="w-6 h-6 text-red-400 mx-auto mb-2" />
             <div className="text-2xl font-bold text-red-400">{lifecycleStats.churned}</div>
-            <div className="text-xs text-muted-foreground">Churned</div>
+            <div className="text-xs text-muted-foreground">Verloren</div>
           </CardContent>
         </Card>
       </div>
@@ -159,10 +167,10 @@ export function ClientLifecycleTracker() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Client Lifecycle Tracking ({clients.length} clients)
+            Klantlevenscyclus Tracking ({clients.length} klanten)
             <Button onClick={autoScheduleFollowUps} className="bg-orange-500 hover:bg-orange-600">
               <Calendar className="w-4 h-4 mr-2" />
-              Auto-Schedule Follow-ups
+              Automatisch Follow-ups Inplannen
             </Button>
           </CardTitle>
         </CardHeader>
@@ -171,13 +179,13 @@ export function ClientLifecycleTracker() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Lifecycle Stage</TableHead>
-                <TableHead>Engagement Score</TableHead>
-                <TableHead>Total Spent</TableHead>
-                <TableHead>Last Session</TableHead>
-                <TableHead>Next Follow-up</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>Klant</TableHead>
+                <TableHead>Levensfase</TableHead>
+                <TableHead>Betrokkenheidsscore</TableHead>
+                <TableHead>Totaal Besteed</TableHead>
+                <TableHead>Laatste Sessie</TableHead>
+                <TableHead>Volgende Follow-up</TableHead>
+                <TableHead>Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -207,13 +215,13 @@ export function ClientLifecycleTracker() {
                   <TableCell>
                     {client.last_session_date 
                       ? format(new Date(client.last_session_date), 'MMM dd, yyyy')
-                      : 'Never'
+                      : 'Nooit'
                     }
                   </TableCell>
                   <TableCell>
                     {client.next_follow_up_date 
                       ? format(new Date(client.next_follow_up_date), 'MMM dd, yyyy')
-                      : 'None scheduled'
+                      : 'Niet ingepland'
                     }
                   </TableCell>
                   <TableCell>
@@ -232,7 +240,7 @@ export function ClientLifecycleTracker() {
                           );
                         }}
                       >
-                        Schedule Follow-up
+                        Follow-up inplannen
                       </Button>
                     </div>
                   </TableCell>

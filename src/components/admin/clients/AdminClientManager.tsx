@@ -112,15 +112,15 @@ export function AdminClientManager() {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">
-            Overview
+            Overzicht
             {clientCheck?.clientCount !== undefined && (
               <span className="ml-2 text-xs bg-muted px-1 rounded">
                 {clientCheck.clientCount}
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="profiles">Client Profiles</TabsTrigger>
-          <TabsTrigger value="communication">Communication</TabsTrigger>
+          <TabsTrigger value="profiles">Klantprofielen</TabsTrigger>
+          <TabsTrigger value="communication">Communicatie</TabsTrigger>
           <TabsTrigger value="followups">Follow-ups</TabsTrigger>
         </TabsList>
 

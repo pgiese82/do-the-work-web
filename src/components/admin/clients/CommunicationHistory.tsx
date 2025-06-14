@@ -83,9 +83,15 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
   };
 
   const getTypeBadge = (type: string) => {
+    const labels: { [key: string]: string } = {
+        email: 'Email',
+        sms: 'SMS',
+        call: 'Telefoongesprek',
+        in_person: 'Persoonlijk'
+    };
     return (
       <Badge variant="outline" className="capitalize">
-        {type.replace('_', ' ')}
+        {labels[type] || type.replace('_', ' ')}
       </Badge>
     );
   };
@@ -93,11 +99,11 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
   const getDirectionBadge = (direction: string) => {
     return direction === 'outbound' ? (
       <Badge variant="default">
-        Outbound
+        Uitgaand
       </Badge>
     ) : (
       <Badge variant="secondary">
-        Inbound
+        Inkomend
       </Badge>
     );
   };
@@ -108,11 +114,11 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5" />
-            Communication History
+            Communicatiegeschiedenis
           </span>
           <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            New Communication
+            Nieuwe Communicatie
           </Button>
         </CardTitle>
       </CardHeader>
@@ -121,7 +127,7 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Search communications by client or content..."
+            placeholder="Zoek communicatie op klant of inhoud..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -133,25 +139,25 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Client</TableHead>
+                <TableHead>Klant</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Direction</TableHead>
-                <TableHead>Subject/Content</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Admin</TableHead>
+                <TableHead>Richting</TableHead>
+                <TableHead>Onderwerp/Inhoud</TableHead>
+                <TableHead>Datum</TableHead>
+                <TableHead>Beheerder</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    Loading communications...
+                    Communicatie laden...
                   </TableCell>
                 </TableRow>
               ) : communications.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No communications found
+                    Geen communicatie gevonden
                   </TableCell>
                 </TableRow>
               ) : (
@@ -187,7 +193,7 @@ export function CommunicationHistory({ onUpdate }: CommunicationHistoryProps) {
                       {format(new Date(comm.created_at), 'MMM dd, yyyy HH:mm')}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {comm.admin?.name || 'System'}
+                      {comm.admin?.name || 'Systeem'}
                     </TableCell>
                   </TableRow>
                 ))

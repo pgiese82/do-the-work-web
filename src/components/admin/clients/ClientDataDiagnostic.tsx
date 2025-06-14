@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -138,7 +137,7 @@ export function ClientDataDiagnostic() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="w-5 h-5" />
-            Client Data Diagnostic
+            Klantdata Diagnose
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -168,13 +167,13 @@ export function ClientDataDiagnostic() {
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold">{results.totalUsers}</div>
-                    <div className="text-sm text-muted-foreground">Totaal Users</div>
+                    <div className="text-sm text-muted-foreground">Totaal Gebruikers</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-green-600">{results.clientUsers}</div>
-                    <div className="text-sm text-muted-foreground">Client Role</div>
+                    <div className="text-sm text-muted-foreground">Rol: Klant</div>
                   </CardContent>
                 </Card>
                 <Card>
@@ -186,7 +185,7 @@ export function ClientDataDiagnostic() {
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-red-600">{results.missingClientRole}</div>
-                    <div className="text-sm text-muted-foreground">Verkeerde Role</div>
+                    <div className="text-sm text-muted-foreground">Verkeerde Rol</div>
                   </CardContent>
                 </Card>
               </div>
@@ -213,7 +212,7 @@ export function ClientDataDiagnostic() {
               {results.needsFixing?.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Te Repareren Users</CardTitle>
+                    <CardTitle className="text-lg">Te Repareren Gebruikers</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -224,7 +223,7 @@ export function ClientDataDiagnostic() {
                             <div className="text-sm text-muted-foreground">{user.email}</div>
                           </div>
                           <Badge variant="secondary">
-                            {user.role || 'geen role'}
+                            {user.role || 'geen rol'}
                           </Badge>
                         </div>
                       ))}
@@ -243,7 +242,7 @@ export function ClientDataDiagnostic() {
                       ) : (
                         <>
                           <CheckCircle className="w-4 h-4 mr-2" />
-                          Repareer User Rollen
+                          Repareer Gebruikersrollen
                         </>
                       )}
                     </Button>
