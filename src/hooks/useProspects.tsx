@@ -101,23 +101,33 @@ export const useProspects = () => {
           description: `Een klant met e-mail ${prospect.email} bestaat al. De prospect wordt nu gekoppeld.`,
         });
       } else {
-        // Create a new client in the 'users' table
-        const { data: newClient, error: clientError } = await supabase
-          .from('users')
-          .insert({
-            name: `${prospect.first_name} ${prospect.last_name}`,
-            email: prospect.email,
-            phone: prospect.phone,
-            role: 'client',
-            client_status: 'active',
-            acquisition_source: prospect.source || 'contact_form',
-          })
-          .select('id')
-          .single();
+        // Create a new client by invoking an edge function
+        console.log(`No existing client found for ${prospect.email}, creating new one...`);
+        const { data: newClient, error: clientError } = await supabase.functions.invoke('create-client-from-prospect', {
+            body: {
+              email: prospect.email,
+              name: `${prospect.first_name} ${prospect.last_name}`,
+              phone: prospect.phone,
+              source: prospect.source || 'contact_form',
+            },
+          }
+        );
 
-        if (clientError) throw clientError;
+        if (clientError) {
+          console.error('Error invoking create-client-from-prospect function:', clientError);
+          throw new Error(clientError.message || 'Failed to create client via edge function.');
+        }
+
+        if (newClient.error) {
+          throw new Error(newClient.error);
+        }
         
-        clientId = newClient.id;
+        if (!newClient.user || !newClient.user.id) {
+          console.error('Edge function did not return a valid user object:', newClient);
+          throw new Error('Kon geen nieuwe klant aanmaken.');
+        }
+
+        clientId = newClient.user.id;
         newClientCreated = true;
       }
 
@@ -134,14 +144,16 @@ export const useProspects = () => {
       if (prospectError) {
         // Rollback client creation if prospect update fails and if we created a new client
         if (newClientCreated) {
-          await supabase.from('users').delete().eq('id', clientId);
+          // We can't easily delete the invited user here, but this case should be rare.
+          // For now, we log it. A manual cleanup might be needed.
+          console.error(`CRITICAL: Failed to update prospect after creating user ${clientId}. Manual cleanup might be needed.`);
         }
         throw prospectError;
       }
 
       toast({
         title: "Prospect Geconverteerd",
-        description: `${prospect.first_name} ${prospect.last_name} is succesvol geconverteerd naar een klant.`,
+        description: `${prospect.first_name} ${prospect.last_name} is succesvol geconverteerd naar een klant. Er is een uitnodiging verstuurd.`,
       });
 
       // 3. Optimistically update prospects list (remove converted prospect)
