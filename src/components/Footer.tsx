@@ -137,7 +137,7 @@ const Footer = () => {
             </form>
 
             <div className="pt-4">
-              <h4 className="text-sm font-semibold text-white mb-4">Volg ons</h4>
+              <h4 className="text-sm font-semibold text-white mb-4">Volg Do The Work</h4>
               <div className="flex space-x-4">
                 {socialLinks.map(social => {
                 const Icon = social.icon;
