@@ -827,6 +827,65 @@ export type Database = {
           },
         ]
       }
+      prospects: {
+        Row: {
+          converted_at: string | null
+          converted_to_client_id: string | null
+          created_at: string
+          email: string
+          experience: string
+          first_name: string
+          goal: string
+          id: string
+          last_name: string
+          message: string | null
+          phone: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          converted_at?: string | null
+          converted_to_client_id?: string | null
+          created_at?: string
+          email: string
+          experience: string
+          first_name: string
+          goal: string
+          id?: string
+          last_name: string
+          message?: string | null
+          phone: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          converted_at?: string | null
+          converted_to_client_id?: string | null
+          created_at?: string
+          email?: string
+          experience?: string
+          first_name?: string
+          goal?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          phone?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospects_converted_to_client_id_fkey"
+            columns: ["converted_to_client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_pricing: {
         Row: {
           created_at: string

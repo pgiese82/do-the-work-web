@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CheckCircle, ArrowLeft, ArrowRight, User, Mail, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const contactSchema = z.object({
   firstName: z.string().min(2, 'Voornaam moet minimaal 2 karakters bevatten'),
@@ -75,17 +77,37 @@ const ContactForm = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('📝 Submitting contact form data:', data);
       
-      console.log('Form submitted:', data);
+      // Save prospect data to database
+      const { error } = await supabase
+        .from('prospects')
+        .insert({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          goal: data.goal,
+          experience: data.experience,
+          message: data.message || null,
+          status: 'new',
+          source: 'contact_form'
+        });
+
+      if (error) {
+        console.error('❌ Error saving prospect:', error);
+        throw error;
+      }
+
+      console.log('✅ Prospect saved successfully');
       setIsSubmitted(true);
       
       toast({
         title: "Bericht verzonden!",
         description: "We nemen binnen 24 uur contact met je op.",
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('💥 Contact form submission error:', error);
       toast({
         title: "Er ging iets mis",
         description: "Probeer het later opnieuw.",
