@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -61,7 +60,9 @@ export const useProspects = () => {
         description: "De prospect status is succesvol bijgewerkt.",
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
+      queryClient.setQueryData(['prospects'], (oldData: Prospect[] | undefined) => 
+        oldData ? oldData.map(p => p.id === prospectId ? { ...p, status: newStatus, updated_at: new Date().toISOString() } : p) : []
+      );
       return true;
     } catch (error: any) {
       console.error('Update prospect status error:', error);
@@ -79,14 +80,16 @@ export const useProspects = () => {
   const convertToClient = async (prospectId: string, clientId: string) => {
     setLoading(true);
     try {
+      const updatePayload = { 
+        status: 'converted',
+        converted_to_client_id: clientId,
+        converted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
       const { error } = await supabase
         .from('prospects')
-        .update({ 
-          status: 'converted',
-          converted_to_client_id: clientId,
-          converted_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .update(updatePayload)
         .eq('id', prospectId);
 
       if (error) throw error;
@@ -96,7 +99,9 @@ export const useProspects = () => {
         description: "De prospect is succesvol geconverteerd naar een klant.",
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
+      queryClient.setQueryData(['prospects'], (oldData: Prospect[] | undefined) => 
+        oldData ? oldData.map(p => p.id === prospectId ? { ...p, ...updatePayload } : p) : []
+      );
       return true;
     } catch (error: any) {
       console.error('Convert prospect error:', error);
@@ -125,8 +130,11 @@ export const useProspects = () => {
         title: "Prospect Verwijderd",
         description: "De prospect is succesvol verwijderd uit de database.",
       });
+      
+      queryClient.setQueryData(['prospects'], (oldData: Prospect[] | undefined) => 
+        oldData ? oldData.filter((prospect) => prospect.id !== prospectId) : []
+      );
 
-      await queryClient.invalidateQueries({ queryKey: ['prospects'] });
       return true;
     } catch (error: any) {
       console.error('Delete prospect error:', error);
@@ -150,4 +158,3 @@ export const useProspects = () => {
     deleteProspect
   };
 };
-
