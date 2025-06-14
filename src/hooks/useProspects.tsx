@@ -28,11 +28,12 @@ export const useProspects = () => {
   const { data: prospects = [], isLoading } = useQuery<Prospect[]>({
     queryKey: ['prospects'],
     queryFn: async () => {
-      console.log('🔍 Fetching prospects...');
+      console.log('🔍 Fetching non-converted prospects...');
       
       const { data, error } = await supabase
         .from('prospects')
         .select('*')
+        .neq('status', 'converted') // Haal geen prospects op die al klant zijn
         .order('created_at', { ascending: false });
 
       if (error) {

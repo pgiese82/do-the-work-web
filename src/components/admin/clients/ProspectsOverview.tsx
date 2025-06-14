@@ -32,14 +32,12 @@ export function ProspectsOverview() {
     const variants = {
       new: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
       intake_scheduled: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
-      converted: 'bg-green-500/20 text-green-400 border-green-500/20',
       not_interested: 'bg-red-500/20 text-red-400 border-red-500/20'
     };
 
     const labels = {
       new: 'Nieuw',
       intake_scheduled: 'Intake Ingepland',
-      converted: 'Actieve Klant',
       not_interested: 'Niet Geïnteresseerd'
     };
 
@@ -115,14 +113,13 @@ export function ProspectsOverview() {
   const statusStats = {
     new: prospects.filter(p => p.status === 'new').length,
     intake_scheduled: prospects.filter(p => p.status === 'intake_scheduled').length,
-    converted: prospects.filter(p => p.status === 'converted').length,
     not_interested: prospects.filter(p => p.status === 'not_interested').length,
   };
 
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
             <User className="w-6 h-6 text-blue-400 mx-auto mb-2" />
@@ -136,14 +133,6 @@ export function ProspectsOverview() {
             <Calendar className="w-6 h-6 text-purple-400 mx-auto mb-2" />
             <div className="text-2xl font-bold text-purple-400">{statusStats.intake_scheduled}</div>
             <div className="text-xs text-muted-foreground">Intake Ingepland</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 text-center">
-            <UserCheck className="w-6 h-6 text-green-400 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-green-400">{statusStats.converted}</div>
-            <div className="text-xs text-muted-foreground">Actieve Klant</div>
           </CardContent>
         </Card>
         
