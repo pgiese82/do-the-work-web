@@ -152,6 +152,7 @@ export const useProspects = () => {
       // 4. Invalidate clients list to refetch with the new client
       await queryClient.invalidateQueries({ queryKey: ['admin-clients'] });
       await queryClient.invalidateQueries({ queryKey: ['client-check'] });
+      await queryClient.invalidateQueries({ queryKey: ['client-lifecycle'] });
 
       return true;
     } catch (error: any) {
