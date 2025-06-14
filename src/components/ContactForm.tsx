@@ -101,7 +101,7 @@ const ContactForm = () => {
         <div className="animate-scale-in">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-bounce" />
           <h3 className="text-2xl font-bold text-slate-900 mb-4">Bedankt!</h3>
-          <p className="text-slate-600 mb-8">
+          <p className="text-slate-800 font-medium mb-8">
             Je bericht is verzonden. We nemen binnen 24 uur contact met je op om je gratis kennismaking in te plannen.
           </p>
           <Button 
