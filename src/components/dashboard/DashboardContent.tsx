@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { DashboardOverview } from './DashboardOverview';
-import { BookSession } from './BookSession';
-import { BookingsOverview } from './BookingsOverview';
-import { Documents } from './Documents';
-import { ProfileSettings } from './ProfileSettings';
+import DashboardOverview from './DashboardOverview';
+import BookSession from './BookSession';
+import BookingsOverview from './BookingsOverview';
+import Documents from './Documents';
+import ProfileSettings from './ProfileSettings';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
