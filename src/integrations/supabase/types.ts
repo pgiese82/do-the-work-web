@@ -1004,7 +1004,7 @@ export type Database = {
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
           health_notes?: string | null
-          id: string
+          id?: string
           last_session_date?: string | null
           name: string
           notes?: string | null

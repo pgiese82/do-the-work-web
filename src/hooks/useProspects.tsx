@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-interface Prospect {
+export interface Prospect {
   id: string;
   first_name: string;
   last_name: string;
@@ -25,7 +25,7 @@ export const useProspects = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const { data: prospects = [], isLoading } = useQuery({
+  const { data: prospects = [], isLoading } = useQuery<Prospect[]>({
     queryKey: ['prospects'],
     queryFn: async () => {
       console.log('🔍 Fetching prospects...');
@@ -41,7 +41,7 @@ export const useProspects = () => {
       }
 
       console.log('📋 Found prospects:', data?.length || 0);
-      return data as Prospect[];
+      return data;
     },
   });
 
@@ -77,34 +77,58 @@ export const useProspects = () => {
     }
   };
 
-  const convertToClient = async (prospectId: string, clientId: string) => {
+  const convertProspectToClient = async (prospect: Prospect) => {
     setLoading(true);
     try {
-      const updatePayload = { 
-        status: 'converted',
-        converted_to_client_id: clientId,
-        converted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      // 1. Create a new client in the 'users' table
+      const { data: newClient, error: clientError } = await supabase
+        .from('users')
+        .insert({
+          name: `${prospect.first_name} ${prospect.last_name}`,
+          email: prospect.email,
+          phone: prospect.phone,
+          role: 'client',
+          client_status: 'active',
+          acquisition_source: prospect.source || 'contact_form',
+        })
+        .select()
+        .single();
 
-      const { error } = await supabase
+      if (clientError) throw clientError;
+
+      // 2. Update the prospect to link to the new client
+      const { error: prospectError } = await supabase
         .from('prospects')
-        .update(updatePayload)
-        .eq('id', prospectId);
+        .update({
+          status: 'converted',
+          converted_to_client_id: newClient.id,
+          converted_at: new Date().toISOString(),
+        })
+        .eq('id', prospect.id);
 
-      if (error) throw error;
+      if (prospectError) {
+        // Rollback client creation if prospect update fails
+        await supabase.from('users').delete().eq('id', newClient.id);
+        throw prospectError;
+      }
 
       toast({
         title: "Prospect Geconverteerd",
-        description: "De prospect is succesvol geconverteerd naar een klant.",
+        description: `${prospect.first_name} ${prospect.last_name} is succesvol geconverteerd naar een klant.`,
       });
 
-      queryClient.setQueryData(['prospects'], (oldData: Prospect[] | undefined) => 
-        oldData ? oldData.map(p => p.id === prospectId ? { ...p, ...updatePayload } : p) : []
+      // 3. Optimistically update prospects list (remove converted prospect)
+      queryClient.setQueryData(['prospects'], (oldData: Prospect[] | undefined) =>
+        oldData ? oldData.filter((p) => p.id !== prospect.id) : []
       );
+
+      // 4. Invalidate clients list to refetch with the new client
+      await queryClient.invalidateQueries({ queryKey: ['admin-clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['client-check'] });
+
       return true;
     } catch (error: any) {
-      console.error('Convert prospect error:', error);
+      console.error('Convert prospect to client error:', error);
       toast({
         variant: "destructive",
         title: "Conversie Mislukt",
@@ -154,7 +178,7 @@ export const useProspects = () => {
     isLoading,
     loading,
     updateProspectStatus,
-    convertToClient,
+    convertProspectToClient,
     deleteProspect
   };
 };

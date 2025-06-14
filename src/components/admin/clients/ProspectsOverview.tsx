@@ -10,7 +10,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { useProspects } from '@/hooks/useProspects';
+import { useProspects, Prospect } from '@/hooks/useProspects';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { 
@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 
 export function ProspectsOverview() {
-  const { prospects, isLoading, updateProspectStatus, deleteProspect } = useProspects();
+  const { prospects, isLoading, updateProspectStatus, deleteProspect, convertProspectToClient } = useProspects();
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -72,6 +72,12 @@ export function ProspectsOverview() {
   const handleDeleteProspect = async (prospectId: string, prospectName: string) => {
     if (window.confirm(`Weet je zeker dat je ${prospectName} wilt verwijderen? Dit kan niet ongedaan worden gemaakt.`)) {
       await deleteProspect(prospectId);
+    }
+  };
+
+  const handleConvertToClient = async (prospect: Prospect) => {
+    if (window.confirm(`Weet je zeker dat je ${prospect.first_name} ${prospect.last_name} wilt converteren naar een klant?`)) {
+      await convertProspectToClient(prospect);
     }
   };
 
@@ -240,7 +246,7 @@ export function ProspectsOverview() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateProspectStatus(prospect.id, 'converted')}
+                            onClick={() => handleConvertToClient(prospect)}
                             className="text-green-600 border-green-600 hover:bg-green-50"
                           >
                             Klant Maken
