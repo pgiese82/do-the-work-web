@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
-import { Search, Edit, User, Calendar, DollarSign } from 'lucide-react';
+import { Search, Edit, User, Calendar, Euro } from 'lucide-react';
 
 interface Client {
   id: string;
@@ -235,7 +234,7 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <DollarSign className="w-4 h-4 text-gray-400" />
+                          <Euro className="w-4 h-4 text-gray-400" />
                           <span className="text-gray-700">€{client.total_spent?.toFixed(2) || '0,00'}</span>
                         </div>
                       </TableCell>

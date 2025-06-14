@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { DollarSign, TrendingUp, TrendingDown, Percent } from 'lucide-react';
+import { Euro, TrendingUp, TrendingDown, Percent } from 'lucide-react';
 
 export function ServicePricingOverview() {
   const { data: services = [], isLoading } = useQuery({
@@ -57,7 +56,7 @@ export function ServicePricingOverview() {
             <CardHeader>
               <CardTitle className="text-white flex items-center justify-between">
                 <span className="truncate">{service.name}</span>
-                <DollarSign className="w-5 h-5 text-orange-400" />
+                <Euro className="w-5 h-5 text-orange-400" />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -65,12 +64,12 @@ export function ServicePricingOverview() {
                 <div className="text-2xl font-bold text-white mb-1">
                   €{service.price}
                 </div>
-                <div className="text-sm text-gray-400">Base Price</div>
+                <div className="text-sm text-gray-400">Basisprijs</div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300">Active Rules:</span>
+                  <span className="text-sm text-gray-300">Actieve Regels:</span>
                   <span className="text-sm text-orange-400">{activePricingRules.length}</span>
                 </div>
 
@@ -78,26 +77,26 @@ export function ServicePricingOverview() {
                   {hasPromotional && (
                     <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/20">
                       <Percent className="w-3 h-3 mr-1" />
-                      Promotional
+                      Promotie
                     </Badge>
                   )}
                   {hasPeakPricing && (
                     <Badge variant="secondary" className="bg-red-500/20 text-red-400 border-red-500/20">
                       <TrendingUp className="w-3 h-3 mr-1" />
-                      Peak
+                      Piek
                     </Badge>
                   )}
                   {hasOffPeakPricing && (
                     <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-500/20">
                       <TrendingDown className="w-3 h-3 mr-1" />
-                      Off-Peak
+                      Daltarief
                     </Badge>
                   )}
                 </div>
               </div>
 
               <div className="text-xs text-gray-400">
-                Duration: {service.duration} minutes
+                Duur: {service.duration} minuten
               </div>
             </CardContent>
           </Card>

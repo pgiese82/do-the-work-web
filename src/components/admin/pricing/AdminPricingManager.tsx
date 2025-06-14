@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PricingRulesTable } from './PricingRulesTable';
 import { CreatePricingRuleModal } from './CreatePricingRuleModal';
 import { ServicePricingOverview } from './ServicePricingOverview';
-import { DollarSign, Plus, TrendingUp } from 'lucide-react';
+import { Plus, TrendingUp } from 'lucide-react';
 
 export function AdminPricingManager() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -20,9 +20,9 @@ export function AdminPricingManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-white mb-2">Pricing Management</h2>
+          <h2 className="text-3xl font-black text-white mb-2">Prijsbeheer</h2>
           <p className="text-gray-300">
-            Manage service pricing, promotional rates, and peak/off-peak pricing
+            Beheer serviceprijzen, promotietarieven en piek-/daltarieven
           </p>
         </div>
         <Button 
@@ -30,20 +30,20 @@ export function AdminPricingManager() {
           className="bg-orange-500 hover:bg-orange-600 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Create Pricing Rule
+          Prijsregel aanmaken
         </Button>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-gray-700">
           <TabsTrigger value="overview" className="text-gray-300 data-[state=active]:text-orange-400">
-            Overview
+            Overzicht
           </TabsTrigger>
           <TabsTrigger value="rules" className="text-gray-300 data-[state=active]:text-orange-400">
-            Pricing Rules
+            Prijsregels
           </TabsTrigger>
           <TabsTrigger value="analytics" className="text-gray-300 data-[state=active]:text-orange-400">
-            Analytics
+            Analyse
           </TabsTrigger>
         </TabsList>
 
@@ -60,11 +60,11 @@ export function AdminPricingManager() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-orange-400" />
-                Pricing Analytics
+                Prijsanalyse
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-300">Pricing analytics will be available soon.</p>
+              <p className="text-gray-300">Prijsanalyse is binnenkort beschikbaar.</p>
             </CardContent>
           </Card>
         </TabsContent>
