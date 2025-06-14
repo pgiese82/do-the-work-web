@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Dumbbell, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Dumbbell, Mail, Phone, MapPin, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+
 const Footer = () => {
   const [email, setEmail] = useState('');
   const {
@@ -51,23 +52,13 @@ const Footer = () => {
     name: 'Mijn verhaal',
     href: '#mijn-verhaal'
   }];
-  const socialLinks = [{
-    name: 'Facebook',
-    icon: Facebook,
-    href: '#'
-  }, {
-    name: 'Instagram',
-    icon: Instagram,
-    href: '#'
-  }, {
-    name: 'LinkedIn',
-    icon: Linkedin,
-    href: '#'
-  }, {
-    name: 'Twitter',
-    icon: Twitter,
-    href: '#'
-  }];
+  const socialLinks = [
+    {
+      name: 'Instagram',
+      icon: Instagram,
+      href: 'https://www.instagram.com/dotheworkcoaching'
+    }
+  ];
   return <footer className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] text-white">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
         {/* Main Footer Content */}
@@ -99,11 +90,13 @@ const Footer = () => {
           <div className="space-y-6">
             <h3 className="text-lg md:text-xl font-bold text-white">Diensten</h3>
             <ul className="space-y-3">
-              {serviceLinks.map(link => <li key={link.name}>
+              {serviceLinks.map(link => (
+                <li key={link.name}>
                   <a href={link.href} className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm md:text-base block py-1">
                     {link.name}
                   </a>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -111,11 +104,13 @@ const Footer = () => {
           <div className="space-y-6">
             <h3 className="text-lg md:text-xl font-bold text-white">Quick Links</h3>
             <ul className="space-y-3">
-              {quickLinks.map(link => <li key={link.name}>
+              {quickLinks.map(link => (
+                <li key={link.name}>
                   <a href={link.href} className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm md:text-base block py-1">
                     {link.name}
                   </a>
-                </li>)}
+                </li>
+              ))}
             </ul>
             
           </div>
@@ -129,9 +124,19 @@ const Footer = () => {
             
             <form onSubmit={handleNewsletterSignup} className="space-y-4">
               <div className="relative">
-                <Input type="email" placeholder="Je e-mailadres" value={email} onChange={e => setEmail(e.target.value)} className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-orange-500 h-12" required />
+                <Input
+                  type="email"
+                  placeholder="Je e-mailadres"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-orange-500 h-12"
+                  required
+                />
               </div>
-              <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 text-sm md:text-base transition-all duration-300 hover:scale-105">
+              <Button
+                type="submit"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 text-sm md:text-base transition-all duration-300 hover:scale-105"
+              >
                 Aanmelden
               </Button>
             </form>
@@ -139,12 +144,21 @@ const Footer = () => {
             <div className="pt-4">
               <h4 className="text-sm font-semibold text-white mb-4">Volg Do The Work</h4>
               <div className="flex space-x-4">
-                {socialLinks.map(social => {
-                const Icon = social.icon;
-                return <a key={social.name} href={social.href} className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-orange-600 transition-all duration-300 hover:scale-110" aria-label={social.name}>
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-orange-600 transition-all duration-300 hover:scale-110"
+                      aria-label={social.name}
+                    >
                       <Icon className="w-5 h-5" />
-                    </a>;
-              })}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>
