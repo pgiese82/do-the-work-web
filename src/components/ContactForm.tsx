@@ -29,10 +29,12 @@ type ContactFormData = z.infer<typeof contactSchema>;
 const ContactForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    mode: 'onBlur',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -49,15 +51,29 @@ const ContactForm = () => {
 
   const nextStep = async () => {
     const fieldsToValidate = getFieldsForStep(currentStep);
+    
+    // Don't proceed if already submitting
+    if (isSubmitting) return;
+    
+    console.log(`🔍 Validating step ${currentStep} fields:`, fieldsToValidate);
+    
     const isValid = await form.trigger(fieldsToValidate);
+    console.log(`✅ Step ${currentStep} validation result:`, isValid);
     
     if (isValid && currentStep < totalSteps) {
+      console.log(`➡️ Moving to step ${currentStep + 1}`);
       setCurrentStep(currentStep + 1);
+    } else if (!isValid) {
+      console.log('❌ Validation failed, staying on current step');
+      // Get current form errors to show user what's wrong
+      const errors = form.formState.errors;
+      console.log('Form errors:', errors);
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) {
+    if (currentStep > 1 && !isSubmitting) {
+      console.log(`⬅️ Moving to step ${currentStep - 1}`);
       setCurrentStep(currentStep - 1);
     }
   };
@@ -76,6 +92,11 @@ const ContactForm = () => {
   };
 
   const onSubmit = async (data: ContactFormData) => {
+    if (isSubmitting) return; // Prevent double submission
+    
+    setIsSubmitting(true);
+    console.log('📝 Starting form submission...');
+    
     try {
       console.log('📝 Submitting contact form data:', data);
       
@@ -113,6 +134,8 @@ const ContactForm = () => {
         description: "Probeer het later opnieuw.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -397,7 +420,7 @@ const ContactForm = () => {
                 type="button"
                 variant="outline"
                 onClick={prevStep}
-                disabled={currentStep === 1}
+                disabled={currentStep === 1 || isSubmitting}
                 className="min-h-[44px]"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -408,6 +431,7 @@ const ContactForm = () => {
                 <Button
                   type="button"
                   onClick={nextStep}
+                  disabled={isSubmitting}
                   className="bg-orange-600 hover:bg-orange-700 min-h-[44px]"
                 >
                   Volgende
@@ -416,10 +440,10 @@ const ContactForm = () => {
               ) : (
                 <Button
                   type="submit"
-                  disabled={form.formState.isSubmitting}
+                  disabled={isSubmitting}
                   className="bg-orange-600 hover:bg-orange-700 min-h-[44px]"
                 >
-                  {form.formState.isSubmitting ? 'Verzenden...' : 'Verstuur bericht'}
+                  {isSubmitting ? 'Verzenden...' : 'Verstuur bericht'}
                 </Button>
               )}
             </div>
