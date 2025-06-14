@@ -20,7 +20,7 @@ const contactSchema = z.object({
   phone: z.string().min(10, 'Telefoonnummer moet minimaal 10 cijfers bevatten'),
   goal: z.string().min(1, 'Selecteer je doel'),
   experience: z.string().min(1, 'Selecteer je ervaring'),
-  message: z.string().min(10, 'Bericht moet minimaal 10 karakters bevatten'),
+  message: z.string().optional(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -68,7 +68,7 @@ const ContactForm = () => {
       case 2:
         return ['goal', 'experience'];
       case 3:
-        return ['message'];
+        return [];
       default:
         return [];
     }
@@ -343,7 +343,7 @@ const ContactForm = () => {
               <div className="space-y-6 animate-fade-in">
                 <div className="flex items-center gap-3 mb-6">
                   <MessageSquare className="w-6 h-6 text-orange-600" />
-                  <h3 className="text-xl font-semibold text-slate-900">Vertel ons meer</h3>
+                  <h3 className="text-xl font-semibold text-slate-900">Wat moet ik nog meer weten?</h3>
                 </div>
 
                 <FormField
@@ -363,7 +363,7 @@ const ContactForm = () => {
                             htmlFor="message"
                             className="absolute left-3 top-3 text-xs text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-6 peer-focus:top-3 peer-focus:text-xs"
                           >
-                            Je bericht
+                            Je bericht (optioneel)
                           </Label>
                         </div>
                       </FormControl>
@@ -375,7 +375,7 @@ const ContactForm = () => {
                 <div className="bg-slate-50 p-4 rounded-lg">
                   <p className="text-sm text-slate-600">
                     <strong>Wat gebeurt er nu?</strong><br />
-                    Na het versturen nemen we binnen 24 uur contact met je op om een gratis kennismaking van 30 minuten in te plannen. Tijdens dit gesprek bespreken we je doelen en kijken we hoe we je het beste kunnen helpen.
+                    Na het versturen neem ik binnen 24 uur contact met je op om een gratis kennismaking van 15 minuten in te plannen. Tijdens dit gesprek bespreken we je doelen en kijken we hoe ik je het beste kan helpen.
                   </p>
                 </div>
               </div>
