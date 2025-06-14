@@ -31,7 +31,6 @@ export function ProspectsOverview() {
   const getStatusBadge = (status: string) => {
     const variants = {
       new: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
-      contacted: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
       intake_scheduled: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
       converted: 'bg-green-500/20 text-green-400 border-green-500/20',
       not_interested: 'bg-red-500/20 text-red-400 border-red-500/20'
@@ -39,7 +38,6 @@ export function ProspectsOverview() {
 
     const labels = {
       new: 'Nieuw',
-      contacted: 'Gecontacteerd',
       intake_scheduled: 'Intake Ingepland',
       converted: 'Actieve Klant',
       not_interested: 'Niet Geïnteresseerd'
@@ -116,7 +114,6 @@ export function ProspectsOverview() {
 
   const statusStats = {
     new: prospects.filter(p => p.status === 'new').length,
-    contacted: prospects.filter(p => p.status === 'contacted').length,
     intake_scheduled: prospects.filter(p => p.status === 'intake_scheduled').length,
     converted: prospects.filter(p => p.status === 'converted').length,
     not_interested: prospects.filter(p => p.status === 'not_interested').length,
@@ -125,20 +122,12 @@ export function ProspectsOverview() {
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
             <User className="w-6 h-6 text-blue-400 mx-auto mb-2" />
             <div className="text-2xl font-bold text-blue-400">{statusStats.new}</div>
             <div className="text-xs text-muted-foreground">Nieuw</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Mail className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-yellow-400">{statusStats.contacted}</div>
-            <div className="text-xs text-muted-foreground">Gecontacteerd</div>
           </CardContent>
         </Card>
         
@@ -224,15 +213,6 @@ export function ProspectsOverview() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {prospect.status === 'new' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateProspectStatus(prospect.id, 'contacted')}
-                        >
-                          Contacteren
-                        </Button>
-                      )}
-                      {prospect.status === 'contacted' && (
                         <Button
                           size="sm"
                           variant="outline"
