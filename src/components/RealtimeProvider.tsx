@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRealtimeSubscriptions } from '@/hooks/useRealtimeSubscriptions';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,15 +54,17 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
         case 'users':
           queryClient.invalidateQueries({ queryKey: ['user-profile'] });
           queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-clients'] });
+          queryClient.invalidateQueries({ queryKey: ['client-check'] });
           break;
         case 'prospects':
+          queryClient.invalidateQueries({ queryKey: ['prospects'] });
           if (payload.eventType === 'INSERT') {
             console.log('New prospect received via Realtime!', payload);
             toast({
               title: "Nieuwe Prospect",
               description: "Een nieuwe prospect is binnengekomen via het contactformulier.",
             });
-            queryClient.invalidateQueries({ queryKey: ['prospects'] });
           }
           break;
       }
