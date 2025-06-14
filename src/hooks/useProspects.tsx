@@ -81,35 +81,61 @@ export const useProspects = () => {
   const convertProspectToClient = async (prospect: Prospect) => {
     setLoading(true);
     try {
-      // 1. Create a new client in the 'users' table
-      const { data: newClient, error: clientError } = await supabase
+      // 1. Check if a client with this email already exists
+      const { data: existingClient, error: checkError } = await supabase
         .from('users')
-        .insert({
-          name: `${prospect.first_name} ${prospect.last_name}`,
-          email: prospect.email,
-          phone: prospect.phone,
-          role: 'client',
-          client_status: 'active',
-          acquisition_source: prospect.source || 'contact_form',
-        })
-        .select()
-        .single();
+        .select('id')
+        .eq('email', prospect.email)
+        .maybeSingle();
 
-      if (clientError) throw clientError;
+      if (checkError) throw checkError;
 
-      // 2. Update the prospect to link to the new client
+      let clientId: string;
+      let newClientCreated = false;
+
+      if (existingClient) {
+        // User already exists, use their ID
+        clientId = existingClient.id;
+        toast({
+          title: "Klant Bestaat Al",
+          description: `Een klant met e-mail ${prospect.email} bestaat al. De prospect wordt nu gekoppeld.`,
+        });
+      } else {
+        // Create a new client in the 'users' table
+        const { data: newClient, error: clientError } = await supabase
+          .from('users')
+          .insert({
+            name: `${prospect.first_name} ${prospect.last_name}`,
+            email: prospect.email,
+            phone: prospect.phone,
+            role: 'client',
+            client_status: 'active',
+            acquisition_source: prospect.source || 'contact_form',
+          })
+          .select('id')
+          .single();
+
+        if (clientError) throw clientError;
+        
+        clientId = newClient.id;
+        newClientCreated = true;
+      }
+
+      // 2. Update the prospect to link to the client
       const { error: prospectError } = await supabase
         .from('prospects')
         .update({
           status: 'converted',
-          converted_to_client_id: newClient.id,
+          converted_to_client_id: clientId,
           converted_at: new Date().toISOString(),
         })
         .eq('id', prospect.id);
 
       if (prospectError) {
-        // Rollback client creation if prospect update fails
-        await supabase.from('users').delete().eq('id', newClient.id);
+        // Rollback client creation if prospect update fails and if we created a new client
+        if (newClientCreated) {
+          await supabase.from('users').delete().eq('id', clientId);
+        }
         throw prospectError;
       }
 
