@@ -29,15 +29,15 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: `${selectedBookings.length} bookings confirmed successfully.`,
+        title: "Succesvol",
+        description: `${selectedBookings.length} boekingen succesvol bevestigd.`,
       });
       
       onActionComplete();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Fout",
         description: error.message,
       });
     }
@@ -46,8 +46,8 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
   const handleSendReminders = async () => {
     // This would typically integrate with an email service
     toast({
-      title: "Reminders Sent",
-      description: `Reminder emails sent to ${selectedBookings.length} clients.`,
+      title: "Herinneringen Verzonden",
+      description: `Herinnering emails verzonden naar ${selectedBookings.length} klanten.`,
     });
     
     onActionComplete();
@@ -67,16 +67,16 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
       if (error) throw error;
 
       const csvData = bookings.map(booking => ({
-        'Booking ID': booking.id,
-        'Client Name': booking.user?.name || 'N/A',
-        'Client Email': booking.user?.email || 'N/A',
+        'Boeking ID': booking.id,
+        'Klant Naam': booking.user?.name || 'N/A',
+        'Klant Email': booking.user?.email || 'N/A',
         'Service': booking.service?.name || 'N/A',
-        'Date': new Date(booking.date_time).toLocaleDateString(),
-        'Time': new Date(booking.date_time).toLocaleTimeString(),
+        'Datum': new Date(booking.date_time).toLocaleDateString('nl-NL'),
+        'Tijd': new Date(booking.date_time).toLocaleTimeString('nl-NL'),
         'Status': booking.status,
-        'Payment Status': booking.payment_status,
-        'Price': `€${booking.service?.price || 0}`,
-        'Notes': booking.notes || '',
+        'Betaalstatus': booking.payment_status,
+        'Prijs': `€${booking.service?.price || 0}`,
+        'Notities': booking.notes || '',
       }));
 
       const csvContent = [
@@ -88,18 +88,18 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `selected-bookings-${Date.now()}.csv`;
+      a.download = `geselecteerde-boekingen-${Date.now()}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
 
       toast({
-        title: "Export Complete",
-        description: `${selectedBookings.length} bookings exported successfully.`,
+        title: "Export Voltooid",
+        description: `${selectedBookings.length} boekingen succesvol geëxporteerd.`,
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Export Error",
+        title: "Export Fout",
         description: error.message,
       });
     }
@@ -111,7 +111,7 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-orange-300">
             <AlertTriangle className="w-4 h-4" />
-            <span className="font-medium">{selectedBookings.length} bookings selected</span>
+            <span className="font-medium">{selectedBookings.length} boekingen geselecteerd</span>
           </div>
           
           <div className="flex gap-2">
@@ -121,7 +121,7 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               <CheckCircle className="w-4 h-4 mr-1" />
-              Confirm All
+              Bevestig Alle
             </Button>
             
             <Button
@@ -131,7 +131,7 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
               className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
             >
               <Mail className="w-4 h-4 mr-1" />
-              Send Reminders
+              Stuur Herinneringen
             </Button>
             
             <Button
@@ -141,7 +141,7 @@ export function BookingsBulkActions({ selectedBookings, onActionComplete }: Book
               className="border-orange-500/20 text-orange-300 hover:bg-orange-500/10"
             >
               <Download className="w-4 h-4 mr-1" />
-              Export Selected
+              Exporteer Geselecteerde
             </Button>
           </div>
         </div>

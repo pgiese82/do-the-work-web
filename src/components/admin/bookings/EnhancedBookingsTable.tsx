@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -123,7 +124,7 @@ export function EnhancedBookingsTable() {
       // Use direct update instead of enhanced operations to avoid bulk function
       const success = await updateBooking(bookingToCancel, { 
         status: 'cancelled',
-        internal_notes: 'Cancelled via admin interface'
+        internal_notes: 'Geannuleerd via admin interface'
       });
       
       if (success) {
@@ -156,7 +157,7 @@ export function EnhancedBookingsTable() {
   };
 
   const handleDuplicateBooking = async (bookingId: string) => {
-    const newDateTime = prompt('Enter new date and time (YYYY-MM-DD HH:MM):');
+    const newDateTime = prompt('Voer nieuwe datum en tijd in (JJJJ-MM-DD UU:MM):');
     if (newDateTime) {
       const success = await duplicateBooking(bookingId, newDateTime);
       if (success) {
@@ -167,20 +168,20 @@ export function EnhancedBookingsTable() {
 
   const exportToCSV = () => {
     const csvData = bookings.map(booking => ({
-      'Booking ID': booking.id,
-      'Client Name': booking.user?.name || 'N/A',
-      'Client Email': booking.user?.email || 'N/A',
-      'Client Status': booking.user?.client_status || 'N/A',
+      'Boeking ID': booking.id,
+      'Klant Naam': booking.user?.name || 'N/A',
+      'Klant Email': booking.user?.email || 'N/A',
+      'Klant Status': booking.user?.client_status || 'N/A',
       'Service': booking.service?.name || 'N/A',
-      'Date': format(new Date(booking.date_time), 'yyyy-MM-dd'),
-      'Time': format(new Date(booking.date_time), 'HH:mm'),
+      'Datum': format(new Date(booking.date_time), 'yyyy-MM-dd'),
+      'Tijd': format(new Date(booking.date_time), 'HH:mm'),
       'Status': booking.status,
-      'Payment Status': booking.payment_status,
-      'Price': `€${booking.service?.price || 0}`,
-      'Total Client Spent': `€${booking.user?.total_spent || 0}`,
-      'Last Session': booking.user?.last_session_date ? format(new Date(booking.user.last_session_date), 'yyyy-MM-dd') : 'N/A',
-      'Internal Notes': booking.internal_notes || '',
-      'Session Notes': booking.session_notes || ''
+      'Betaalstatus': booking.payment_status,
+      'Prijs': `€${booking.service?.price || 0}`,
+      'Totaal Klant Uitgegeven': `€${booking.user?.total_spent || 0}`,
+      'Laatste Sessie': booking.user?.last_session_date ? format(new Date(booking.user.last_session_date), 'yyyy-MM-dd') : 'N/A',
+      'Interne Notities': booking.internal_notes || '',
+      'Sessie Notities': booking.session_notes || ''
     }));
 
     const csvContent = [
@@ -192,7 +193,7 @@ export function EnhancedBookingsTable() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `enhanced-bookings-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `boekingen-export-${format(new Date(), 'yyyy-MM-dd')}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -207,7 +208,7 @@ export function EnhancedBookingsTable() {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>Enhanced Booking Management</CardTitle>
+            <CardTitle>Uitgebreid Boekingen Beheer</CardTitle>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -218,7 +219,7 @@ export function EnhancedBookingsTable() {
               </Button>
               <Button onClick={exportToCSV} variant="outline">
                 <Download className="w-4 h-4 mr-2" />
-                Export CSV
+                Exporteer CSV
               </Button>
             </div>
           </div>
@@ -227,23 +228,23 @@ export function EnhancedBookingsTable() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{searchStats.totalResults}</div>
-              <div className="text-xs text-muted-foreground">Total Results</div>
+              <div className="text-xs text-muted-foreground">Totaal Resultaten</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-600">{searchStats.pendingBookings}</div>
-              <div className="text-xs text-muted-foreground">Pending</div>
+              <div className="text-xs text-muted-foreground">In Afwachting</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{searchStats.confirmedBookings}</div>
-              <div className="text-xs text-muted-foreground">Confirmed</div>
+              <div className="text-xs text-muted-foreground">Bevestigd</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{searchStats.completedBookings}</div>
-              <div className="text-xs text-muted-foreground">Completed</div>
+              <div className="text-xs text-muted-foreground">Voltooid</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">€{searchStats.totalRevenue.toFixed(2)}</div>
-              <div className="text-xs text-muted-foreground">Revenue</div>
+              <div className="text-xs text-muted-foreground">Omzet</div>
             </div>
           </div>
         </CardHeader>
@@ -253,7 +254,7 @@ export function EnhancedBookingsTable() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search by client name, email, booking ID, service, or notes..."
+              placeholder="Zoek op klantnaam, email, boeking ID, service, of notities..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -296,7 +297,7 @@ export function EnhancedBookingsTable() {
                   </TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort('user.name')}>
                     <div className="flex items-center gap-2">
-                      Client {getSortIcon('user.name')}
+                      Klant {getSortIcon('user.name')}
                     </div>
                   </TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort('service.name')}>
@@ -306,31 +307,31 @@ export function EnhancedBookingsTable() {
                   </TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort('date_time')}>
                     <div className="flex items-center gap-2">
-                      Date & Time {getSortIcon('date_time')}
+                      Datum & Tijd {getSortIcon('date_time')}
                     </div>
                   </TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Payment</TableHead>
+                  <TableHead>Betaling</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort('service.price')}>
                     <div className="flex items-center gap-2">
-                      Price {getSortIcon('service.price')}
+                      Prijs {getSortIcon('service.price')}
                     </div>
                   </TableHead>
-                  <TableHead>Client Value</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>Klant Waarde</TableHead>
+                  <TableHead>Acties</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                      Loading enhanced bookings...
+                      Boekingen laden...
                     </TableCell>
                   </TableRow>
                 ) : bookings.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                      No bookings found matching your criteria
+                      Geen boekingen gevonden die voldoen aan je criteria
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -362,7 +363,7 @@ export function EnhancedBookingsTable() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div>{format(new Date(booking.date_time), 'MMM dd, yyyy')}</div>
+                          <div>{format(new Date(booking.date_time), 'dd MMM yyyy')}</div>
                           <div className="text-xs text-muted-foreground">{format(new Date(booking.date_time), 'HH:mm')}</div>
                         </div>
                       </TableCell>
@@ -380,8 +381,8 @@ export function EnhancedBookingsTable() {
                           <div className="font-medium">€{booking.user?.total_spent || 0}</div>
                           <div className="text-xs text-muted-foreground">
                             {booking.user?.last_session_date 
-                              ? format(new Date(booking.user.last_session_date), 'MMM dd')
-                              : 'No sessions'
+                              ? format(new Date(booking.user.last_session_date), 'dd MMM')
+                              : 'Geen sessies'
                             }
                           </div>
                         </div>

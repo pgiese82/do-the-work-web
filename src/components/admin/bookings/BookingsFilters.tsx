@@ -36,34 +36,34 @@ export function BookingsFilters({
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent className="bg-gray-800 border-orange-900/20">
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-            <SelectItem value="no_show">No Show</SelectItem>
+            <SelectItem value="all">Alle Statussen</SelectItem>
+            <SelectItem value="pending">In Afwachting</SelectItem>
+            <SelectItem value="confirmed">Bevestigd</SelectItem>
+            <SelectItem value="completed">Voltooid</SelectItem>
+            <SelectItem value="cancelled">Geannuleerd</SelectItem>
+            <SelectItem value="no_show">Niet Verschenen</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label className="text-gray-300 text-xs">Payment</Label>
+        <Label className="text-gray-300 text-xs">Betaling</Label>
         <Select value={paymentFilter} onValueChange={setPaymentFilter}>
           <SelectTrigger className="w-32 bg-gray-700/50 border-orange-900/20 text-white">
-            <SelectValue placeholder="Payment" />
+            <SelectValue placeholder="Betaling" />
           </SelectTrigger>
           <SelectContent className="bg-gray-800 border-orange-900/20">
-            <SelectItem value="all">All Payments</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="paid">Paid</SelectItem>
-            <SelectItem value="failed">Failed</SelectItem>
-            <SelectItem value="refunded">Refunded</SelectItem>
+            <SelectItem value="all">Alle Betalingen</SelectItem>
+            <SelectItem value="pending">In Afwachting</SelectItem>
+            <SelectItem value="paid">Betaald</SelectItem>
+            <SelectItem value="failed">Mislukt</SelectItem>
+            <SelectItem value="refunded">Terugbetaald</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label className="text-gray-300 text-xs">Date From</Label>
+        <Label className="text-gray-300 text-xs">Datum Van</Label>
         <Input
           type="date"
           value={dateRange.from}
@@ -73,7 +73,7 @@ export function BookingsFilters({
       </div>
 
       <div className="space-y-2">
-        <Label className="text-gray-300 text-xs">Date To</Label>
+        <Label className="text-gray-300 text-xs">Datum Tot</Label>
         <Input
           type="date"
           value={dateRange.to}

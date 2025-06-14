@@ -15,22 +15,22 @@ interface PaymentStatusBadgeProps {
 const paymentStatusConfig = {
   pending: {
     icon: Clock,
-    label: 'Pending',
+    label: 'In Afwachting',
     className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20',
   },
   paid: {
     icon: CreditCard,
-    label: 'Paid',
+    label: 'Betaald',
     className: 'bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20',
   },
   failed: {
     icon: XCircle,
-    label: 'Failed',
+    label: 'Mislukt',
     className: 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20',
   },
   refunded: {
     icon: RotateCcw,
-    label: 'Refunded',
+    label: 'Terugbetaald',
     className: 'bg-gray-500/10 text-gray-400 border-gray-500/20 hover:bg-gray-500/20',
   },
 };

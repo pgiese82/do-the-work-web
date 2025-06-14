@@ -48,16 +48,16 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
       if (error) throw error;
 
       toast({
-        title: 'Status Updated',
-        description: `Booking status changed to ${newStatus}`,
+        title: 'Status Bijgewerkt',
+        description: `Boeking status gewijzigd naar ${newStatus}`,
       });
 
       onUpdate();
     } catch (error) {
       console.error('Error updating status:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update booking status',
+        title: 'Fout',
+        description: 'Kon boeking status niet bijwerken',
         variant: 'destructive',
       });
     }
@@ -72,14 +72,14 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
       if (error) throw error;
 
       toast({
-        title: 'Reminder Sent',
-        description: 'Booking reminder sent successfully',
+        title: 'Herinnering Verzonden',
+        description: 'Boeking herinnering succesvol verzonden',
       });
     } catch (error) {
       console.error('Error sending reminder:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send reminder',
+        title: 'Fout',
+        description: 'Kon herinnering niet verzenden',
         variant: 'destructive',
       });
     }
@@ -88,8 +88,8 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
   const handleSendSMS = async () => {
     if (!booking.user.phone) {
       toast({
-        title: 'No Phone Number',
-        description: 'Client does not have a phone number on file',
+        title: 'Geen Telefoonnummer',
+        description: 'Klant heeft geen telefoonnummer in het systeem',
         variant: 'destructive',
       });
       return;
@@ -103,14 +103,14 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
       if (error) throw error;
 
       toast({
-        title: 'SMS Sent',
-        description: 'SMS reminder sent successfully',
+        title: 'SMS Verzonden',
+        description: 'SMS herinnering succesvol verzonden',
       });
     } catch (error) {
       console.error('Error sending SMS:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send SMS',
+        title: 'Fout',
+        description: 'Kon SMS niet verzenden',
         variant: 'destructive',
       });
     }
@@ -126,7 +126,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
       <DropdownMenuContent align="end" className="bg-gray-700 border-orange-900/20">
         <DropdownMenuItem onClick={onEdit} className="text-gray-300 hover:text-white hover:bg-gray-600">
           <Edit className="mr-2 h-4 w-4" />
-          Edit Details
+          Bewerk Details
         </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-orange-900/20" />
@@ -137,7 +137,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
             className="text-green-400 hover:text-green-300 hover:bg-gray-600"
           >
             <CheckCircle className="mr-2 h-4 w-4" />
-            Confirm Booking
+            Bevestig Boeking
           </DropdownMenuItem>
         )}
         
@@ -147,7 +147,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
             className="text-blue-400 hover:text-blue-300 hover:bg-gray-600"
           >
             <Calendar className="mr-2 h-4 w-4" />
-            Mark Complete
+            Markeer als Voltooid
           </DropdownMenuItem>
         )}
         
@@ -157,7 +157,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
             className="text-red-400 hover:text-red-300 hover:bg-gray-600"
           >
             <XCircle className="mr-2 h-4 w-4" />
-            Cancel Booking
+            Annuleer Boeking
           </DropdownMenuItem>
         )}
         
@@ -168,7 +168,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
           className="text-gray-300 hover:text-white hover:bg-gray-600"
         >
           <Mail className="mr-2 h-4 w-4" />
-          Send Email Reminder
+          Stuur Email Herinnering
         </DropdownMenuItem>
         
         <DropdownMenuItem 
@@ -177,7 +177,7 @@ export function QuickActionsDropdown({ booking, onEdit, onUpdate }: QuickActions
           disabled={!booking.user.phone}
         >
           <Phone className="mr-2 h-4 w-4" />
-          Send SMS Reminder
+          Stuur SMS Herinnering
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

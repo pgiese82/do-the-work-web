@@ -16,27 +16,27 @@ interface BookingStatusBadgeProps {
 const statusConfig = {
   pending: {
     icon: Clock,
-    label: 'Pending',
+    label: 'In Afwachting',
     className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20',
   },
   confirmed: {
     icon: CheckCircle,
-    label: 'Confirmed',
+    label: 'Bevestigd',
     className: 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20',
   },
   completed: {
     icon: CheckCircle,
-    label: 'Completed',
+    label: 'Voltooid',
     className: 'bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20',
   },
   cancelled: {
     icon: XCircle,
-    label: 'Cancelled',
+    label: 'Geannuleerd',
     className: 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20',
   },
   no_show: {
     icon: AlertCircle,
-    label: 'No Show',
+    label: 'Niet Verschenen',
     className: 'bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20',
   },
 };
