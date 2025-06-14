@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -100,21 +99,10 @@ const ContactForm = () => {
       <div className="max-w-md mx-auto text-center py-12">
         <div className="animate-scale-in">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-bounce" />
-          <h3 className="text-2xl font-bold text-slate-900 mb-4">Bedankt!</h3>
-          <p className="text-slate-800 font-medium mb-8">
+          <h3 className="text-3xl font-bold text-white mb-6">Bedankt!</h3>
+          <p className="text-white text-lg font-medium">
             Je bericht is verzonden. We nemen binnen 24 uur contact met je op om je gratis kennismaking in te plannen.
           </p>
-          <Button 
-            onClick={() => {
-              setIsSubmitted(false);
-              setCurrentStep(1);
-              form.reset();
-            }}
-            variant="outline"
-            className="min-h-[44px]"
-          >
-            Nieuw bericht
-          </Button>
         </div>
       </div>
     );
