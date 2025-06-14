@@ -1,29 +1,16 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { DesktopNavigation } from './header/DesktopNavigation';
 import { AccountSection } from './header/AccountSection';
 import { MobileMenu } from './header/MobileMenu';
 import { MobileMenuButton } from './header/MobileMenuButton';
-import LogoProcessor from './LogoProcessor';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState('/lovable-uploads/78b34f25-d564-4507-866d-3367ca31062c.png');
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleLogoProcessed = (event: CustomEvent) => {
-      setLogoUrl(event.detail.url);
-    };
-
-    window.addEventListener('logoProcessed', handleLogoProcessed as EventListener);
-    
-    return () => {
-      window.removeEventListener('logoProcessed', handleLogoProcessed as EventListener);
-    };
-  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -40,41 +27,38 @@ const Header = () => {
   };
 
   return (
-    <>
-      <LogoProcessor />
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow-lg">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <img 
-                src={logoUrl}
-                alt="DO THE WORK Logo" 
-                className="h-10 w-auto"
-              />
-              <span className="ml-3 text-xl font-bold text-white tracking-wide">THE WORK</span>
-            </div>
-
-            {/* Desktop Navigation */}
-            <DesktopNavigation scrollToSection={scrollToSection} />
-
-            {/* Desktop Account Section */}
-            <AccountSection user={user} onLogout={handleLogout} />
-
-            {/* Mobile menu button */}
-            <MobileMenuButton isOpen={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)} />
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 shadow-lg">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/78b34f25-d564-4507-866d-3367ca31062c.png" 
+              alt="DO THE WORK Logo" 
+              className="h-10 w-auto"
+            />
+            <span className="ml-3 text-xl font-bold text-white tracking-wide">THE WORK</span>
           </div>
 
-          {/* Mobile Navigation */}
-          <MobileMenu 
-            isOpen={isMenuOpen} 
-            user={user} 
-            scrollToSection={scrollToSection} 
-            onLogout={handleLogout} 
-          />
+          {/* Desktop Navigation */}
+          <DesktopNavigation scrollToSection={scrollToSection} />
+
+          {/* Desktop Account Section */}
+          <AccountSection user={user} onLogout={handleLogout} />
+
+          {/* Mobile menu button */}
+          <MobileMenuButton isOpen={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)} />
         </div>
-      </header>
-    </>
+
+        {/* Mobile Navigation */}
+        <MobileMenu 
+          isOpen={isMenuOpen} 
+          user={user} 
+          scrollToSection={scrollToSection} 
+          onLogout={handleLogout} 
+        />
+      </div>
+    </header>
   );
 };
 
