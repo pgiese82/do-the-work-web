@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -81,6 +82,26 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
       if (error) throw error;
 
       setClient(data);
+      
+      // Convert old status to new uniform system
+      let normalizedStatus = 'prospect';
+      if (data.client_status) {
+        switch (data.client_status.toLowerCase()) {
+          case 'active':
+          case 'actief':
+            normalizedStatus = 'active';
+            break;
+          case 'inactive':
+          case 'inactief':
+          case 'churned':
+          case 'weggevallen':
+            normalizedStatus = 'inactive';
+            break;
+          default:
+            normalizedStatus = 'prospect';
+        }
+      }
+      
       setFormData({
         name: data.name || '',
         email: data.email || '',
@@ -91,7 +112,7 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
         emergency_contact_phone: data.emergency_contact_phone || '',
         health_notes: data.health_notes || '',
         training_preferences: data.training_preferences || '',
-        client_status: data.client_status && data.client_status.trim() !== '' ? data.client_status : 'prospect',
+        client_status: normalizedStatus,
         acquisition_source: data.acquisition_source || '',
         notes: data.notes || ''
       });
@@ -231,9 +252,8 @@ export function ClientProfileModal({ open, onOpenChange, clientId, onUpdate }: C
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="prospect">Prospect</SelectItem>
-                      <SelectItem value="active">Actief</SelectItem>
-                      <SelectItem value="inactive">Inactief</SelectItem>
-                      <SelectItem value="churned">Weggevallen</SelectItem>
+                      <SelectItem value="active">Actieve Klant</SelectItem>
+                      <SelectItem value="inactive">Niet-actieve Klant</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

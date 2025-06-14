@@ -85,11 +85,33 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
         );
       }
 
-      // Ensure client_status is never empty
-      filteredData = filteredData.map(client => ({
-        ...client,
-        client_status: client.client_status && client.client_status.trim() !== '' ? client.client_status : 'prospect'
-      }));
+      // Ensure client_status uses the new uniform system
+      filteredData = filteredData.map(client => {
+        let normalizedStatus = 'prospect';
+        
+        // Convert old statuses to new uniform system
+        if (client.client_status) {
+          switch (client.client_status.toLowerCase()) {
+            case 'active':
+            case 'actief':
+              normalizedStatus = 'active';
+              break;
+            case 'inactive':
+            case 'inactief':
+            case 'churned':
+            case 'weggevallen':
+              normalizedStatus = 'inactive';
+              break;
+            default:
+              normalizedStatus = 'prospect';
+          }
+        }
+        
+        return {
+          ...client,
+          client_status: normalizedStatus
+        };
+      });
 
       console.log('Filtered clients:', filteredData.map(c => ({ id: c.id, client_status: c.client_status })));
 
@@ -98,26 +120,21 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
   });
 
   const getStatusBadge = (status: string) => {
-    // Ensure status is never empty
-    const normalizedStatus = status && status.trim() !== '' ? status : 'prospect';
-    
     const variants = {
       prospect: 'bg-blue-100 text-blue-800 border-blue-200',
       active: 'bg-green-100 text-green-800 border-green-200',
-      inactive: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      churned: 'bg-red-100 text-red-800 border-red-200'
+      inactive: 'bg-red-100 text-red-800 border-red-200'
     };
 
     const labels = {
       prospect: 'Prospect',
-      active: 'Actief',
-      inactive: 'Inactief',
-      churned: 'Weggevallen'
+      active: 'Actieve Klant',
+      inactive: 'Niet-actieve Klant'
     };
 
     return (
-      <Badge className={variants[normalizedStatus as keyof typeof variants] || variants.prospect}>
-        {labels[normalizedStatus as keyof typeof labels] || normalizedStatus}
+      <Badge className={variants[status as keyof typeof variants] || variants.prospect}>
+        {labels[status as keyof typeof labels] || status}
       </Badge>
     );
   };
@@ -155,9 +172,8 @@ export function ClientProfilesTable({ onUpdate }: ClientProfilesTableProps) {
               <SelectContent className="bg-white border-gray-200">
                 <SelectItem value="all">Alle Statussen</SelectItem>
                 <SelectItem value="prospect">Prospect</SelectItem>
-                <SelectItem value="active">Actief</SelectItem>
-                <SelectItem value="inactive">Inactief</SelectItem>
-                <SelectItem value="churned">Weggevallen</SelectItem>
+                <SelectItem value="active">Actieve Klant</SelectItem>
+                <SelectItem value="inactive">Niet-actieve Klant</SelectItem>
               </SelectContent>
             </Select>
           </div>

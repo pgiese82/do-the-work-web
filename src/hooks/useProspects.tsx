@@ -110,12 +110,43 @@ export const useProspects = () => {
     }
   };
 
+  const deleteProspect = async (prospectId: string) => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('prospects')
+        .delete()
+        .eq('id', prospectId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Prospect Verwijderd",
+        description: "De prospect is succesvol verwijderd uit de database.",
+      });
+
+      refetch();
+      return true;
+    } catch (error: any) {
+      console.error('Delete prospect error:', error);
+      toast({
+        variant: "destructive",
+        title: "Verwijderen Mislukt",
+        description: error.message,
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     prospects,
     isLoading,
     loading,
     refetch,
     updateProspectStatus,
-    convertToClient
+    convertToClient,
+    deleteProspect
   };
 };
