@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -217,7 +216,7 @@ export function ProspectsOverview() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap gap-1">
                       {prospect.status === 'new' && (
                         <Button
                           size="sm"
@@ -256,16 +255,6 @@ export function ProspectsOverview() {
                           </Button>
                         </>
                       )}
-                      {prospect.status === 'not_interested' && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDeleteProspect(prospect.id, `${prospect.first_name} ${prospect.last_name}`)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Verwijderen
-                        </Button>
-                      )}
                       {prospect.message && (
                         <Button
                           size="sm"
@@ -273,6 +262,16 @@ export function ProspectsOverview() {
                           title={prospect.message}
                         >
                           <MessageSquare className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {prospect.status !== 'converted' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteProspect(prospect.id, `${prospect.first_name} ${prospect.last_name}`)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Verwijderen
                         </Button>
                       )}
                     </div>
