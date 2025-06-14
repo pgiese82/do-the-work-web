@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -88,6 +87,14 @@ const ContactForm = () => {
         return [];
       default:
         return [];
+    }
+  };
+
+  const handleNextOrSubmit = async () => {
+    if (currentStep === totalSteps) {
+      await form.handleSubmit(onSubmit)();
+    } else {
+      await nextStep();
     }
   };
 
@@ -427,25 +434,23 @@ const ContactForm = () => {
                 Vorige
               </Button>
 
-              {currentStep < totalSteps ? (
-                <Button
-                  type="button"
-                  onClick={nextStep}
-                  disabled={isSubmitting}
-                  className="bg-orange-600 hover:bg-orange-700 min-h-[44px]"
-                >
-                  Volgende
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-orange-600 hover:bg-orange-700 min-h-[44px]"
-                >
-                  {isSubmitting ? 'Verzenden...' : 'Verstuur bericht'}
-                </Button>
-              )}
+              <Button
+                type="button"
+                onClick={handleNextOrSubmit}
+                disabled={isSubmitting}
+                className="bg-orange-600 hover:bg-orange-700 min-h-[44px]"
+              >
+                {currentStep < totalSteps ? (
+                  <>
+                    Volgende
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                ) : isSubmitting ? (
+                  'Verzenden...'
+                ) : (
+                  'Verstuur bericht'
+                )}
+              </Button>
             </div>
           </form>
         </Form>
