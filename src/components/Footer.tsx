@@ -90,7 +90,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center text-sm md:text-base">
                 <MapPin className="w-4 h-4 mr-3 text-orange-500 flex-shrink-0" />
-                <span>Amsterdam, Nederland</span>
+                <span>Heerenveen, Nederland</span>
               </div>
             </div>
           </div>
