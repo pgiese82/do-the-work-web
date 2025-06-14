@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import { useDashboardStats, useNextBooking, useUserProfile } from '@/hooks/useDa
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorMessage } from './ErrorMessage';
 
-export function DashboardOverview() {
+function DashboardOverview() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -273,3 +272,5 @@ export function DashboardOverview() {
     </div>
   );
 }
+
+export default DashboardOverview;

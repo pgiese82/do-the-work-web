@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookingTabs } from './mybookings/BookingTabs';
@@ -9,7 +8,7 @@ import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorMessage } from './ErrorMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-export function BookingsOverview() {
+function BookingsOverview() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { 
@@ -105,3 +104,5 @@ export function BookingsOverview() {
     </div>
   );
 }
+
+export default BookingsOverview;

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorMessage } from './ErrorMessage';
 
-export function ProfileSettings() {
+function ProfileSettings() {
   const { data: profile, isLoading, error, refetch } = useUserProfile();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
@@ -277,3 +276,5 @@ export function ProfileSettings() {
     </div>
   );
 }
+
+export default ProfileSettings;

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,7 @@ type DatabaseService = {
   updated_at: string;
 };
 
-export function BookSession() {
+function BookSession() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
 
@@ -146,3 +145,5 @@ export function BookSession() {
     </div>
   );
 }
+
+export default BookSession;

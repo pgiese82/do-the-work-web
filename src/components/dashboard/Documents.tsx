@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type DocumentCategory = 'contract' | 'invoice' | 'receipt' | 'program' | 'medical' | 'other' | 'all';
 
-export function Documents() {
+function Documents() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<DocumentCategory>('all');
   const [uploading, setUploading] = useState(false);
@@ -309,3 +308,5 @@ export function Documents() {
     </div>
   );
 }
+
+export default Documents;
