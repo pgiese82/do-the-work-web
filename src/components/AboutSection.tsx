@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useNavigate } from 'react-router-dom';
 
 const AboutSection = () => {
+  const navigate = useNavigate();
   const {
     ref: contentRef,
     isVisible: contentVisible
@@ -41,7 +43,10 @@ const AboutSection = () => {
               </div>
               <span className="text-slate-600 font-medium text-sm md:text-base lg:text-lg">500+ succesverhalen</span>
             </div>
-            <Button className="bg-slate-900 hover:bg-slate-800 text-white min-h-[44px] md:min-h-[52px] lg:min-h-[60px] px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 w-full sm:w-auto text-base md:text-lg">
+            <Button 
+              onClick={() => navigate('/mijn-verhaal')}
+              className="bg-slate-900 hover:bg-slate-800 text-white min-h-[44px] md:min-h-[52px] lg:min-h-[60px] px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 w-full sm:w-auto text-base md:text-lg"
+            >
               Lees mijn verhaal
             </Button>
           </div>

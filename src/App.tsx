@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RealtimeProvider } from '@/components/RealtimeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import Index from '@/pages/Index';
+import MijnVerhaal from '@/pages/MijnVerhaal';
 import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
 import AdminLogin from '@/pages/AdminLogin';
@@ -84,6 +85,7 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/mijn-verhaal" element={<MijnVerhaal />} />
               <Route path="/auth" element={<Auth />} />
               
               {/* Dashboard Routes - Individual explicit routes */}
