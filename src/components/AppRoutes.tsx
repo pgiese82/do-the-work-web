@@ -12,6 +12,7 @@ import {
   SharedDocument,
   PrivacyPolicy,
   TermsAndConditions,
+  CookiePolicy,
   AdminLogin,
   AdminDashboard,
   AdminBookings,
@@ -49,6 +50,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/auth" element={<Auth />} />
         <Route path="/privacybeleid" element={<PrivacyPolicy />} />
         <Route path="/algemene-voorwaarden" element={<TermsAndConditions />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
         
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={

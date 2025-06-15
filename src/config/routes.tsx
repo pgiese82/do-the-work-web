@@ -9,6 +9,7 @@ const NotFound = lazy(() => import('@/pages/NotFound'));
 const SharedDocument = lazy(() => import('@/pages/SharedDocument'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('@/pages/TermsAndConditions'));
+const CookiePolicy = lazy(() => import('@/pages/CookiePolicy'));
 
 // Admin pages
 const AdminLogin = lazy(() => import('@/pages/AdminLogin'));
@@ -41,6 +42,7 @@ export {
   SharedDocument,
   PrivacyPolicy,
   TermsAndConditions,
+  CookiePolicy,
   AdminLogin,
   AdminDashboard,
   AdminBookings,
