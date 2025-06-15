@@ -13,7 +13,7 @@ import { HolidayManager } from './HolidayManager';
 import { BookingDragModal } from './BookingDragModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { format, addDays, addWeeks, addMonths, startOfDay, endOfDay } from 'date-fns';
+import { format, addDays, addWeeks, addMonths, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import { nl } from 'date-fns/locale';
 
 interface Booking {
@@ -154,8 +154,8 @@ export function AdminCalendar() {
       case 'day':
         return format(currentDate, 'EEEE, d MMMM yyyy', { locale: nl });
       case 'week':
-        const weekStart = startOfDay(currentDate);
-        const weekEnd = endOfDay(addDays(weekStart, 6));
+        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
         return `${format(weekStart, 'd MMM', { locale: nl })} - ${format(weekEnd, 'd MMM yyyy', { locale: nl })}`;
       case 'month':
         return format(currentDate, 'MMMM yyyy', { locale: nl });
