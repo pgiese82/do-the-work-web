@@ -30,7 +30,7 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-white" id="succesverhalen">
+    <section className="py-16 md:py-20 lg:py-24 xl:py-32 bg-white" id="testimonials">
       <div className="container mx-auto px-4 md:px-8 lg:px-12 xl:px-16">
         <div ref={titleRef} className={`text-center mb-12 md:mb-16 lg:mb-20 xl:mb-24 scroll-fade-in ${titleVisible ? 'visible' : ''}`}>
           <Badge className="mb-4 md:mb-6 bg-orange-100 text-orange-800 hover:bg-orange-200 min-h-[44px] flex items-center justify-center w-fit mx-auto text-sm md:text-base">
