@@ -27,7 +27,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
         .from('bookings')
         .select(`
           *,
-          user:users(
+          user:user_id(
             id,
             name, 
             email, 
@@ -36,7 +36,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
             total_spent,
             last_session_date
           ),
-          service:services(
+          service:service_id(
             id,
             name, 
             price,
