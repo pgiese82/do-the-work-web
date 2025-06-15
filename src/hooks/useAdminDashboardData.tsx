@@ -1,7 +1,5 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAdminRealtimeData } from './useAdminRealtimeData';
 
 interface AdminDashboardStats {
   todayBookings: number;
@@ -15,10 +13,8 @@ interface AdminDashboardStats {
 }
 
 export const useAdminDashboardStats = () => {
-  const updateTrigger = useAdminRealtimeData();
-
   return useQuery({
-    queryKey: ['admin-dashboard-stats', updateTrigger],
+    queryKey: ['admin-dashboard-stats'],
     queryFn: async (): Promise<AdminDashboardStats> => {
       const today = new Date().toISOString().split('T')[0];
       const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
@@ -238,8 +234,4 @@ export const useRecentActivity = () => {
     staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 60 * 1000, // 1 minute
   });
-};
-
-export const useRealtimeUpdates = () => {
-  return useAdminRealtimeData();
 };

@@ -4,6 +4,7 @@ import { AdminSidebar } from './AdminSidebar';
 import { AdminMobileMenu } from './AdminMobileMenu';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAdminRealtimeSetup } from '@/hooks/useAdminRealtimeSetup';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useAdminRealtimeSetup(); // Setup realtime subscriptions once for all admin pages.
 
   console.log('AdminLayout rendering');
 

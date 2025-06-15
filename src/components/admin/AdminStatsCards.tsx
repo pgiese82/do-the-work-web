@@ -8,18 +8,10 @@ import {
   Clock,
   CheckCircle
 } from 'lucide-react';
-import { useAdminDashboardStats, useRealtimeUpdates } from '@/hooks/useAdminDashboardData';
+import { useAdminDashboardStats } from '@/hooks/useAdminDashboardData';
 
 export function AdminStatsCards() {
-  const updateTrigger = useRealtimeUpdates();
   const { data: stats, isLoading } = useAdminDashboardStats();
-
-  // Force refetch when realtime updates occur
-  React.useEffect(() => {
-    if (updateTrigger > 0) {
-      console.log('📊 Realtime update triggered, refetching stats');
-    }
-  }, [updateTrigger]);
 
   if (isLoading) {
     return (
