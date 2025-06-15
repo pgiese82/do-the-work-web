@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,7 +21,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
   }>({ key: 'date_time', direction: 'desc' });
 
   const { data: bookings = [], isLoading, refetch } = useQuery({
-    queryKey: ['advanced-bookings-search', filters.statusFilter, filters.paymentFilter, filters.serviceFilter, filters.clientStatusFilter, filters.dateRange, sortConfig],
+    queryKey: ['advanced-bookings-search', filters.statusFilter, filters.paymentFilter, filters.serviceFilter, filters.dateRange, sortConfig],
     queryFn: async () => {
       let query = supabase
         .from('bookings')
@@ -64,9 +63,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
         query = query.eq('service_id', filters.serviceFilter);
       }
 
-      if (filters.clientStatusFilter !== 'all') {
-        query = query.eq('user.client_status', filters.clientStatusFilter);
-      }
+      // Client status filter is now handled on the client side.
 
       if (filters.dateRange.from) {
         query = query.gte('date_time', filters.dateRange.from);
@@ -104,14 +101,22 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
     enabled: true,
   });
 
-  // Perform text search on the client side for robustness
+  // Perform text search and client status filtering on the client side for robustness
   const filteredBookings = useMemo(() => {
+    let results = bookings;
+
+    // Apply client status filter
+    if (filters.clientStatusFilter !== 'all') {
+      results = results.filter(booking => booking.user?.client_status === filters.clientStatusFilter);
+    }
+    
+    // Apply text search
     if (!filters.searchTerm) {
-      return bookings;
+      return results;
     }
 
     const searchLower = filters.searchTerm.toLowerCase();
-    return bookings.filter(booking => {
+    return results.filter(booking => {
       const searchFields = [
         booking.id,
         booking.user?.name,
@@ -122,10 +127,10 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
       ];
 
       return searchFields.some(field =>
-        field && field.toLowerCase().includes(searchLower)
+        field && String(field).toLowerCase().includes(searchLower)
       );
     });
-  }, [bookings, filters.searchTerm]);
+  }, [bookings, filters.searchTerm, filters.clientStatusFilter]);
 
 
   const handleSort = (key: string) => {
