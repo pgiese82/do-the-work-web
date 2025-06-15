@@ -60,7 +60,7 @@ export const MobileMenu = ({ isOpen, user, scrollToSection, onLogout }: MobileMe
           Diensten
         </button>
         <button
-          onClick={() => scrollToSection('succesverhalen')}
+          onClick={() => scrollToSection('testimonials')}
           className="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
         >
           Succesverhalen

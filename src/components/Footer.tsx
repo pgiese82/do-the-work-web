@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dumbbell, Mail, Phone, MapPin, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,19 +20,7 @@ const Footer = () => {
       setEmail('');
     }
   };
-  const companyLinks = [{
-    name: 'Over ons',
-    href: '#over-mij'
-  }, {
-    name: 'Ons verhaal',
-    href: '#'
-  }, {
-    name: 'Team',
-    href: '#'
-  }, {
-    name: 'Carrière',
-    href: '#'
-  }];
+
   const serviceLinks = [{
     name: 'Personal Training',
     href: '#services'
@@ -50,7 +39,7 @@ const Footer = () => {
     href: '#faq'
   }, {
     name: 'Mijn verhaal',
-    href: '#mijn-verhaal'
+    href: '/mijn-verhaal'
   }];
   const socialLinks = [
     {
@@ -171,13 +160,13 @@ const Footer = () => {
               © 2024 Do The Work. Alle rechten voorbehouden.
             </p>
             <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
+              <a href="/privacybeleid" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
                 Privacybeleid
               </a>
-              <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
+              <a href="/algemene-voorwaarden" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
                 Algemene Voorwaarden
               </a>
-              <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
+              <a href="/cookies" className="text-gray-400 hover:text-orange-400 transition-colors duration-300">
                 Cookies
               </a>
             </div>
