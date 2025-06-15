@@ -22,7 +22,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
   }>({ key: 'date_time', direction: 'desc' });
 
   const { data: bookings = [], isLoading, refetch } = useQuery({
-    queryKey: ['advanced-bookings-search', filters, sortConfig],
+    queryKey: ['advanced-bookings-search', filters.statusFilter, filters.paymentFilter, filters.serviceFilter, filters.clientStatusFilter, filters.dateRange, sortConfig],
     queryFn: async () => {
       let query = supabase
         .from('bookings')
@@ -76,17 +76,8 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
         query = query.lte('date_time', filters.dateRange.to);
       }
 
-      // Apply text search using database full-text search
-      if (filters.searchTerm) {
-        query = query.or(`
-          id.ilike.%${filters.searchTerm}%,
-          user.name.ilike.%${filters.searchTerm}%,
-          user.email.ilike.%${filters.searchTerm}%,
-          service.name.ilike.%${filters.searchTerm}%,
-          internal_notes.ilike.%${filters.searchTerm}%,
-          notes.ilike.%${filters.searchTerm}%
-        `);
-      }
+      // Text search is moved to client-side to prevent errors with NULL relations
+      // The .or() filter has been removed from here.
 
       // Apply sorting
       const ascending = sortConfig.direction === 'asc';
@@ -113,6 +104,30 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
     enabled: true,
   });
 
+  // Perform text search on the client side for robustness
+  const filteredBookings = useMemo(() => {
+    if (!filters.searchTerm) {
+      return bookings;
+    }
+
+    const searchLower = filters.searchTerm.toLowerCase();
+    return bookings.filter(booking => {
+      const searchFields = [
+        booking.id,
+        booking.user?.name,
+        booking.user?.email,
+        booking.service?.name,
+        booking.internal_notes,
+        booking.notes,
+      ];
+
+      return searchFields.some(field =>
+        field && field.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [bookings, filters.searchTerm]);
+
+
   const handleSort = (key: string) => {
     setSortConfig(current => ({
       key,
@@ -120,21 +135,21 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
     }));
   };
 
-  // Calculate search statistics
+  // Calculate search statistics based on client-filtered results
   const searchStats = useMemo(() => {
     return {
-      totalResults: bookings.length,
-      pendingBookings: bookings.filter(b => b.status === 'pending').length,
-      confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
-      completedBookings: bookings.filter(b => b.status === 'completed').length,
-      totalRevenue: bookings
+      totalResults: filteredBookings.length,
+      pendingBookings: filteredBookings.filter(b => b.status === 'pending').length,
+      confirmedBookings: filteredBookings.filter(b => b.status === 'confirmed').length,
+      completedBookings: filteredBookings.filter(b => b.status === 'completed').length,
+      totalRevenue: filteredBookings
         .filter(b => b.payment_status === 'paid')
         .reduce((sum, b) => sum + (b.service?.price || 0), 0),
     };
-  }, [bookings]);
+  }, [filteredBookings]);
 
   return {
-    bookings,
+    bookings: filteredBookings,
     isLoading,
     refetch,
     sortConfig,
