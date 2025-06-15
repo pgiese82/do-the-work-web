@@ -120,14 +120,14 @@ export function NotificationPreferences() {
   };
 
   if (loading) {
-    return <div className="text-white">Loading preferences...</div>;
+    return <div>Loading preferences...</div>;
   }
 
   return (
-    <Card className="bg-gray-800/50 border-orange-900/20">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Settings className="w-5 h-5 text-orange-400" />
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Settings className="w-5 h-5 text-orange-500" />
           Notification Preferences
         </CardTitle>
       </CardHeader>
@@ -138,17 +138,17 @@ export function NotificationPreferences() {
             if (!pref) return null;
 
             return (
-              <div key={type.key} className="border border-gray-700 rounded-lg p-4">
+              <div key={type.key} className="border rounded-lg p-4">
                 <div className="mb-3">
-                  <h3 className="text-white font-medium">{type.label}</h3>
-                  <p className="text-gray-400 text-sm">{type.description}</p>
+                  <h3 className="font-medium text-foreground">{type.label}</h3>
+                  <p className="text-sm text-muted-foreground">{type.description}</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Bell className="w-4 h-4 text-blue-400" />
-                      <Label htmlFor={`${type.key}-app`} className="text-gray-300">
+                      <Bell className="w-4 h-4 text-blue-500" />
+                      <Label htmlFor={`${type.key}-app`} className="text-sm font-normal text-foreground">
                         In-App
                       </Label>
                     </div>
@@ -163,8 +163,8 @@ export function NotificationPreferences() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-green-400" />
-                      <Label htmlFor={`${type.key}-email`} className="text-gray-300">
+                      <Mail className="w-4 h-4 text-green-500" />
+                      <Label htmlFor={`${type.key}-email`} className="text-sm font-normal text-foreground">
                         Email
                       </Label>
                     </div>
@@ -179,8 +179,8 @@ export function NotificationPreferences() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-orange-400" />
-                      <Label htmlFor={`${type.key}-toast`} className="text-gray-300">
+                      <MessageSquare className="w-4 h-4 text-orange-500" />
+                      <Label htmlFor={`${type.key}-toast`} className="text-sm font-normal text-foreground">
                         Toast
                       </Label>
                     </div>
@@ -202,7 +202,7 @@ export function NotificationPreferences() {
           <Button 
             onClick={savePreferences} 
             disabled={saving}
-            className="bg-orange-500 hover:bg-orange-600"
+            className="bg-orange-600 text-primary-foreground hover:bg-orange-700"
           >
             <Save className="w-4 h-4 mr-2" />
             {saving ? 'Saving...' : 'Save Preferences'}
