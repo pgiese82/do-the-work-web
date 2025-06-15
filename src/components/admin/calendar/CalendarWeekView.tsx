@@ -1,32 +1,15 @@
-
 import React from 'react';
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface Booking {
-  id: string;
-  date_time: string;
-  status: string;
-  payment_status: string;
-  users: {
-    name: string;
-    email: string;
-  };
-  services: {
-    name: string;
-    duration: number;
-    id: string;
-  };
-}
+import { Booking } from '@/types/calendar';
 
 interface CalendarWeekViewProps {
   startDate: Date;
   bookings: Booking[];
   onBookingDrop: (bookingId: string, newDateTime: Date) => void;
-  getServiceColor: (serviceId: string) => string;
   onBookingDrag: (booking: Booking | null) => void;
 }
 
@@ -34,7 +17,6 @@ export function CalendarWeekView({
   startDate,
   bookings,
   onBookingDrop,
-  getServiceColor,
   onBookingDrag
 }: CalendarWeekViewProps) {
   const weekStart = startOfWeek(startDate, { weekStartsOn: 1 }); // Maandag start

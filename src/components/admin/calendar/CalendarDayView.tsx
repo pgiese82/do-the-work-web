@@ -1,32 +1,15 @@
-
 import React from 'react';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface Booking {
-  id: string;
-  date_time: string;
-  status: string;
-  payment_status: string;
-  users: {
-    name: string;
-    email: string;
-  };
-  services: {
-    name: string;
-    duration: number;
-    id: string;
-  };
-}
+import { Booking } from '@/types/calendar';
 
 interface CalendarDayViewProps {
   date: Date;
   bookings: Booking[];
   onBookingDrop: (bookingId: string, newDateTime: Date) => void;
-  getServiceColor: (serviceId: string) => string;
   onBookingDrag: (booking: Booking | null) => void;
 }
 
@@ -34,7 +17,6 @@ export function CalendarDayView({
   date,
   bookings,
   onBookingDrop,
-  getServiceColor,
   onBookingDrag
 }: CalendarDayViewProps) {
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 tot 21:00
