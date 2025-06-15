@@ -28,7 +28,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
         .from('bookings')
         .select(`
           *,
-          user:users!inner(
+          user:users(
             id,
             name, 
             email, 
@@ -37,7 +37,7 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
             total_spent,
             last_session_date
           ),
-          service:services!inner(
+          service:services(
             id,
             name, 
             price,
@@ -83,7 +83,8 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
           user.name.ilike.%${filters.searchTerm}%,
           user.email.ilike.%${filters.searchTerm}%,
           service.name.ilike.%${filters.searchTerm}%,
-          internal_notes.ilike.%${filters.searchTerm}%
+          internal_notes.ilike.%${filters.searchTerm}%,
+          notes.ilike.%${filters.searchTerm}%
         `);
       }
 
@@ -112,23 +113,6 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
     enabled: true,
   });
 
-  // Memoized search results with additional client-side filtering for complex queries
-  const filteredBookings = useMemo(() => {
-    if (!filters.searchTerm) return bookings;
-
-    return bookings.filter(booking => {
-      const searchLower = filters.searchTerm.toLowerCase();
-      return (
-        booking.id.toLowerCase().includes(searchLower) ||
-        booking.user?.name?.toLowerCase().includes(searchLower) ||
-        booking.user?.email?.toLowerCase().includes(searchLower) ||
-        booking.service?.name?.toLowerCase().includes(searchLower) ||
-        booking.internal_notes?.toLowerCase().includes(searchLower) ||
-        booking.notes?.toLowerCase().includes(searchLower)
-      );
-    });
-  }, [bookings, filters.searchTerm]);
-
   const handleSort = (key: string) => {
     setSortConfig(current => ({
       key,
@@ -139,18 +123,18 @@ export const useAdvancedBookingSearch = (filters: SearchFilters) => {
   // Calculate search statistics
   const searchStats = useMemo(() => {
     return {
-      totalResults: filteredBookings.length,
-      pendingBookings: filteredBookings.filter(b => b.status === 'pending').length,
-      confirmedBookings: filteredBookings.filter(b => b.status === 'confirmed').length,
-      completedBookings: filteredBookings.filter(b => b.status === 'completed').length,
-      totalRevenue: filteredBookings
+      totalResults: bookings.length,
+      pendingBookings: bookings.filter(b => b.status === 'pending').length,
+      confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
+      completedBookings: bookings.filter(b => b.status === 'completed').length,
+      totalRevenue: bookings
         .filter(b => b.payment_status === 'paid')
         .reduce((sum, b) => sum + (b.service?.price || 0), 0),
     };
-  }, [filteredBookings]);
+  }, [bookings]);
 
   return {
-    bookings: filteredBookings,
+    bookings,
     isLoading,
     refetch,
     sortConfig,
